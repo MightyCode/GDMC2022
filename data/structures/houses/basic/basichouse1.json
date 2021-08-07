@@ -1,0 +1,37 @@
+{
+  "mainEntry": {
+    "facing" : "north",
+    "position" : [7, 1, 2]
+  },
+  "replacements" : {
+    "minecraft:cyan_bed" : { "type" : "bed", "state" : 1 },
+    "oak" : { "type" : "woodType", "state" : 2 },
+    "spruce" : { "type" : "woodType2", "state" : 2 }  
+  },
+  "air" : {
+    "preferedAirMode" : 2,
+    "replacements" : [
+      [2, 1, 2, 8, 8, 11],
+      [7, 1, 0, 7, 2, 1]
+    ]
+  },
+  "lootTables" : [
+    ["kitchenhouse", [8, 1, 6, 8, 2, 6]],
+    ["bedroomhouse", [5, 1, 10, 6, 1, 10]]  
+  ],
+  "villageInfo" : {
+    "villager" : 2,
+    "murdererTrap" : [3, -1, 3]
+  },
+  "ground" : {
+    "zones" : [
+      [1, 1, 10, 12]
+    ]
+  },
+  "sign" : {
+    "position" : [7, 4, 1],
+    "facing" : "north",
+    "tier" : 1,
+    "name" : "House"
+  }
+}

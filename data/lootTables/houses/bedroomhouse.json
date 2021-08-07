@@ -1,0 +1,62 @@
+
+  {
+    "pools": [
+      {
+        "rolls": {
+          "min": 1,
+          "max": 5
+        },
+        "entries": [
+          {
+            "type": "item",
+            "name": "minecraft:leather_helmet",
+            "weight": 10
+          },
+          {
+            "type": "item",
+            "name": "minecraft:leather_chestplate",
+            "weight": 10
+          },
+          {
+            "type": "item",
+            "name": "minecraft:leather_leggings",
+            "weight": 10
+          },
+          {
+            "type": "item",
+            "name": "minecraft:leather_boots",
+            "weight": 10
+          },
+          {
+            "type": "item",
+            "name": "*villageBook*",
+            "weight": 5
+          },
+          {
+            "type": "item",
+            "name": "*villagerRegistry*",
+            "weight": 7
+          },
+          {
+            "type": "item",
+            "name": "*deadVillagerRegistry*",
+            "weight": 3
+          },
+          {
+            "type" : "item",
+            "name" : "minecraft:emerald{display:{Name:'{\"text\":\"*villageName* currency\"}',Lore:['{\"text\":\"Currency used on that village to trade\",\"color\":\"dark_aqua\"}']}}",
+            "weight" : 10,
+            "functions": [
+              {
+                "function": "set_count",
+                "count": {
+                  "min": 1,
+                  "max": 3
+                }
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  }

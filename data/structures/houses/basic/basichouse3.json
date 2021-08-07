@@ -1,0 +1,35 @@
+{
+  "mainEntry": {
+    "facing" : "north",
+    "position" : [3, 1, 1]
+  },
+  "replacements" : {
+    "minecraft:blue_bed" : { "type" : "bed", "state" : 1 },
+    "oak" : { "type" : "woodType", "state" : 2 },
+    "spruce" : { "type" : "woodType2", "state" : 2 }
+  },
+  "air" : {
+    "preferedAirMode" : 2,
+    "replacements" : [
+      [0, 1, 0, 5, 6, 9]
+    ]
+  },
+  "lootTables" : [
+    ["bedroomhouse"]  
+  ],
+  "villageInfo" : {
+    "villager" : 2,
+    "murdererTrap" : [3, -1, 2]
+  },
+  "ground" : {
+    "zones" : [
+      [0, 0, 5, 9]
+    ]
+  },
+  "sign" : {
+    "position" : [5, 2, 3],
+    "facing" : "east",
+    "tier" : 1,
+    "name" : "House"
+  }
+}

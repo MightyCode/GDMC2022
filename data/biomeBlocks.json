@@ -1,0 +1,178 @@
+{
+    "rules" : {
+        "village" : [
+            "woodType", "woodType2", "woodType3", "woodType4"
+        ],
+        "structure" : [
+            "ground", "ground2"
+        ]
+    },
+    "0" : {
+        "Comment" : "Plaine and normal forest biome",
+        "woodResources" : 1.5,
+        "dirtResources" : 0.5,
+        "stoneResources" : 0.34,
+        "woodType" : "oak",
+        "woodType2" : "spruce",
+        "woodType3" : "birch",
+        "woodType4" : "acacia",
+        "ground" : "minecraft:grass_block",
+        "ground2" : "minecraft:dirt"
+    },
+    "1" : {
+        "Comment": "Oak biome, but darker",
+        "woodResources" : 1.5,
+        "dirtResources" : 0.5,
+        "stoneResources" : 0.34,
+        "woodType" : "oak",
+        "woodType2" : "dark_oak",
+        "woodType3" : "spruce",
+        "woodType4" : "jungle",
+        "ground" : "minecraft:grass_block",
+        "ground2" : "minecraft:dirt"
+    },
+    "2" : {
+        "Comment": "Mushroom special biome",
+        "woodResources" : 0.5,
+        "dirtResources" : 0.25,
+        "stoneResources" : 0.5,
+        "woodType" : "oak",
+        "woodType2" : "dark_oak",
+        "woodType3" : "spruce",
+        "woodType4" : "jungle",
+        "ground" : "minecraft:mycelium",
+        "ground2" : "minecraft:dirt"
+    },
+    "3" : {
+        "Comment" : "Very Hot biome, normal sand",
+        "woodResources" : 0.34,
+        "dirtResources" : 0.17,
+        "stoneResources" : 0.17,
+        "woodType" : "acacia",
+        "woodType2" : "jungle",
+        "woodType3" : "birch",
+        "woodType4" : "spruce",
+        "ground" : "minecraft:sand",
+        "ground2" : "minecraft:sand"
+    },
+    "4" : {
+        "Comment" : "Hot biome, vegetation, normal ground",
+        "woodResources" : 0.5,
+        "dirtResources" : 1,
+        "stoneResources" : 0.34,
+        "woodType" : "acacia",
+        "woodType2" : "birch",
+        "woodType3" : "oak",
+        "woodType4" : "spruce",
+        "ground" : "minecraft:grass_block",
+        "ground2" : "minecraft:dirt"
+    },
+    "5" : {
+        "Comment" : "Hot biome, vegetation, red sand",
+        "woodResources" : 0.34,
+        "dirtResources" : 0.1,
+        "stoneResources" : 0.17,
+        "woodType" : "acacia",
+        "woodType2" : "birch",
+        "woodType3" : "oak",
+        "woodType4" : "spruce",
+        "ground" : "minecraft:red_sand",
+        "ground2" : "minecraft:red_sand"
+    },
+    "6" : {
+        "Comment": "Cold biome, normal ground",
+        "woodResources" : 0.5,
+        "dirtResources" : 0.34,
+        "stoneResources" : 0.17,
+        "woodType" : "spruce",
+        "woodType2" : "dark_oak",
+        "woodType3" : "oak",
+        "woodType4" : "acacia",
+        "ground" : "minecraft:grass_block",
+        "ground2" : "minecraft:dirt"
+    },
+    "7": {
+        "Comment": "Cold biome, sand ground",
+        "woodResources" : 0.5,
+        "dirtResources" : 0.17,
+        "stoneResources" : 0.17,
+        "woodType" : "spruce",
+        "woodType2" : "dark_oak",
+        "woodType3" : "oak",
+        "woodType4" : "acacia",
+        "ground" : "minecraft:sand",
+        "ground2" : "minecraft:sand"
+    },
+    "8" : {
+        "Comment": "Cold biome, podzol ground",
+        "woodResources" : 0.5,
+        "dirtResources" : 0.75,
+        "stoneResources" : 0.34,
+        "woodType" : "spruce",
+        "woodType2" : "dark_oak",
+        "woodType3" : "oak",
+        "woodType4" : "acacia",
+        "ground" : "minecraft:podzol",
+        "ground2" : "minecraft:dirt"
+    },
+    "9" : {
+        "Comment": "Cold biome, snow ground",
+        "woodResources" : 0.5,
+        "dirtResources" : 0.5,
+        "stoneResources" : 0.17,
+        "woodType" : "spruce",
+        "woodType2" : "dark_oak",
+        "woodType3" : "oak",
+        "woodType4" : "acacia",
+        "ground" : "minecraft:snow",
+        "ground2" : "minecraft:dirt"
+    },
+    "10" : {
+        "Comment": "Cold biome, gravel ground",
+        "woodResources" : 0.5,
+        "dirtResources" : 0.34,
+        "stoneResources" : 0.34,
+        "woodType" : "spruce",
+        "woodType2" : "dark_oak",
+        "woodType3" : "oak",
+        "woodType4" : "acacia",
+        "ground" : "minecraft:gravel",
+        "ground2" : "minecraft:gravel"
+    },
+    "11" : {
+        "Comment" : "Jungle biome and derivated",
+        "woodResources" : 1.5,
+        "dirtResources" : 0.75,
+        "stoneResources" : 0.34,
+        "woodType" : "jungle",
+        "woodType2" : "spruce",
+        "woodType3" : "oak",
+        "woodType4" : "dark_oak",
+        "ground" : "minecraft:grass_block",
+        "ground2" : "minecraft:dirt"
+    },
+    "12" : {
+        "Comment" : "Biome which use birch",
+        "woodResources" : 1.5,
+        "dirtResources" : 0.75,
+        "stoneResources" : 0.34,
+        "woodType" : "birch",
+        "woodType2" : "oak",
+        "woodType3" : "spruce",
+        "woodType4" : "dark_oak",
+        "ground" : "minecraft:grass_block",
+        "ground2" : "minecraft:dirt"
+    },
+    "13" : {
+        "Comment" : "Dark biome",
+        "woodResources" : 1,
+        "dirtResources" : 1,
+        "stoneResources" : 0.34,
+        "woodType" : "dark_oak",
+        "woodType2" : "oak",
+        "woodType3" : "spruce",
+        "woodType4" : "jungle",
+        "ground" : "minecraft:grass_block",
+        "ground2" : "minecraft:dirt"
+    }
+}

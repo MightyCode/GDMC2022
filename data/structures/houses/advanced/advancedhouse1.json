@@ -1,0 +1,23 @@
+{
+  "mainEntry": {
+    "facing" : "north",
+    "position" : [3, 4, 3]
+  },
+  "replacements" : {
+    "oak" : { "type" : "woodType", "state" : 2 },
+    "spruce" : { "type" : "woodType2", "state" : 2 },
+    "birch" : { "type" : "woodType3", "state" : 2 },
+    "jungle" : { "type" : "woodType4", "state" : 2 },
+    "minecraft:grass_block" : { "type" : "ground", "state" : 1 },
+    "minecraft:dirt" : { "type" : "ground2", "state" : 1 }
+  },
+  "air" : {
+    "preferedAirMode" : 2,
+    "replacements" : [
+      [3, 0, 4, 9, 4, 8],
+      [1, 5, 1, 11, 10, 9],
+      [0, 11, 0, 12, 14, 10],
+      [3, 15, 4, 11, 18, 9]
+    ]
+  }
+}

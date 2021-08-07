@@ -1,0 +1,33 @@
+
+{
+  "mainEntry": {
+    "facing" : "north",
+    "position" : [2, 1, 0]
+  },
+  "replacements" : {
+    "oak" : { "type" : "woodType", "state" : 2 },
+    "spruce" : { "type" : "woodType2", "state" : 2 }
+  },
+  "air" : {
+    "preferedAirMode" : 1,
+    "replacements" : [
+    ]
+  },
+  "lootTables" : [
+    ["smeltery"]
+  ],
+    "villageInfo" : {
+      "villager" : 2,
+      "gameProfession" : "toolsmith",
+      "profession" : "Smelterer"
+    },
+    "ground" : {
+      "info" : "all"
+    },
+    "sign" : {
+      "position" : [4, 4, 2],
+      "facing" : "north",
+      "tier" : 1,
+      "name" : "Smeltery"
+    }
+  }

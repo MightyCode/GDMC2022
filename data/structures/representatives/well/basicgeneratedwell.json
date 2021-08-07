@@ -1,0 +1,12 @@
+{   
+  "mainEntry": {
+    "facing" : "north",
+    "position" : [0, 0, 0]
+  },
+  "villageInfo" : {
+    "villager" : 0,
+    "gameProfession" : "toolsmith",
+    "profession" : "Miner"
+  }
+}
+  

@@ -1,0 +1,32 @@
+{
+    "mainEntry": {
+      "facing" : "north",
+      "position" : [3, 1, 0]
+    },
+    "replacements" : {
+      "oak" : { "type" : "woodType", "state" : 2 },
+      "spruce" : { "type" : "woodType2", "state" : 2}
+    },
+    "air" : {
+      "preferedAirMode" : 1,
+      "replacements" : [
+      ]
+    },
+    "lootTables" : [
+      ["basicstonecutter"]
+    ],
+    "villageInfo" : {
+      "villager" : 1,
+      "gameProfession" : "mason",
+      "profession" : "Stone worker"
+    },
+    "ground" : {
+      "info" : "all"
+    },
+    "sign" : {
+      "position" : [0, 0, 3],
+      "facing" : "north",
+      "tier" : 1,
+      "name" : "Stone Cutter"
+    }
+  }

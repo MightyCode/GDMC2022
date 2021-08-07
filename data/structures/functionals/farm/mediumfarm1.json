@@ -1,0 +1,32 @@
+{
+  "mainEntry": {
+    "facing" : "north",
+    "position" : [7, 1, 0]
+  },
+  "replacements" : {
+    "oak" : { "type" : "woodType", "state" : 2 },
+    "spruce" : { "type" : "woodType2", "state" : 2 }
+  },
+  "air" : {
+    "preferedAirMode" : 1,
+    "replacements" : [
+    ]
+  },
+  "lootTables" : [
+    ["basicfarm"]
+  ],
+  "villageInfo" : {
+    "villager" : 2,
+    "gameProfession" : "farmer",
+    "profession" : "Farmer"
+  },
+  "ground" : {
+    "info" : "all"
+  },
+  "sign" : {
+    "position" : [6, 3, 0],
+    "facing" : "east",
+    "tier" : 2,
+    "name" : "Farm"
+  }
+}

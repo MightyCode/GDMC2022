@@ -1,0 +1,33 @@
+{
+  "mainEntry": {
+    "facing" : "north",
+    "position" : [2, 1, 1]
+  },
+  "replacements" : {
+    "oak" : { "type" : "woodType", "state" : 2 },
+    "minecraft:white_bed" : { "type" : "bed", "state" : 1 },
+    "minecraft:grass_block" : { "type" : "ground", "state" : 1 },
+    "minecraft:dirt" : { "type" : "ground2", "state" : 1 }
+  },
+  "air" : {
+    "preferedAirMode" : 2,
+    "replacements" : [
+      [1, 1, 0, 3, 4, 4]
+    ]
+  },
+  "villageInfo" : {
+    "villager" : 1,
+    "murdererTrap" : [2, -1, 4]
+  },
+  "ground" : {
+    "zones" : [
+      [0, 1, 4, 5]
+    ]
+  },
+  "sign" : {
+    "position" : [3, 3, 1],
+    "facing" : "west",
+    "tier" : 0,
+    "name" : "House"
+  }
+} 

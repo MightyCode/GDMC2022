@@ -1,0 +1,43 @@
+{
+  "mainEntry": {
+    "facing" : "west",
+    "position" : [1, 4, 4]
+  },
+  "replacements" : {
+    "oak" : { "type" : "woodType", "state" : 2 },
+    "spruce" : { "type" : "woodType2", "state" : 2 },
+    "birch" : { "type" : "woodType3", "state" : 2 },
+    "minecraft:white_bed" : { "type" : "bed", "state" : 1 },
+    "minecraft:white_carpet" : { "type" : "carpet", "state" : 1 },
+    "minecraft:grass_block" : { "type" : "ground", "state" : 1 },
+    "minecraft:dirt" : { "type" : "ground2", "state" : 1 }
+
+  },
+  "air" : {
+    "preferedAirMode" : 2,
+    "replacements" : [
+      [1, 0, 1, 9, 9, 7],
+      [0, 4, 4, 0, 5, 4]
+    ]
+  },
+  "lootTables" : [
+    ["kitchenhouse", [1, 0, 1, 9, 5, 7]],
+    ["bedroomhouse", [1, 5, 1, 9, 9, 7]]
+  ],
+  "villageInfo" : {
+    "villager" : 3,
+    "murdererTrap" : [7, 0, 2]
+  },
+  "ground" : {
+    "zones" : [
+      [1, 1, 9, 7], 
+      [0, 4, 0, 4]
+    ]
+  },
+  "sign" : {
+    "position" : [0, 5, 3],
+    "facing" : "west",
+    "tier" : 2,
+    "name" : "House"
+  }
+}

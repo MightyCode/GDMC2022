@@ -1,0 +1,36 @@
+{
+  "mainEntry": {
+    "facing" : "north",
+    "position" : [4, 1, 1]
+  },
+  "replacements" : {
+    "oak" : { "type" : "woodType", "state" : 2 },
+    "spruce" : { "type" : "woodType2", "state" : 2 }
+  },
+  "air" : {
+    "preferedAirMode" : 2,
+    "replacements" : [
+      [0, 1, 0, 9, 20, 8],
+      [0, 1, 8, 9, 9, 13]
+    ]
+  },
+  "lootTables" : [
+    ["windmill"]
+  ],
+  "ground" : {
+    "zones" : [
+      [1, 0, 7, 13]
+    ]
+  },
+  "villageInfo" : {
+    "villager" : 2,
+    "gameProfession" : "farmer",
+    "profession" : "Crusher"
+  },
+  "sign" : {
+    "position" : [3, 4, 0],
+    "facing" : "north",
+    "tier" : 1,
+    "name" : "Windmill"
+  }
+}

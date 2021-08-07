@@ -1,0 +1,17 @@
+{   
+  "mainEntry": {
+    "facing" : "north",
+    "position" : [0, 0, 0]
+  },
+  "villageInfo" : {
+    "villager" : 2,
+    "gameProfession" : "toolsmith",
+    "profession" : "Miner"
+  },
+  "sign" : {
+    "position" : [0, 0, 0],
+    "facing" : "north",
+    "tier" : 1,
+    "name" : "Quarry"
+  }
+}

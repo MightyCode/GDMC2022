@@ -1,0 +1,33 @@
+{
+  "mainEntry": {
+    "facing" : "north",
+    "position" : [4, 1, 0]
+  },
+  "replacements" : {
+    "oak" : { "type" : "woodType", "state" : 2},
+    "spruce" : { "type" : "woodType2", "state" : 2},
+    "minecraft:grass_block" : { "type" : "ground", "state" : 1 },
+    "minecraft:dirt" : { "type" : "ground2", "state" : 1 }
+  },
+  "air" : {
+    "preferedAirMode" : 2,
+    "replacements" : [
+      [1, 0, 1, 6, 5, 7],
+      [3, 0, 0, 3, 2, 0]
+    ]
+  },
+  "villageInfo" : {
+    "villager" : 2,
+    "gameProfession" : "mason",
+    "profession" : "Weaver"
+  },
+  "ground" : {
+    "zones" : [[1, 0, 7, 7]]
+  },
+  "sign" : {
+    "position" : [2, 2, 0],
+    "facing" : "north",
+    "tier" : 1,
+    "name" : "Weaver house"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "mainEntry": {
+    "facing" : "north",
+    "position" : [2, 1, 0]
+  },
+  "replacements" : {
+    "oak" : { "type" : "woodType", "state" : 2, "excluded": [[1, 1, 5, 1, 1, 5]] },
+    "spruce" : { "type" : "woodType2", "state" : 2, "excluded": [[1, 1, 4, 1, 1, 4]] },
+    "minecraft:grass_block" : { "type" : "ground", "state" : 1 },
+    "minecraft:dirt" : { "type" : "ground2", "state" : 1 }
+  },
+  "air" : {
+    "preferedAirMode" : 1,
+    "replacements" : [
+    ]
+  },
+  "lootTables" : [
+    ["basiclumberjachut"]
+  ],
+  "villageInfo" : {
+    "villager" : 1,
+    "gameProfession" : "mason",
+    "profession" : "Lumberjack"
+  },
+  "ground" : {
+    "info" : "all"
+  },
+  "sign" : {
+    "position" : [0, 3, 0],
+    "facing" : "north",
+    "tier" : 1,
+    "name" : "LumberJack Hut"
+  }
+}

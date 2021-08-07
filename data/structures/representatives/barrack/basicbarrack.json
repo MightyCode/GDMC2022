@@ -1,0 +1,33 @@
+{
+    "mainEntry": {
+      "facing" : "north",
+      "position" : [5, 1, 0]
+    },
+    "replacements" : {
+      "minecraft:light_blue_bed" : { "type" : "bed", "state" : 1 },
+      "oak" : { "type" : "woodType", "state" : 2 },
+      "spruce" : { "type" : "woodType2", "state" : 2 }
+    },
+    "air" : {
+      "preferedAirMode" : 1,
+      "replacements" : [
+      ]
+    },
+    "lootTables" : [
+      ["barrack"]
+    ],
+    "villageInfo" : {
+      "villager" : 3,
+      "gameProfession" : "armorer",
+      "profession" : "Guard soldier"
+    },
+    "ground" : {
+      "info" : "all"
+    },
+    "sign" : {
+      "position" : [5, 5, -1],
+      "facing" : "north",
+      "tier" : 1,
+      "name" : "Barrack"
+    }
+  }
