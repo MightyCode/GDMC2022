@@ -1,5 +1,8 @@
-# GDMC2021
-by Tsukuba Team
+# GDMC2022
+by Maxence Bazin
+
+This repository is the continuation of my work last year with the tsukuba team.
+
 ## How to run this project:
 - Make sure to have the [http interface mod](https://github.com/nilsgawlik/gdmc_http_interface) installed;
 - Open the minecraft world, and run the `setbuildarea x0 y0 z0 x1 y1 z1` command.
@@ -28,8 +31,4 @@ We want to work on interaction between villages, implement new houses, make more
 
 If you want to contact us for any question, you can do so via discord :
 
-Izzypizi#7987
-
 Tamalou-Max#0432
-
-Harckyl#0032
