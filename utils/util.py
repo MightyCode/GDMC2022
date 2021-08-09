@@ -96,11 +96,11 @@ def addResourcesFromChunk(resources, settlementData, biome):
         
     dictResources = resources.biomesBlocks[biome]
     if "woodResources" in dictResources:
-        settlementData["woodResources"] += dictResources["woodResources"]
+        settlementData.ressources["woodResources"] += dictResources["woodResources"]
     if "dirtResources" in dictResources:
-        settlementData["dirtResources"] += dictResources["dirtResources"]
+        settlementData.ressources["dirtResources"] += dictResources["dirtResources"]
     if "stoneResources" in dictResources:
-        settlementData["stoneResources"] += dictResources["stoneResources"]
+        settlementData.ressources["stoneResources"] += dictResources["stoneResources"]
 
 
 """
@@ -148,12 +148,12 @@ Spawn a villager at his house if unemployed or at his building of work
 """
 def spawnVillagerForStructure(settlementData, structureData, position):
     for id in structureData["villagersId"]:
-        if (structureData["type"] == "houses" and settlementData["villagerProfession"][id] == "Unemployed") or (structureData["type"] != "houses" and settlementData["villagerProfession"][id] != "Unemployed") : 
+        if (structureData["type"] == "houses" and settlementData.villagerProfession[id] == "Unemployed") or (structureData["type"] != "houses" and settlementData.villagerProfession[id] != "Unemployed") : 
             # get a random level for the profession of the villager (2: Apprentice, 3: Journeyman, 4: Expert, 5: Master)
             randomProfessionLevel = rd.randint(2, 5)
 
             spawnVillager(position[0], position[1] + 1, position[2], "minecraft:villager", 
-                settlementData["villagerNames"][id], settlementData["villagerGameProfession"][id], randomProfessionLevel, settlementData["biomeName"])
+                settlementData.villagerNames[id], settlementData.villagerGameProfession[id], randomProfessionLevel, settlementData.biomeName)
 
 
 def spawnVillager(x, y, z, entity, name, profession, level, type):

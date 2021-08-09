@@ -2,7 +2,7 @@ import random
 
 
 def alterSettlementDataWithNewStructures(settlementData, indexNewStructure):
-    structureName = settlementData["structures"][indexNewStructure]["name"]
+    structureName = settlementData.structures[indexNewStructure]["name"]
 
     if structureName == "basictownhall":
         voteForColor(settlementData)
@@ -15,17 +15,17 @@ def voteForColor(settlementData):
     
 
 def fillSettlementDataWithColor(settlementData, color):
-    settlementData["materialsReplacement"]["color"] = color
-    settlementData["materialsReplacement"]["wool"] = "minecraft:" + color + "_wool"
-    settlementData["materialsReplacement"]["terracota"] = "minecraft:" + color + "_terracota"
-    settlementData["materialsReplacement"]["carpet"] = "minecraft:" + color + "_carpet"
-    settlementData["materialsReplacement"]["stained_glass"] = "minecraft:" + color + "_stained_glass"
-    settlementData["materialsReplacement"]["shulker_box"] = "minecraft:" + color + "_shulker_box"
-    settlementData["materialsReplacement"]["glazed_terracota"] = "minecraft:" + color + "_glazed_terracota"
-    settlementData["materialsReplacement"]["stained_glass_pane"] = "minecraft:" + color + "_stained_glass_pane"
-    settlementData["materialsReplacement"]["concrete"] = "minecraft:" + color + "_concrete"
-    settlementData["materialsReplacement"]["concrete_powder"] = "minecraft:" + color + "_concrete_powder"
-    settlementData["materialsReplacement"]["dye"] = "minecraft:" + color + "_dye"
-    settlementData["materialsReplacement"]["bed"] = "minecraft:" + color + "_bed"
-    settlementData["materialsReplacement"]["banner"] = "minecraft:" + color + "_banner"
-    settlementData["materialsReplacement"]["wall_banner"] = "minecraft:" + color + "_wall_banner"
+    settlementData.setMaterialReplacement("color", color)
+    settlementData.setMaterialReplacement("wool", "minecraft:" + color + "_wool")
+    settlementData.setMaterialReplacement("terracota", "minecraft:" + color + "_terracota")
+    settlementData.setMaterialReplacement("carpet", "minecraft:" + color + "_carpet")
+    settlementData.setMaterialReplacement("stained_glass", "minecraft:" + color + "_stained_glass")
+    settlementData.setMaterialReplacement("shulker_box", "minecraft:" + color + "_shulker_box")
+    settlementData.setMaterialReplacement("glazed_terracota", "minecraft:" + color + "_glazed_terracota")
+    settlementData.setMaterialReplacement("stained_glass_pane", "minecraft:" + color + "_stained_glass_pane")
+    settlementData.setMaterialReplacement("concrete", "minecraft:" + color + "_concrete")
+    settlementData.setMaterialReplacement("concrete_powder", "minecraft:" + color + "_concrete_powder")
+    settlementData.setMaterialReplacement("dye", "minecraft:" + color + "_dye")
+    settlementData.setMaterialReplacement("bed", "minecraft:" + color + "_bed")
+    settlementData.setMaterialReplacement("banner",  "minecraft:" + color + "_banner")
+    settlementData.setMaterialReplacement("wall_banner", "minecraft:" + color + "_wall_banner")

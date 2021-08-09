@@ -1,4 +1,5 @@
 import generation.generator as generator
+import generation.data.settlementData as settlementDataClass
 
 import random as rd
 import pandas as pd
@@ -173,7 +174,7 @@ def createTextForDeadVillagers(listOfVillagers):
 
 
 def createBookForVillager(settlementData, villagerIndex):
-    villagerName = settlementData["villagerNames"][villagerIndex]
+    villagerName = settlementData.villagerNames[villagerIndex]
     gift = ""
 
     # 1 / 2 chance to a gift
@@ -219,9 +220,9 @@ def createBookForVillager(settlementData, villagerIndex):
             targetedVillager = availableIndices[rd.randint(0, len(availableIndices) - 1)]
             if randomGift == 1:
                 if rd.randint(1, 2) == 1:
-                    textDiaryVillager += (f'I love {settlementData["villagerNames"][targetedVillager]}\\\\n')
+                    textDiaryVillager += (f'I love {settlementData.villagerNames[targetedVillager]}\\\\n')
                 else : 
-                    textDiaryVillager += (f'{settlementData["villagerNames"][targetedVillager]} is my best friend\\\\n')
+                    textDiaryVillager += (f'{settlementData.villagerNames[targetedVillager]} is my best friend\\\\n')
 
                 if rd.randint(1, 2) == 1:
                     textDiaryVillager += (', I left a surprise under the door.\\\\n')
@@ -230,9 +231,9 @@ def createBookForVillager(settlementData, villagerIndex):
                     
             elif randomGift == 2:
                 if rd.randint(1, 2) == 1:
-                    textDiaryVillager += (f'I hate {settlementData["villagerNames"][targetedVillager]}\\\\n')
+                    textDiaryVillager += (f'I hate {settlementData.villagerNames[targetedVillager]}\\\\n')
                 else : 
-                    textDiaryVillager += (f'{settlementData["villagerNames"][targetedVillager]} is a jerk\\\\n')
+                    textDiaryVillager += (f'{settlementData.villagerNames[targetedVillager]} is a jerk\\\\n')
 
                 if rd.randint(1, 2) == 1:
                     textDiaryVillager += (', I placed a tnt under the door.\\\\n')
@@ -241,23 +242,24 @@ def createBookForVillager(settlementData, villagerIndex):
             continue
         
         # Murderer suspicion
-        if rd.randint(1, 5) == 1 and not murdererSuspicious and settlementData["murdererIndex"] != -1 :
-            textDiaryVillager += (f'I think that {settlementData["villagerNames"][settlementData["murdererIndex"]]} is really strange. \\\\n')
+        murdererData = settlementData.murdererData
+        if rd.randint(1, 5) == 1 and not murdererSuspicious and murdererData.villagerIndex != -1 :
+            textDiaryVillager += (f'I think that {settlementData.villagerNames[murdererData.villagerIndex]} is really strange. \\\\n')
             murdererSuspicious = True
             continue
 
         # Other phrase    
         random = rd.randint(1, 5)
         if random == 1:
-            randomProfession = rd.randint(0, len(settlementData["villagerProfessionList"]) - 1)
-            textDiaryVillager += (f'I hate all {settlementData["villagerProfessionList"][randomProfession]} \\\\n')
+            randomProfession = rd.randint(0, len(settlementDataClass.SettlementData.VILLAGE_PROFESSION_LIST) - 1)
+            textDiaryVillager += (f'I hate all {settlementDataClass.SettlementData.VILLAGE_PROFESSION_LIST[randomProfession]} \\\\n')
             if rd.randint(1, 5) == 1:
-                secondRandomProfession = rd.randint(0, len(settlementData["villagerProfessionList"]) - 1)
+                secondRandomProfession = rd.randint(0, len(settlementDataClass.SettlementData.VILLAGE_PROFESSION_LIST) - 1)
                 if secondRandomProfession != randomProfession:
-                    textDiaryVillager += (f'I would like to work as a {settlementData["villagerProfessionList"][secondRandomProfession]}.\\\\n')
+                    textDiaryVillager += (f'I would like to work as a {settlementDataClass.SettlementData.VILLAGE_PROFESSION_LIST[secondRandomProfession]}.\\\\n')
         elif random == 2 and not targetTextDone: 
             randomDiaryTextWithTarget = rd.randint(0, len(newDiaryTextWithTarget) - 1)
-            targeted = settlementData["villagerDeadNames"][rd.randint(0, len(settlementData["villagerDeadNames"]) - 1)]
+            targeted = settlementData.villagerDeadNames[rd.randint(0, len(settlementData.villagerDeadNames) - 1)]
             textDiaryVillager += (f'{newDiaryTextWithTarget[randomDiaryTextWithTarget]}'
                                           f'{targeted}.  \\\\n')
             newDiaryTextWithTarget.remove(newDiaryTextWithTarget[randomDiaryTextWithTarget])

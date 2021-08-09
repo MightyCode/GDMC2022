@@ -153,13 +153,13 @@ def computeZEntry(zLocalPosition, cornerProjection, facingStruct, cornerStruct):
 	return z
 
 
-def initRoad(floodFill, settlementData, worldModif,  materials):
+def initRoad(floodFill, settlementData, worldModif):
 	NODE_IN_ROAD.clear()
 	POSITION_OF_LANTERN.clear()
 	CORNER_PROJECTION = { "north" : [ 0, 1, 0, 0], "south" : [ 0, 0, 0, 1 ], "west" : [ 1, 0, 0, 0 ], "east" : [ 0, 0, 1, 0 ] }
 	
 	squarelist = []
-	for index in range(0, len(settlementData["structures"])):
+	for index in range(0, len(settlementData.structures)):
 		entrytemp = []
 		entrytemp.append(floodFill.listHouse[index][0])
 		entrytemp.append(floodFill.listHouse[index][1])
@@ -168,7 +168,7 @@ def initRoad(floodFill, settlementData, worldModif,  materials):
 			entrytemp[0] + floodFill.listHouse[index][3][2], entrytemp[2] + floodFill.listHouse[index][3][3]])
 
 	#print(squarelist)
-	for indexFrom in range(0,len(settlementData["structures"])):
+	for indexFrom in range(0, len(settlementData.structures)):
 		# To know if the house doesn't have parent...
 		start = [0, 0]
 		goal = [0, 0]
@@ -178,8 +178,8 @@ def initRoad(floodFill, settlementData, worldModif,  materials):
 			continue
 		
 		# House From
-		facingStructFrom = settlementData["structures"][indexFrom]["prebuildingInfo"]["entry"]["facing"]
-		cornerStructFrom = settlementData["structures"][indexFrom]["prebuildingInfo"]["corner"]
+		facingStructFrom = settlementData.structures[indexFrom]["prebuildingInfo"]["entry"]["facing"]
+		cornerStructFrom = settlementData.structures[indexFrom]["prebuildingInfo"]["corner"]
 		entryStructFrom = [floodFill.listHouse[indexFrom][0], floodFill.listHouse[indexFrom][1], floodFill.listHouse[indexFrom][2]]
 
 		x = computeXEntry(entryStructFrom[0], CORNER_PROJECTION, facingStructFrom, cornerStructFrom)
@@ -195,8 +195,8 @@ def initRoad(floodFill, settlementData, worldModif,  materials):
 		start = [x, z]
 
 		# House to
-		facingStructTo = settlementData["structures"][indexTo]["prebuildingInfo"]["entry"]["facing"]
-		cornerStructTo = settlementData["structures"][indexTo]["prebuildingInfo"]["corner"]
+		facingStructTo = settlementData.structures[indexTo]["prebuildingInfo"]["entry"]["facing"]
+		cornerStructTo = settlementData.structures[indexTo]["prebuildingInfo"]["corner"]
 
 		entryStructTo = [floodFill.listHouse[indexTo][0], floodFill.listHouse[indexTo][1] - 1, floodFill.listHouse[indexTo][2]]
 
@@ -215,14 +215,14 @@ def initRoad(floodFill, settlementData, worldModif,  materials):
 				#print("stuck1")
 
 		try:
-			generateRoad(worldModif, floodFill, start, goal, squarelist, materials, entryStructFrom)		
+			generateRoad(worldModif, floodFill, start, goal, squarelist, settlementData, entryStructFrom)		
 		except ValueError:
 			print("ValueError, path can't be implemented there")
 
 """
 Generating the path among 2 houses
 """
-def generateRoad(worldModif, floodFill, start, goal, squarelist, materials, entryStructFrom):
+def generateRoad(worldModif, floodFill, start, goal, squarelist, settlementData, entryStructFrom):
 
 	path = astar(start, goal, squarelist)
 	temp = 1
@@ -239,7 +239,7 @@ def generateRoad(worldModif, floodFill, start, goal, squarelist, materials, entr
 
 		while iu.getBlock(block[0], y, block[1]) == 'minecraft:water':
 			y = y + 1
-			material = "minecraft:" + materials["woodType"] + "_planks"
+			material = "minecraft:" + settlementData.getMatRep("woodType") + "_planks"
 		while iu.getBlock(block[0], y, block[1]) == 'minecraft:lava':
 			y = y + 1
 			material = "minecraft:nether_bricks"
@@ -279,5 +279,3 @@ def generateRoad(worldModif, floodFill, start, goal, squarelist, materials, entr
 			
 		temp += 1
 		yTemp = y
-
-
