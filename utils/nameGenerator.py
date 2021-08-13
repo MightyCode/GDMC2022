@@ -7,11 +7,11 @@ class NameGenerator:
         self.nameToGenerate = []
 
         with open(NameGenerator.VILLAGER_NAME_PATH + "villagerFirstNames.txt", "r") as f:
-            self.firstNames = f.read().replace("\n", "").split(";")
+            self.firstNames = f.read().replace("\n", "").split(";")[0:-1]
             f.close()
 
         with open(NameGenerator.VILLAGER_NAME_PATH + "villagerLastNames.txt", "r") as f:
-            self.lastNames = f.read().replace("\n", "").split(";")
+            self.lastNames = f.read().replace("\n", "").split(";")[0:-1]
             f.close()
 
         for i in range(len(self.firstNames)):
