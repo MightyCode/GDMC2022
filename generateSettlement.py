@@ -8,6 +8,7 @@ from generation.floodFill import *
 import generation.generator as generator
 import generation.resourcesLoader as resLoader
 import utils.util as util
+from utils.nameGenerator import NameGenerator
 from utils.worldModification import *
 import utils.argumentParser as argParser
 import generation.loremaker as loremaker
@@ -15,6 +16,8 @@ import generation.road as road
 import lib.interfaceUtils as iu
 import lib.toolbox as toolbox
 from random import choice
+import utils.book as book
+
 
 TIME_LIMIT = 600
 TIME_TO_BUILD_A_VILLAGE = 30
@@ -28,6 +31,8 @@ iu.setBuffering(True)
 worldModif = WorldModification(interface)
 args, parser = argParser.giveArgsAndParser()
 buildArea = argParser.getBuildArea(args)
+
+nameGenerator = NameGenerator()
 
 if buildArea == -1:
     exit()
@@ -90,54 +95,54 @@ if not args.remove:
         print("Global slice done")
 
         """ First main step : init settlementData """
-        settlementData = generator.createSettlementData(area, resources)
+        settlementData = generator.createSettlementData(area, resources, nameGenerator)
 
         floodFill = FloodFill(worldModif, settlementData)
 
-        structureMananager = StructureManager(settlementData, resources)
+        structureMananager = StructureManager(settlementData, resources, nameGenerator)
 
         """ Second main step : choose structures and their position """
         i = 0
-        while i < settlementData["structuresNumberGoal"] : 
-            print("Generate position " + str(i+1) + "/" + str(settlementData["structuresNumberGoal"]) + "  ", end="\r")
+        while i < settlementData.structuresNumberGoal : 
+            print("Generate position " + str(i+1) + "/" + str(settlementData.structuresNumberGoal) + "  ", end="\r")
             # 0 -> normal, 1 -> replacement, 2 -> no more structure
             result = structureMananager.chooseOneStructure()
 
             if result == 2 :
-                settlementData["structuresNumberGoal"] = i
+                settlementData.structuresNumberGoal = i
                 break
             
             if result == 1: 
-                settlementData["structuresNumberGoal"] -= 1
+                settlementData.structuresNumberGoal -= 1
                 continue
 
-            structure = resources.structures[settlementData["structures"][i]["name"]]
+            structure = resources.structures[settlementData.structures[i]["name"]]
 
             corners = structure.setupInfoAndGetCorners()
             result = floodFill.findPosHouse(corners)
             
             if not result["validPosition"]:
-                settlementData["structuresNumberGoal"] -= 1 
+                settlementData.structuresNumberGoal -= 1 
                 structureMananager.removeLastStructure()
-                floodFill.setNumberHouse(settlementData["structuresNumberGoal"])
+                floodFill.setNumberHouse(settlementData.structuresNumberGoal)
                 continue
 
-            settlementData["structures"][i]["validPosition"] = result["validPosition"]
+            settlementData.structures[i]["validPosition"] = result["validPosition"]
 
-            settlementData["structures"][i]["position"] = result["position"]
-            settlementData["structures"][i]["flip"] = result["flip"]
-            settlementData["structures"][i]["rotation"] = result["rotation"]
+            settlementData.structures[i]["position"] = result["position"]
+            settlementData.structures[i]["flip"] = result["flip"]
+            settlementData.structures[i]["rotation"] = result["rotation"]
             
-            settlementData["structures"][i]["prebuildingInfo"] = structure.getNextBuildingInformation(result["flip"], result["rotation"])
+            settlementData.structures[i]["prebuildingInfo"] = structure.getNextBuildingInformation(result["flip"], result["rotation"])
 
             # If new chunck discovererd, add new ressources
-            chunk = [int(settlementData["structures"][i]["position"][0] / 16), int(settlementData["structures"][i]["position"][2] / 16)] 
-            if not chunk in settlementData["discoveredChunk"] :
-                structureBiomeId = util.getBiome(settlementData["structures"][i]["position"][0], settlementData["structures"][i]["position"][2], 1, 1)
+            chunk = [int(settlementData.structures[i]["position"][0] / 16), int(settlementData.structures[i]["position"][2] / 16)] 
+            if not chunk in settlementData.discoveredChunks :
+                structureBiomeId = util.getBiome(settlementData.structures[i]["position"][0], settlementData.structures[i]["position"][2], 1, 1)
                 structureBiomeName = resources.biomeMinecraftId[int(structureBiomeId)]
                 structureBiomeBlockId = str(resources.biomesBlockId[structureBiomeName])
 
-                settlementData["discoveredChunk"].append(chunk)
+                settlementData.discoveredChunks.append(chunk)
                 util.addResourcesFromChunk(resources, settlementData, structureBiomeBlockId)
 
             loremaker.alterSettlementDataWithNewStructures(settlementData, i)
@@ -148,8 +153,8 @@ if not args.remove:
                 structureMananager.checkDependencies()
                 i += 1
             else:
-                settlementData["structuresNumberGoal"] = i + 1
-                floodFill.setNumberHouse(settlementData["structuresNumberGoal"])
+                settlementData.structuresNumberGoal = i + 1
+                floodFill.setNumberHouse(settlementData.structuresNumberGoal)
                 print("Abort finding position and adding structures due to time expired")
                 break
         
@@ -157,67 +162,66 @@ if not args.remove:
         print("\nGenerate lore")
 
         # Murderer
-        if len(settlementData["villagerNames"]) <= 1:
-            settlementData["murdererIndex"] = -1
-            settlementData["murdererTargetIndex"] = -1
-        else :
-            settlementData["murdererIndex"] = choice([i for i in range(0, len(settlementData["villagerNames"])) if settlementData["villagerProfession"][i] != "Mayor"])
-            settlementData["murdererTargetIndex"] = choice([i for i in range(0, len(settlementData["villagerNames"])) if i != settlementData["murdererIndex"]])
+        murdererData = settlementData.murdererData
 
-        for structureData in settlementData["structures"]:
-            if settlementData["murdererTargetIndex"] in structureData["villagersId"]:
+        if len(settlementData.villagerNames) > 1:
+            murdererData.villagerIndex = choice([i for i in range(0, len(settlementData.villagerNames)) if settlementData.villagerProfession[i] != "Mayor"])
+            murdererData.villagerTargetIndex = choice([i for i in range(0, len(settlementData.villagerNames)) if i != murdererData.villagerIndex])
+
+        for structureData in settlementData.structures:
+            if murdererData.villagerTargetIndex in structureData["villagersId"]:
                 structureData["gift"] = "minecraft:tnt"
 
-        books = generator.generateBooks(settlementData)
+        books = generator.generateBooks(settlementData, nameGenerator)
         generator.placeBooks(settlementData, books, floodFill, worldModif)
 
         # Villager interaction
-        for i in range(len(settlementData["villagerNames"])):
-            settlementData["villagerDiary"].append([])
+        for i in range(len(settlementData.villagerNames)):
+            settlementData.villagerDiary.append([])
             
             available = True
-            for structureData in settlementData["structures"]:
+            for structureData in settlementData.structures:
                 if i in structureData["villagersId"]:
                     available = not "haybale" in structureData["name"]
                     break
 
             if random.randint(1, 3) == 1 and available:
                 #print("Genere diary of " + settlementData["villagerNames"][i])
-                settlementData["villagerDiary"][i] = book.createBookForVillager(settlementData, i)
-                settlementData["villagerDiary"][i][0] = "minecraft:written_book" + toolbox.writeBook(settlementData["villagerDiary"][i][0], 
-                    title="Diary of " + settlementData["villagerNames"][i], author=settlementData["villagerNames"][i], description="Diary of " + settlementData["villagerNames"][i])
-                if settlementData["villagerDiary"][i][1] != "":
-                    structureData["gift"] = settlementData["villagerDiary"][i][1]
+                settlementData.villagerDiary[i] = book.createBookForVillager(settlementData, i)
+                settlementData.villagerDiary[i][0] = "minecraft:written_book" + toolbox.writeBook(settlementData.villagerDiary[i][0], 
+                    title="Diary of " + settlementData.villagerNames[i], author=settlementData.villagerNames[i], description="Diary of " + settlementData.villagerNames[i])
+                if settlementData.villagerDiary[i][1] != "":
+                    structureData["gift"] = settlementData.villagerDiary[i][1]
         
         # Add books replacements
-        settlementData["materialsReplacement"]["villageBook"] = "minecraft:written_book" + books["villageNameBook"]
-        settlementData["materialsReplacement"]["villageLecternBook"] = books["villageNameBook"]
-        settlementData["materialsReplacement"]["villagerRegistry"] = "minecraft:written_book" + books["villagerNamesBook"]
-        settlementData["materialsReplacement"]["deadVillagerRegistry"] = "minecraft:written_book" + books["deadVillagersBook"]
+        settlementData.setMaterialReplacement("villageBook", "minecraft:written_book" + books["villageNameBook"])
+        settlementData.setMaterialReplacement("villageLecternBook", books["villageNameBook"])
+        settlementData.setMaterialReplacement("villagerRegistry", "minecraft:written_book" + books["villagerNamesBook"])
+        settlementData.setMaterialReplacement("deadVillagerRegistry", "minecraft:written_book" + books["deadVillagersBook"])
         
         """ Fourth main step : creates the roads of the village """
-        road.initRoad(floodFill, settlementData, worldModif, settlementData["materialsReplacement"])
+        road.initRoad(floodFill, settlementData, worldModif)
 
 
         """ Five main step : places every structrure and after that every decorations """
         i = 0
         timeNow = int(round(time.time() * 1000)) - milliseconds
-        while i < len(settlementData["structures"]) and timeNow / 1000 < TIME_LIMIT :
-            print("Build structure " + str(i + 1) + "/" + str(settlementData["structuresNumberGoal"]) + "  ", end="\r")
-            generator.generateStructure(settlementData["structures"][i], settlementData, resources, worldModif, chestGeneration)
-            util.spawnVillagerForStructure(settlementData, settlementData["structures"][i], settlementData["structures"][i]["position"])
+        while i < len(settlementData.structures) and timeNow / 1000 < TIME_LIMIT :
+            print("Build structure " + str(i + 1) + "/" + str(settlementData.structuresNumberGoal) + "  ", end="\r")
+            generator.generateStructure(settlementData.structures[i], settlementData, resources, worldModif, chestGeneration)
+            util.spawnVillagerForStructure(settlementData, settlementData.structures[i], settlementData.structures[i]["position"])
             timeNow = int(round(time.time() * 1000)) - milliseconds
             i += 1
 
         worldModif.saveToFile(file)  
         
-        if i < len(settlementData["structures"]):
+        if i < len(settlementData.structures):
             print("\nAbort building due time expired")
 
         print("\nBuild decoration")
-        floodFill.placeDecorations(settlementData["materialsReplacement"])
-        print("Position of lectern for village", zAdvencement * numberZoneX, ":", [settlementData["center"][0], 
-                floodFill.getHeight(settlementData["center"][0], settlementData["center"][2]), settlementData["center"][1]])
+        floodFill.placeDecorations(settlementData)
+        print("Position of lectern for village", zAdvencement * numberZoneX, ":", [settlementData.center[0], 
+                floodFill.getHeight(settlementData.center[0], settlementData.center[2]), settlementData.center[1]])
         print("Position of first structure", [floodFill.listHouse[0][0], floodFill.listHouse[0][1], floodFill.listHouse[0][2]])
         #iu.runCommand("tp {} {} {}".format(floodFill.listHouse[0][0], floodFill.listHouse[0][1], floodFill.listHouse[0][2]))
         print("Time left :", TIME_LIMIT - (int(round(time.time() * 1000)) - milliseconds) / 1000, "s")

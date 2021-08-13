@@ -21,7 +21,7 @@ class FloodFill:
 
     def __init__(self, worldModification, settlementData):
         self.worldModif = worldModification
-        self.setNumberHouse(settlementData["structuresNumberGoal"])
+        self.setNumberHouse(settlementData.structuresNumberGoal)
         self.listHouse = []
         random.seed(a=None, version=2)
         self.startPosRange = [0.98, 0.98]
@@ -29,8 +29,8 @@ class FloodFill:
         self.distanceFirstHouse = 40
         self.distanceFirstHouseIncrease = 3
 
-        self.buildArea = settlementData["area"]
-        self.size = settlementData["size"]
+        self.buildArea = settlementData.area
+        self.size = settlementData.size
         self.validHouseFloodFillPosition = [ self.buildArea[0] + self.size[0]/10, 
                                     self.buildArea[2] + self.size[1]/10, 
                                     self.buildArea[3] - self.size[0]/10,
@@ -333,7 +333,7 @@ class FloodFill:
         return False
 
 
-    def placeDecorations(self, materials):
+    def placeDecorations(self, settlementData):
         xmin, xmax, zmin, zmax = self.decideMinMax()
         decorationcoord = []
         for i in range(self.numberOfDecoration):
@@ -352,7 +352,7 @@ class FloodFill:
                                 if not [xrand,zrand] in decorationcoord:
                                     if rand == 1:
                                         decorationcoord.append([xrand,zrand])
-                                        self.worldModif.setBlock(xrand, height, zrand,"minecraft:" + materials["woodType"]+"_fence")
+                                        self.worldModif.setBlock(xrand, height, zrand,"minecraft:" + settlementData.getMatRep("woodType") + "_fence")
                                         randombloc = random.randint(0, len(FloodFill.DOUBLE_BLOC) - 1)
                                         blocktoplace = FloodFill.DOUBLE_BLOC[randombloc]
                                         if blocktoplace == 'minecraft:skeleton_skull' or blocktoplace == 'minecraft:zombie_head' or blocktoplace == 'minecraft:creeper_head':
