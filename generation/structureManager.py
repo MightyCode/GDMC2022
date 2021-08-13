@@ -1,5 +1,6 @@
-import utils.util as util
-import utils.book as book
+from generation.resources import Resources
+from generation.data.settlementData import SettlementData
+from utils.nameGenerator import NameGenerator
 import json
 import random
 
@@ -9,18 +10,17 @@ class StructureManager:
     FUNCTIONALS = "functionals"
     REPRESENTATIVES = "representatives"
 
-    def __init__(self, settlementData, resources):
+    def __init__(self, settlementData:SettlementData, resources:Resources, nameGenerator:NameGenerator):
         with open(StructureManager.PATH) as json_file:
            self.dependencies = json.load(json_file)
+
+        self.nameGenerator = nameGenerator
         self.settlementData = settlementData
         self.resources = resources
 
         self.numberOfStructuresForEachGroup = {}
         for group in self.dependencies.keys():
             self.numberOfStructuresForEachGroup[group] = 0
-
-        self.villagerFirstNamesList = book.getFirstNamelist()
-        self.villagerLastNamesList = book.getLastNamelist()
 
         self.checkDependencies()
 
@@ -59,7 +59,7 @@ class StructureManager:
                 return 0
 
 
-    def choosedStructure(self, structure):
+    def choosedStructure(self, structure:dict):
         self.settlementData.structures[-1]["name"] = structure["name"]
         self.settlementData.structures[-1]["type"] = structure["type"]
         self.settlementData.structures[-1]["group"] = structure["group"]
@@ -74,10 +74,7 @@ class StructureManager:
             self.settlementData.structures[-1]["villagersId"] = []
             size = len(self.settlementData.villagerNames)
             for i in range(numberToAdd):
-                self.settlementData.villagerNames.append(
-                            book.getRandomVillagerNames(self.villagerFirstNamesList, 1)[0] + 
-                            " " + book.getRandomVillagerNames(self.villagerLastNamesList, 1)[0]
-                )
+                self.settlementData.villagerNames.append(self.nameGenerator.generateVillagerName(True))
                 
                 self.settlementData.villagerProfession.append("Unemployed")
                 self.settlementData.villagerGameProfession.append("nitwit")
@@ -131,7 +128,7 @@ class StructureManager:
         del self.settlementData.structures[-1]
     
 
-    def removeOneVillager(self, index):
+    def removeOneVillager(self, index:int):
         del self.settlementData.villagerNames[index]
         del self.settlementData.villagerProfession[index]
         del self.settlementData.villagerGameProfession[index]
@@ -140,6 +137,7 @@ class StructureManager:
             for i in range(len(structureData["villagersId"])):
                 if structureData["villagersId"][i] > index:
                     structureData["villagersId"][i] -= 1
+
 
     def checkDependencies(self):
         # Make arrays empty
@@ -191,7 +189,7 @@ class StructureManager:
                 self.allStructures.append(data)
 
 
-    def checkOneCondition(self, name, conditionValues):
+    def checkOneCondition(self, name:str, conditionValues:tuple):
         valueToCheck = 0
 
         if name == "villagerNeeded" :

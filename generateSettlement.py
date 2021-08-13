@@ -8,6 +8,7 @@ from generation.floodFill import *
 import generation.generator as generator
 import generation.resourcesLoader as resLoader
 import utils.util as util
+from utils.nameGenerator import NameGenerator
 from utils.worldModification import *
 import utils.argumentParser as argParser
 import generation.loremaker as loremaker
@@ -15,6 +16,8 @@ import generation.road as road
 import lib.interfaceUtils as iu
 import lib.toolbox as toolbox
 from random import choice
+import utils.book as book
+
 
 TIME_LIMIT = 600
 TIME_TO_BUILD_A_VILLAGE = 30
@@ -28,6 +31,8 @@ iu.setBuffering(True)
 worldModif = WorldModification(interface)
 args, parser = argParser.giveArgsAndParser()
 buildArea = argParser.getBuildArea(args)
+
+nameGenerator = NameGenerator()
 
 if buildArea == -1:
     exit()
@@ -90,11 +95,11 @@ if not args.remove:
         print("Global slice done")
 
         """ First main step : init settlementData """
-        settlementData = generator.createSettlementData(area, resources)
+        settlementData = generator.createSettlementData(area, resources, nameGenerator)
 
         floodFill = FloodFill(worldModif, settlementData)
 
-        structureMananager = StructureManager(settlementData, resources)
+        structureMananager = StructureManager(settlementData, resources, nameGenerator)
 
         """ Second main step : choose structures and their position """
         i = 0
@@ -167,7 +172,7 @@ if not args.remove:
             if murdererData.villagerTargetIndex in structureData["villagersId"]:
                 structureData["gift"] = "minecraft:tnt"
 
-        books = generator.generateBooks(settlementData)
+        books = generator.generateBooks(settlementData, nameGenerator)
         generator.placeBooks(settlementData, books, floodFill, worldModif)
 
         # Villager interaction

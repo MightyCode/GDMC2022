@@ -1,3 +1,4 @@
+from generation.resources import Resources
 from generation.data.murdererData import MurdererData
 import copy
 
@@ -46,13 +47,13 @@ class SettlementData:
         self.murdererData = MurdererData()
 
 
-    def setArea(self, newArea):
+    def setArea(self, newArea:tuple):
         self.area = newArea
         self.center = [int((self.area[0] + self.area[3]) / 2), 80, int((self.area[2] + self.area[5]) / 2)]
         self.size = [self.area[3] - self.area[0] + 1, self.area[5] - self.area[2] + 1]
 
     
-    def setVillageBiome(self, biomeId, resources):
+    def setVillageBiome(self, biomeId:int, resources:Resources):
         self.biomeId = biomeId
         self.biomeName = resources.biomeMinecraftId[int(self.biomeId)]
         self.biomeBlockId =  str(resources.biomesBlockId[self.biomeName])
@@ -62,15 +63,15 @@ class SettlementData:
             self.biomeBlockId = "0"
 
 
-    def setMaterialReplacement(self, propertyName, replacement):
+    def setMaterialReplacement(self, propertyName:str, replacement:str):
         self.__materialsReplacement[propertyName] = replacement
     
 
-    def getMaterialReplacement(self, propertyName):
+    def getMaterialReplacement(self, propertyName:str):
         return self.__materialsReplacement[propertyName]
 
 
-    def getMatRep(self, propertyName):
+    def getMatRep(self, propertyName:str):
         return self.getMaterialReplacement(propertyName)
 
 

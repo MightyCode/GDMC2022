@@ -1,3 +1,8 @@
+from generation.floodFill import FloodFill
+from generation.chestGeneration import ChestGeneration
+from utils.worldModification import WorldModification
+from generation.resources import Resources
+from utils.nameGenerator import NameGenerator
 import utils.util as util
 import utils.book as book
 import lib.toolbox as toolbox
@@ -9,7 +14,7 @@ import random
 import copy
 
 
-def createSettlementData(area, resources):
+def createSettlementData(area:tuple, resources:Resources, nameGenerator:NameGenerator):
     settlementData = SettlementData()
     settlementData.setArea(area)
 
@@ -24,7 +29,7 @@ def createSettlementData(area, resources):
     # Per default, choosen color is white
     loremaker.fillSettlementDataWithColor(settlementData, "white")
 
-    settlementData.villageName = book.generateVillageName()
+    settlementData.villageName = nameGenerator.generateVillageName(True)
     settlementData.setMaterialReplacement("villageName", settlementData.villageName)
     
     settlementData.structuresNumberGoal = random.randint(20, 70)
@@ -32,7 +37,7 @@ def createSettlementData(area, resources):
     return settlementData
 
 
-def generateBooks(settlementData):
+def generateBooks(settlementData:SettlementData, nameGenerator:NameGenerator):
     # Create books for the village
     strVillagers = settlementData.villagerNames[0] + " : " + settlementData.villagerProfession[0] + ";"
     for i in range(1, len(settlementData.villagerNames)):
@@ -40,10 +45,11 @@ def generateBooks(settlementData):
     listOfVillagers = strVillagers.split(";")
 
     textVillagersNames = book.createTextForVillagersNames(listOfVillagers)
-    textDeadVillagers = book.createTextForDeadVillagers(listOfVillagers)
+    textDeadVillagers = book.createTextForDeadVillagers(listOfVillagers, nameGenerator)
     settlementData.villagerDeadNames = textDeadVillagers[2]
     textVillagePresentationBook = book.createTextOfPresentationVillage(settlementData.villageName, 
                 settlementData.structuresNumberGoal, settlementData.structures, textDeadVillagers[1], listOfVillagers)
+                
     settlementData.textOfBooks = [textVillagersNames, textDeadVillagers]
     
     books = {}
@@ -54,13 +60,13 @@ def generateBooks(settlementData):
     return books
 
 
-def initnumberHouse(xSize, zSize):
+def initnumberHouse(xSize:int, zSize:int):
     numberOhHousemin = math.isqrt(xSize * zSize)/ 2.2
     numberOhHousemax = math.isqrt(xSize * zSize)/ 1.8
     return numberOhHousemin, numberOhHousemax
 
 
-def placeBooks(settlementData, books, floodFill, worldModif):
+def placeBooks(settlementData:SettlementData, books:dict, floodFill:FloodFill, worldModif:WorldModification):
     items = []
 
     for key in books.keys():
@@ -82,7 +88,7 @@ def placeBooks(settlementData, books, floodFill, worldModif):
         settlementData.center[2] + 1, books["villageNameBook"], worldModif, 'east')
 
 
-def generateStructure(structureData, settlementData, resources, worldModif, chestGeneration):
+def generateStructure(structureData:dict, settlementData:SettlementData, resources:Resources, worldModif:WorldModification, chestGeneration:ChestGeneration):
     #print(structureData["name"])
     #print(structureData["validPosition"])
     structure = resources.structures[structureData["name"]]
@@ -138,7 +144,9 @@ def generateStructure(structureData, settlementData, resources, worldModif, ches
         worldModif.setBlock(position[0], position[1], position[2], structureData["gift"])
 
 
-def buildMurdererHouse(structureData, settlementData, resources, worldModif, chestGeneration, buildingCondition):
+def buildMurdererHouse(structureData:dict, settlementData:SettlementData, resources:Resources, 
+        worldModif:WorldModification, chestGeneration:ChestGeneration, buildingCondition:dict):
+
     #print("Build a house hosting a murderer")
     structure = resources.structures[structureData["name"]]
     info = structure.info
@@ -150,6 +158,7 @@ def buildMurdererHouse(structureData, settlementData, resources, worldModif, che
 
     structureMurderer = resources.structures["murderercache"]
     buildingInfo = structureMurderer.setupInfoAndGetCorners()
+
     # Temporary
     buildingCondition["flip"] = 0
     buildingCondition["rotation"] = 0  
@@ -172,7 +181,7 @@ def buildMurdererHouse(structureData, settlementData, resources, worldModif, che
 
 
 
-def modifyBuildingConditionDependingOnStructure(buildingCondition, settlementData, structureData, structureName):
+def modifyBuildingConditionDependingOnStructure(buildingCondition:dict, settlementData:SettlementData, structureData:dict, structureName:str):
     if structureName == "basicgraveyard":
         number = 8
 
@@ -216,12 +225,12 @@ def modifyBuildingConditionDependingOnStructure(buildingCondition, settlementDat
                 #print("add diary of", settlementData["villagerNames"][villagerIndex])
 
 
-def returnVillagerAvailableForGift(settlementData, exception):
+def returnVillagerAvailableForGift(settlementData:SettlementData, exceptions:tuple):
     available = []
     for structureData in settlementData.structures:
         if not "gift" in structureData.keys():
             for index in structureData["villagersId"]:
-                if not index in exception:
+                if not index in exceptions:
                     available.append(index)
 
     return available
