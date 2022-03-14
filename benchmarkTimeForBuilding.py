@@ -10,7 +10,7 @@ from generation.floodFill import *
 import generation.resourcesLoader as resLoader
 from utils.worldModification import *
 import utils.argumentParser as argParser
-import utils.utils as utils
+import utils.util as utils
 import lib.interfaceUtils as iu
 
 interface = interfaceUtils.Interface(buffering=True, caching = True)

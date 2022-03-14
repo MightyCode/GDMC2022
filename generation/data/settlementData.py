@@ -8,43 +8,43 @@ class SettlementData:
                     "cleric", "armorer", "weaponsmith", "toolsmith", "butcher", "leatherworker", "mason", "nitwit"]
 
     def __init__(self):
-        self.area = [0, 0]
-        self.center = [0, 0]
-        self.size = []
+        self.area:tuple = [0, 0]
+        self.center:tuple = [0, 0]
+        self.size:tuple = []
 
-        self.discoveredChunks = []
+        self.discoveredChunks:tuple = []
 
         # Materials replacement
-        self.__materialsReplacement = {}
+        self.__materialsReplacement:dict = {}
 
         # Biome 
-        self.biomeId = 0
-        self.biomeName = ""
-        self.biomeBlockId = 0
+        self.biomeId:int = 0
+        self.biomeName:str = ""
+        self.biomeBlockId:int = 0
 
-        self.villageName = ""
+        self.villageName:str = ""
         self.__materialsReplacement["villageName"] = self.villageName
 
-        self.villagerNames = []
-        self.villagerProfession = []
-        self.villagerGameProfession = []
+        self.villagerNames:tuple = []
+        self.villagerProfession:tuple = []
+        self.villagerGameProfession:tuple = []
 
-        # [0 -> content, 1 -> isGift]
-        self.villagerDiary = []
+        # [[0 -> content, 1 -> isGift], [...] , ...]
+        self.villagerDiary:tuple = []
         
-        self.structuresNumberGoal = []
+        self.structuresNumberGoal:tuple = []
 
         # structures contains "position", "rotation", "flip" "name", "type", "group", "villagersId", "gift"
-        self.structures = []
-        self.freeVillager = 0
+        self.structures:tuple = []
+        self.freeVillager:int = 0
 
-        self.ressources = {
+        self.ressources:dict = {
             "woodResources" : 0,
             "dirtResources" : 0,
             "stoneResources" : 0
         }
 
-        self.murdererData = MurdererData()
+        self.murdererData:MurdererData = MurdererData()
 
 
     def setArea(self, newArea:tuple):

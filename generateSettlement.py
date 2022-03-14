@@ -1,4 +1,6 @@
 import time
+
+from numpy import number
 milliseconds = int(round(time.time() * 1000))
 
 from generation.resources import *
@@ -19,37 +21,36 @@ from random import choice
 import utils.book as book
 
 
-TIME_LIMIT = 600
-TIME_TO_BUILD_A_VILLAGE = 30
+TIME_LIMIT:int = 600
+TIME_TO_BUILD_A_VILLAGE:int = 30
 
-file = "temp.txt"
-interface = interfaceUtils.Interface(buffering=True, caching = True)
+file:str = "temp.txt"
+interface:interfaceUtils.Interface  = interfaceUtils.Interface(buffering=True, caching = True)
 interface.setCaching(True)
 interface.setBuffering(True)
 iu.setCaching(True)
 iu.setBuffering(True)
-worldModif = WorldModification(interface)
+worldModif:WorldModification = WorldModification(interface)
 args, parser = argParser.giveArgsAndParser()
 buildArea = argParser.getBuildArea(args)
 
-nameGenerator = NameGenerator()
+nameGenerator:NameGenerator = NameGenerator()
 
 if buildArea == -1:
     exit()
     
-buildArea = (buildArea[0], buildArea[1], buildArea[2], buildArea[3] - 1, buildArea[4] - 1, buildArea[5] - 1)
-sizeArea = [buildArea[3] - buildArea[0] + 1, buildArea[5] - buildArea[2] + 1]
+buildArea:tuple = (buildArea[0], buildArea[1], buildArea[2], buildArea[3] - 1, buildArea[4] - 1, buildArea[5] - 1)
+sizeArea:tuple = [buildArea[3] - buildArea[0] + 1, buildArea[5] - buildArea[2] + 1]
     
 # Five main steps : init setllement Data, choose structures and find its positions, make road between these structures, and finaly build structures.
 if not args.remove:
-    
-    resources = Resources()
+    resources:Resources = Resources()
     resLoader.loadAllResources(resources)
 
-    chestGeneration = ChestGeneration(resources, interface)
+    chestGeneration:ChestGeneration = ChestGeneration(resources, interface)
     
     # Each zone for takes 500 blocks, division begin after 1000
-    numberZoneX = int(sizeArea[0] / 500)
+    numberZoneX:int = int(sizeArea[0] / 500)
     if numberZoneX == 0:
         numberZoneX = 1
     sizeZoneX = int(sizeArea[0] / numberZoneX)
@@ -58,10 +59,11 @@ if not args.remove:
         numberZoneZ = 1
     sizeZoneZ = int(sizeArea[1] / numberZoneZ)
 
-    xAdvencement = 0
-    zAdvencement = 0
+    xAdvencement:int = 0
+    zAdvencement:int = 0
+
     while zAdvencement < numberZoneZ:
-        timeNow = int(round(time.time() * 1000)) - milliseconds
+        timeNow:int = int(round(time.time() * 1000)) - milliseconds
 
         if timeNow / 1000 >= TIME_LIMIT - TIME_TO_BUILD_A_VILLAGE:
             print("Abord immediatly not time to generate") 
@@ -83,12 +85,6 @@ if not args.remove:
             zAdvencement += 1
             xAdvencement = 0
         
-        interface = interfaceUtils.Interface(buffering=True, caching = True)
-        interface.setCaching(True)
-        interface.setBuffering(True)
-        iu.setCaching(True)
-        iu.setBuffering(True)
-        worldModif = WorldModification(interface)
         iu.setBuildArea(area[0], area[1], area[2], area[3] + 1, area[4] + 1, area[5] + 1)
         print("Make global slice")
         iu.makeGlobalSlice()

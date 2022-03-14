@@ -1,7 +1,8 @@
 from generation.structures.generated.generatedWell import GeneratedWell
 from generation.structures.generated.generatedQuarry import * 
+from generation.resources import Resources
 
-def loadAllResources(resources) : 
+def loadAllResources(resources:Resources) : 
     print("Begin load ressources")
     # Loads structures
     ## Load houses

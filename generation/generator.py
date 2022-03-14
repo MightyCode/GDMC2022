@@ -14,8 +14,8 @@ import random
 import copy
 
 
-def createSettlementData(area:tuple, resources:Resources, nameGenerator:NameGenerator):
-    settlementData = SettlementData()
+def createSettlementData(area:tuple, resources:Resources, nameGenerator:NameGenerator) -> SettlementData:
+    settlementData:SettlementData = SettlementData()
     settlementData.setArea(area)
 
     # Biome 
@@ -37,12 +37,13 @@ def createSettlementData(area:tuple, resources:Resources, nameGenerator:NameGene
     return settlementData
 
 
-def generateBooks(settlementData:SettlementData, nameGenerator:NameGenerator):
+def generateBooks(settlementData:SettlementData, nameGenerator:NameGenerator) -> dict:
     # Create books for the village
-    strVillagers = settlementData.villagerNames[0] + " : " + settlementData.villagerProfession[0] + ";"
+    strVillagers:str = settlementData.villagerNames[0] + " : " + settlementData.villagerProfession[0] + ";"
+
     for i in range(1, len(settlementData.villagerNames)):
         strVillagers += settlementData.villagerNames[i] + " : " + settlementData.villagerProfession[i] + ";"
-    listOfVillagers = strVillagers.split(";")
+    listOfVillagers:tuple = strVillagers.split(";")
 
     textVillagersNames = book.createTextForVillagersNames(listOfVillagers)
     textDeadVillagers = book.createTextForDeadVillagers(listOfVillagers, nameGenerator)
@@ -52,7 +53,7 @@ def generateBooks(settlementData:SettlementData, nameGenerator:NameGenerator):
                 
     settlementData.textOfBooks = [textVillagersNames, textDeadVillagers]
     
-    books = {}
+    books:dict = {}
     books["villageNameBook"] = toolbox.writeBook(textVillagePresentationBook, title="Village Presentation", author="Mayor", description="Presentation of the village")
     books["villagerNamesBook"] = toolbox.writeBook(textVillagersNames, title="List of all villagers", author="Mayor", description="List of all villagers")
     books["deadVillagersBook"] = toolbox.writeBook(textDeadVillagers[0], title="List of all dead villagers", author="Mayor", description="List of all dead villagers")
@@ -60,14 +61,15 @@ def generateBooks(settlementData:SettlementData, nameGenerator:NameGenerator):
     return books
 
 
-def initnumberHouse(xSize:int, zSize:int):
-    numberOhHousemin = math.isqrt(xSize * zSize)/ 2.2
-    numberOhHousemax = math.isqrt(xSize * zSize)/ 1.8
+def initNumberHouse(xSize:int, zSize:int) -> tuple:
+    numberOhHousemin:int = math.isqrt(xSize * zSize) / 2.2
+    numberOhHousemax:int = math.isqrt(xSize * zSize) / 1.8
+
     return numberOhHousemin, numberOhHousemax
 
 
 def placeBooks(settlementData:SettlementData, books:dict, floodFill:FloodFill, worldModif:WorldModification):
-    items = []
+    items:tuple = []
 
     for key in books.keys():
         items += [["minecraft:written_book" + books[key], 1]]
@@ -88,7 +90,7 @@ def placeBooks(settlementData:SettlementData, books:dict, floodFill:FloodFill, w
         settlementData.center[2] + 1, books["villageNameBook"], worldModif, 'east')
 
 
-def generateStructure(structureData:dict, settlementData:SettlementData, resources:Resources, worldModif:WorldModification, chestGeneration:ChestGeneration):
+def generateStructure(structureData:dict, settlementData:SettlementData, resources:Resources, worldModif:WorldModification, chestGeneration:ChestGeneration) -> None:
     #print(structureData["name"])
     #print(structureData["validPosition"])
     structure = resources.structures[structureData["name"]]
