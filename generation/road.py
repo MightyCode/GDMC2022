@@ -1,41 +1,48 @@
+from generation.data.settlementData import SettlementData
+from generation.floodFill import FloodFill
 import utils.projectMath as projectMath
 import lib.interfaceUtils as iu
+from utils.worldModification import WorldModification
 
-NODE_IN_ROAD = []
-POSITION_OF_LANTERN = []
+NODE_IN_ROAD:tuple = []
+POSITION_OF_LANTERN:tuple = []
 
 
 class Node:
-	def __init__(self,point):
-		self.point = point
-		self.parent = None
-		self.cost = 0
-		self.H = 0
+	def __init__(self, point:tuple):
+		self.point:tuple = point
+		self.parent:Node = None
+		self.cost:int = 0
+		self.H:int  = 0
 
 	def move_cost(self, other):
 		return 1
 
+
 class logNode:
-	def __init__(self, point):
-		self.point = point
+	def __init__(self, point:tuple):
+		self.point:tuple = point
 		self.child = None
 
-def manhattan(point, point2):
+
+def manhattan(point:Node, point2:Node) -> int:
 	return abs(point2.point[0] - point.point[0]) + abs(point2.point[1] - point.point[1])
 
-def manhattanForCoord(point, point2):
+
+def manhattanForCoord(point:tuple, point2:tuple):
 	return abs(point2[0] - point[0]) + abs(point2[1] - point[1])
 
-def children(point):
+
+def children(point) -> tuple:
 	x, z = point.point
-	links = []
+	links:tuple = []
 	for d in [(x - 1, z), (x, z - 1), (x, z + 1), (x + 1,z)]:
 		links.append(Node([d[0], d[1]]))
 
 	return links
 
 
-def compareNode(node1,node2):
+def compareNode(node1:Node, node2:Node) -> int:
 	if node1.H < node2.H:
 		return 1
 	elif node1.H == node2.H:
@@ -43,24 +50,31 @@ def compareNode(node1,node2):
 	else:
 		return -1
 
-def isInClosedList(node, closedlist):
+
+def isInClosedList(node:Node, closedlist:tuple) -> bool:
 	for i in closedlist:
 		if node.point == i.point:
 			return True
+
 	return False
 
-def isInListWithInferiorCost(node, list):
+
+def isInListWithInferiorCost(node:Node, list:tuple) -> bool:
 	for i in list:
 		if node.point == i.point:
 			if i.H < node.H:
+
 				return True
 	return False
 
-def isInRoad(coord):
+
+def isInRoad(coord:tuple) -> bool:
 	for index in NODE_IN_ROAD:
 		if coord in index:
 			return True
+
 	return False
+
 
 def isInLantern(coord):
 	for index in POSITION_OF_LANTERN:
@@ -136,44 +150,54 @@ def astar(startcoord, goalcoord, squarelist):
 	raise ValueError('No Path Found')
 
 
-def computeXEntry(xLocalPosition, cornerProjection, facingStruct, cornerStruct):
-	x = xLocalPosition
-	x = x + cornerProjection[facingStruct][0] * cornerStruct[0]
-	x = x + cornerProjection[facingStruct][2] * cornerStruct[2]
-	x = x - cornerProjection[facingStruct][0] + cornerProjection[facingStruct][2]
+def computeXEntry(xLocalPosition:int, cornerProjection, facingStruct, cornerStruct):
+	x:int = xLocalPosition
+	x += cornerProjection[facingStruct][0] * cornerStruct[0]
+	x += cornerProjection[facingStruct][2] * cornerStruct[2]
+	x += -cornerProjection[facingStruct][0] + cornerProjection[facingStruct][2]
 
 	return x
 
-def computeZEntry(zLocalPosition, cornerProjection, facingStruct, cornerStruct):
-	z = zLocalPosition
-	z = z + cornerProjection[facingStruct][1] * cornerStruct[1]
-	z = z + cornerProjection[facingStruct][3] * cornerStruct[3]
-	z = z - cornerProjection[facingStruct][1] + cornerProjection[facingStruct][3]
+
+def computeZEntry(zLocalPosition:int, cornerProjection, facingStruct, cornerStruct):
+	z:int = zLocalPosition
+	z += cornerProjection[facingStruct][1] * cornerStruct[1]
+	z += cornerProjection[facingStruct][3] * cornerStruct[3]
+	z += -cornerProjection[facingStruct][1] + cornerProjection[facingStruct][3]
 
 	return z
 
 
-def initRoad(floodFill, settlementData, worldModif):
+def initRoad(floodFill:FloodFill, settlementData:SettlementData, worldModif:WorldModification):
 	NODE_IN_ROAD.clear()
 	POSITION_OF_LANTERN.clear()
-	CORNER_PROJECTION = { "north" : [ 0, 1, 0, 0], "south" : [ 0, 0, 0, 1 ], "west" : [ 1, 0, 0, 0 ], "east" : [ 0, 0, 1, 0 ] }
+
+	cornerProjection:dict = { 
+		"north" : [ 0, 1, 0, 0], 
+		"south" : [ 0, 0, 0, 1 ], 
+		"west" : [ 1, 0, 0, 0 ], 
+		"east" : [ 0, 0, 1, 0 ] 
+	}
 	
-	squarelist = []
+	squarelist:list = []
+
 	for index in range(0, len(settlementData.structures)):
-		entrytemp = []
+		entrytemp:tuple = []
 		entrytemp.append(floodFill.listHouse[index][0])
 		entrytemp.append(floodFill.listHouse[index][1])
 		entrytemp.append(floodFill.listHouse[index][2])
+
 		squarelist.append([entrytemp[0] + floodFill.listHouse[index][3][0] , entrytemp[2] + floodFill.listHouse[index][3][1], 
 			entrytemp[0] + floodFill.listHouse[index][3][2], entrytemp[2] + floodFill.listHouse[index][3][3]])
+
 
 	#print(squarelist)
 	for indexFrom in range(0, len(settlementData.structures)):
 		# To know if the house doesn't have parent...
-		start = [0, 0]
-		goal = [0, 0]
+		start:tuple = [0, 0]
+		goal:tuple = [0, 0]
 		
-		indexTo = floodFill.listHouse[indexFrom][5]
+		indexTo:int = floodFill.listHouse[indexFrom][5]
 		if indexTo == -1:
 			continue
 		
@@ -182,9 +206,9 @@ def initRoad(floodFill, settlementData, worldModif):
 		cornerStructFrom = settlementData.structures[indexFrom]["prebuildingInfo"]["corner"]
 		entryStructFrom = [floodFill.listHouse[indexFrom][0], floodFill.listHouse[indexFrom][1], floodFill.listHouse[indexFrom][2]]
 
-		x = computeXEntry(entryStructFrom[0], CORNER_PROJECTION, facingStructFrom, cornerStructFrom)
+		x = computeXEntry(entryStructFrom[0], cornerProjection, facingStructFrom, cornerStructFrom)
 		y = entryStructFrom[1]
-		z = computeZEntry(entryStructFrom[2], CORNER_PROJECTION, facingStructFrom, cornerStructFrom)
+		z = computeZEntry(entryStructFrom[2], cornerProjection, facingStructFrom, cornerStructFrom)
 		
 		while not(floodFill.is_air(x, y + 2, z)) or floodFill.is_air(x, y + 1, z):
 			if floodFill.is_air(x, y + 1, z):
@@ -200,9 +224,9 @@ def initRoad(floodFill, settlementData, worldModif):
 
 		entryStructTo = [floodFill.listHouse[indexTo][0], floodFill.listHouse[indexTo][1] - 1, floodFill.listHouse[indexTo][2]]
 
-		x = computeXEntry(entryStructTo[0], CORNER_PROJECTION, facingStructTo, cornerStructTo)
+		x = computeXEntry(entryStructTo[0], cornerProjection, facingStructTo, cornerStructTo)
 		y = entryStructTo[1]
-		z = computeZEntry(entryStructTo[2], CORNER_PROJECTION, facingStructTo, cornerStructTo)
+		z = computeZEntry(entryStructTo[2], cornerProjection, facingStructTo, cornerStructTo)
 	
 		goal = [x, z]
 		goal = findClosestNodeInRoad(start, goal)
