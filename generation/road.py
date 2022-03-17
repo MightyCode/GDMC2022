@@ -1,27 +1,28 @@
 from generation.data.settlementData import SettlementData
-from generation.floodFill import FloodFill
-import utils.projectMath as projectMath
-import lib.interfaceUtils as iu
 from utils.worldModification import WorldModification
 
-NODE_IN_ROAD:tuple = []
-POSITION_OF_LANTERN:tuple = []
+import utils.projectMath as projectMath
+import lib.interfaceUtils as iu
+from utils.constants import Constants
+
+NODE_IN_ROAD: list = []
+POSITION_OF_LANTERN: list = []
 
 
 class Node:
-	def __init__(self, point:tuple):
-		self.point:tuple = point
-		self.parent:Node = None
-		self.cost:int = 0
-		self.H:int  = 0
+	def __init__(self, point: list):
+		self.point: list = point
+		self.parent: Node = None
+		self.cost: int = 0
+		self.H: int = 0
 
 	def move_cost(self, other):
 		return 1
 
 
 class logNode:
-	def __init__(self, point:tuple):
-		self.point:tuple = point
+	def __init__(self, point: tuple):
+		self.point: tuple = point
 		self.child = None
 
 
@@ -35,7 +36,8 @@ def manhattanForCoord(point:tuple, point2:tuple):
 
 def children(point) -> tuple:
 	x, z = point.point
-	links:tuple = []
+	links: list = []
+
 	for d in [(x - 1, z), (x, z - 1), (x, z + 1), (x + 1,z)]:
 		links.append(Node([d[0], d[1]]))
 
@@ -51,7 +53,7 @@ def compareNode(node1:Node, node2:Node) -> int:
 		return -1
 
 
-def isInClosedList(node:Node, closedlist:tuple) -> bool:
+def isInClosedList(node:Node, closedlist: list) -> bool:
 	for i in closedlist:
 		if node.point == i.point:
 			return True
@@ -59,7 +61,7 @@ def isInClosedList(node:Node, closedlist:tuple) -> bool:
 	return False
 
 
-def isInListWithInferiorCost(node:Node, list:tuple) -> bool:
+def isInListWithInferiorCost(node: Node, list: list) -> bool:
 	for i in list:
 		if node.point == i.point:
 			if i.H < node.H:
@@ -68,7 +70,7 @@ def isInListWithInferiorCost(node:Node, list:tuple) -> bool:
 	return False
 
 
-def isInRoad(coord:tuple) -> bool:
+def isInRoad(coord: list) -> bool:
 	for index in NODE_IN_ROAD:
 		if coord in index:
 			return True
@@ -168,7 +170,7 @@ def computeZEntry(zLocalPosition:int, cornerProjection, facingStruct, cornerStru
 	return z
 
 
-def initRoad(floodFill:FloodFill, settlementData:SettlementData, worldModif:WorldModification):
+def initRoad(listHouse: list, settlementData: SettlementData, worldModif: WorldModification):
 	NODE_IN_ROAD.clear()
 	POSITION_OF_LANTERN.clear()
 
@@ -182,39 +184,39 @@ def initRoad(floodFill:FloodFill, settlementData:SettlementData, worldModif:Worl
 	squarelist:list = []
 
 	for index in range(0, len(settlementData.structures)):
-		entrytemp:tuple = []
-		entrytemp.append(floodFill.listHouse[index][0])
-		entrytemp.append(floodFill.listHouse[index][1])
-		entrytemp.append(floodFill.listHouse[index][2])
+		entrytemp: list = []
+		entrytemp.append(listHouse[index][0])
+		entrytemp.append(listHouse[index][1])
+		entrytemp.append(listHouse[index][2])
 
-		squarelist.append([entrytemp[0] + floodFill.listHouse[index][3][0] , entrytemp[2] + floodFill.listHouse[index][3][1], 
-			entrytemp[0] + floodFill.listHouse[index][3][2], entrytemp[2] + floodFill.listHouse[index][3][3]])
+		squarelist.append([entrytemp[0] + listHouse[index][3][0], entrytemp[2] + listHouse[index][3][1],
+			entrytemp[0] + listHouse[index][3][2], entrytemp[2] + listHouse[index][3][3]])
 
 
 	#print(squarelist)
 	for indexFrom in range(0, len(settlementData.structures)):
 		# To know if the house doesn't have parent...
-		start:tuple = [0, 0]
-		goal:tuple = [0, 0]
+		start: list = [0, 0]
+		goal: list = [0, 0]
 		
-		indexTo:int = floodFill.listHouse[indexFrom][5]
+		indexTo:int = listHouse[indexFrom][5]
 		if indexTo == -1:
 			continue
 		
 		# House From
 		facingStructFrom = settlementData.structures[indexFrom]["prebuildingInfo"]["entry"]["facing"]
 		cornerStructFrom = settlementData.structures[indexFrom]["prebuildingInfo"]["corner"]
-		entryStructFrom = [floodFill.listHouse[indexFrom][0], floodFill.listHouse[indexFrom][1], floodFill.listHouse[indexFrom][2]]
+		entryStructFrom = [listHouse[indexFrom][0], listHouse[indexFrom][1], listHouse[indexFrom][2]]
 
 		x = computeXEntry(entryStructFrom[0], cornerProjection, facingStructFrom, cornerStructFrom)
 		y = entryStructFrom[1]
 		z = computeZEntry(entryStructFrom[2], cornerProjection, facingStructFrom, cornerStructFrom)
 		
-		while not(floodFill.is_air(x, y + 2, z)) or floodFill.is_air(x, y + 1, z):
-			if floodFill.is_air(x, y + 1, z):
+		while not(Constants.is_air(x, y + 2, z)) or Constants.is_air(x, y + 1, z):
+			if Constants.is_air(x, y + 1, z):
 				y -=1
 
-			if not(floodFill.is_air(x, y + 2, z)):
+			if not(Constants.is_air(x, y + 2, z)):
 				y += 1
 		start = [x, z]
 
@@ -222,7 +224,7 @@ def initRoad(floodFill:FloodFill, settlementData:SettlementData, worldModif:Worl
 		facingStructTo = settlementData.structures[indexTo]["prebuildingInfo"]["entry"]["facing"]
 		cornerStructTo = settlementData.structures[indexTo]["prebuildingInfo"]["corner"]
 
-		entryStructTo = [floodFill.listHouse[indexTo][0], floodFill.listHouse[indexTo][1] - 1, floodFill.listHouse[indexTo][2]]
+		entryStructTo = [listHouse[indexTo][0], listHouse[indexTo][1] - 1, listHouse[indexTo][2]]
 
 		x = computeXEntry(entryStructTo[0], cornerProjection, facingStructTo, cornerStructTo)
 		y = entryStructTo[1]
@@ -231,22 +233,23 @@ def initRoad(floodFill:FloodFill, settlementData:SettlementData, worldModif:Worl
 		goal = [x, z]
 		goal = findClosestNodeInRoad(start, goal)
 
-		while not(floodFill.is_air(x, y + 2, z)) or floodFill.is_air(x, y + 1, z):
-			if floodFill.is_air(x, y + 1, z):
+		while not(Constants.is_air(x, y + 2, z)) or Constants.is_air(x, y + 1, z):
+			if Constants.is_air(x, y + 1, z):
 				y -=1
-			if not(floodFill.is_air(x, y + 2, z)):
+			if not(Constants.is_air(x, y + 2, z)):
 				y += 1
 				#print("stuck1")
 
 		try:
-			generateRoad(worldModif, floodFill, start, goal, squarelist, settlementData, entryStructFrom)		
+			generateRoad(worldModif, start, goal, listHouse, squarelist, settlementData, entryStructFrom)
 		except ValueError:
 			print("ValueError, path can't be implemented there")
+
 
 """
 Generating the path among 2 houses
 """
-def generateRoad(worldModif, floodFill, start, goal, squarelist, settlementData, entryStructFrom):
+def generateRoad(worldModif, start, goal, list_house, squarelist, settlementData, entryStructFrom):
 
 	path = astar(start, goal, squarelist)
 	temp = 1
@@ -255,10 +258,10 @@ def generateRoad(worldModif, floodFill, start, goal, squarelist, settlementData,
 	for block in path:
 		y = yTemp
 		material = 'minecraft:grass_path'
-		while not(floodFill.is_air(block[0], y + 1, block[1])) or floodFill.is_air(block[0], y, block[1]):
-			if floodFill.is_air(block[0], y, block[1]):
+		while not(Constants.is_air(block[0], y + 1, block[1])) or Constants.is_air(block[0], y, block[1]):
+			if Constants.is_air(block[0], y, block[1]):
 				y -=1
-			if not(floodFill.is_air(block[0], y + 1, block[1])):
+			if not(Constants.is_air(block[0], y + 1, block[1])):
 				y += 1
 
 		while iu.getBlock(block[0], y, block[1]) == 'minecraft:water':
@@ -278,11 +281,11 @@ def generateRoad(worldModif, floodFill, start, goal, squarelist, settlementData,
 	yTemp = entryStructFrom[1]
 	for block in path:
 		y = yTemp
-		while not(floodFill.is_air(block[0], y + 1, block[1])) or floodFill.is_air(block[0], y, block[1]):
-			if floodFill.is_air(block[0], y, block[1]):
+		while not(Constants.is_air(block[0], y + 1, block[1])) or Constants.is_air(block[0], y, block[1]):
+			if Constants.is_air(block[0], y, block[1]):
 				y -=1
 				
-			if not(floodFill.is_air(block[0], y + 1, block[1])):
+			if not(Constants.is_air(block[0], y + 1, block[1])):
 				y += 1
 
 		while iu.getBlock(block[0], y, block[1]) == 'minecraft:water' or iu.getBlock(block[0], y, block[1]) == 'minecraft:lava':
@@ -294,7 +297,7 @@ def generateRoad(worldModif, floodFill, start, goal, squarelist, settlementData,
 
 			for i in [0, 1, 2, 3]:
 				position = [block[0] + diffX[i], block[1] + diffZ[i]]
-				if not position in path and not floodFill.isInHouse(position) and not isInRoad(position):
+				if not position in path and not projectMath.isInHouse(list_house, position) and not isInRoad(position):
 					POSITION_OF_LANTERN.append([block[0], block[1]])
 					worldModif.setBlock(position[0], y - 1, position[1], 'minecraft:cobblestone')
 					worldModif.setBlock(position[0], y, 	position[1], 'minecraft:cobblestone_wall')

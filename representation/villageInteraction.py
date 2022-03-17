@@ -1,4 +1,4 @@
-from representation.Village import Village
+from representation.village import Village
 
 import random
 

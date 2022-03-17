@@ -1,5 +1,5 @@
 from this import d
-from representation.Village import Village
+from representation.village import Village
 
 class Villager:
     def __init__(self, village:Village) -> None:
@@ -12,5 +12,5 @@ class Villager:
         self.parentOf:tuple = []
         self.childOf:tuple = []
 
-
         self.job:str = "Unemployed"
+        self.minecraftJob: str = ""

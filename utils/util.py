@@ -96,11 +96,11 @@ def addResourcesFromChunk(resources, settlementData, biome):
         
     dictResources = resources.biomesBlocks[biome]
     if "woodResources" in dictResources:
-        settlementData.ressources["woodResources"] += dictResources["woodResources"]
+        settlementData.resources["woodResources"] += dictResources["woodResources"]
     if "dirtResources" in dictResources:
-        settlementData.ressources["dirtResources"] += dictResources["dirtResources"]
+        settlementData.resources["dirtResources"] += dictResources["dirtResources"]
     if "stoneResources" in dictResources:
-        settlementData.ressources["stoneResources"] += dictResources["stoneResources"]
+        settlementData.resources["stoneResources"] += dictResources["stoneResources"]
 
 
 """

@@ -134,7 +134,7 @@ def createTextForVillagersNames(listOfVillagers):
 """
 Return the text of the book of the dead villagers names and professions
 """
-def createTextForDeadVillagers(listOfVillagers:tuple, nameGenerator:NameGenerator):
+def createTextForDeadVillagers(listOfVillagers: list, nameGenerator:NameGenerator):
     randomOfDeadVillagers = rd.randint(1, len(listOfVillagers) - 1)
     
     data = {}

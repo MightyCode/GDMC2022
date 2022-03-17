@@ -134,7 +134,7 @@ class Interface():
                 else:
                     self.setBlock(x, y, z, replaceBlock)
 
-    def setBlock(self, x, y, z, blockStr):
+    def setBlock(self, x: int, y: int, z: int, blockStr: str):
         """**Place a block in the world depending on buffer activation**.
         Takes local coordinates, works with local and global coordinates
         """

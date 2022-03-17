@@ -24,7 +24,7 @@
       "info" : "all"
     },
     "sign" : {
-      "position" : [0, 0, 3],
+      "position" : [0, 3, 0],
       "facing" : "north",
       "tier" : 1,
       "name" : "Stone Cutter"

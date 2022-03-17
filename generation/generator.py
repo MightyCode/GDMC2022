@@ -1,21 +1,24 @@
-from generation.floodFill import FloodFill
 from generation.chestGeneration import ChestGeneration
 from utils.worldModification import WorldModification
 from generation.resources import Resources
 from utils.nameGenerator import NameGenerator
+from generation.structures.baseStructure import BaseStructure
+from generation.data.settlementData import SettlementData
+from representation.village import Village
+from utils.constants import Constants
+
+import generation.loremaker as loremaker
 import utils.util as util
 import utils.book as book
 import lib.toolbox as toolbox
-from generation.structures.baseStructure import BaseStructure
-from generation.data.settlementData import SettlementData
-import generation.loremaker as loremaker
+
 import math
 import random
 import copy
 
 
-def createSettlementData(area:tuple, resources:Resources, nameGenerator:NameGenerator) -> SettlementData:
-    settlementData:SettlementData = SettlementData()
+def createSettlementData(area:tuple, villageModel:Village, resources:Resources) -> SettlementData:
+    settlementData:SettlementData = SettlementData(villageModel)
     settlementData.setArea(area)
 
     # Biome 
@@ -28,9 +31,6 @@ def createSettlementData(area:tuple, resources:Resources, nameGenerator:NameGene
 
     # Per default, choosen color is white
     loremaker.fillSettlementDataWithColor(settlementData, "white")
-
-    settlementData.villageName = nameGenerator.generateVillageName(True)
-    settlementData.setMaterialReplacement("villageName", settlementData.villageName)
     
     settlementData.structuresNumberGoal = random.randint(20, 70)
 
@@ -43,12 +43,12 @@ def generateBooks(settlementData:SettlementData, nameGenerator:NameGenerator) ->
 
     for i in range(1, len(settlementData.villagerNames)):
         strVillagers += settlementData.villagerNames[i] + " : " + settlementData.villagerProfession[i] + ";"
-    listOfVillagers:tuple = strVillagers.split(";")
+    listOfVillagers: list = strVillagers.split(";")
 
     textVillagersNames = book.createTextForVillagersNames(listOfVillagers)
     textDeadVillagers = book.createTextForDeadVillagers(listOfVillagers, nameGenerator)
     settlementData.villagerDeadNames = textDeadVillagers[2]
-    textVillagePresentationBook = book.createTextOfPresentationVillage(settlementData.villageName, 
+    textVillagePresentationBook = book.createTextOfPresentationVillage(settlementData.villageModel.name,
                 settlementData.structuresNumberGoal, settlementData.structures, textDeadVillagers[1], listOfVillagers)
                 
     settlementData.textOfBooks = [textVillagersNames, textDeadVillagers]
@@ -61,33 +61,34 @@ def generateBooks(settlementData:SettlementData, nameGenerator:NameGenerator) ->
     return books
 
 
-def initNumberHouse(xSize:int, zSize:int) -> tuple:
-    numberOhHousemin:int = math.isqrt(xSize * zSize) / 2.2
-    numberOhHousemax:int = math.isqrt(xSize * zSize) / 1.8
+def initNumberHouse(x_size: int, z_size: int) -> tuple:
+    minimal_number_of_house: int = int(math.sqrt(x_size * z_size) / 2.2)
+    maximum_number_of_house: int = int(math.sqrt(x_size * z_size) / 1.8)
 
-    return numberOhHousemin, numberOhHousemax
+    return minimal_number_of_house, maximum_number_of_house
 
 
-def placeBooks(settlementData:SettlementData, books:dict, floodFill:FloodFill, worldModif:WorldModification):
-    items:tuple = []
+def placeBooks(settlement_data: SettlementData, books: dict, world_modification: WorldModification):
+    items: list = []
 
     for key in books.keys():
         items += [["minecraft:written_book" + books[key], 1]]
 
     # Set a chest for the books and place the books in the chest
-    worldModif.setBlock(settlementData.center[0], 
-                        floodFill.getHeight(settlementData.center[0], settlementData.center[2]), 
-                        settlementData.center[2], "minecraft:chest[facing=east]", placeImmediately=True)
-    util.addItemChest(settlementData.center[0], 
-                        floodFill.getHeight(settlementData.center[0], settlementData.center[2]),
-                        settlementData.center[2], items)
+    world_modification.setBlock(settlement_data.center[0],
+                                Constants.getHeight(settlement_data.center[0], settlement_data.center[2]),
+                                settlement_data.center[2], "minecraft:chest[facing=east]", placeImmediately=True)
+
+    util.addItemChest(settlement_data.center[0],
+                      Constants.getHeight(settlement_data.center[0], settlement_data.center[2]),
+                      settlement_data.center[2], items)
 
 
     # Set a lectern for the book of village presentation
     toolbox.placeLectern(
-        settlementData.center[0], 
-        floodFill.getHeight(settlementData.center[0], settlementData.center[2]), 
-        settlementData.center[2] + 1, books["villageNameBook"], worldModif, 'east')
+        settlement_data.center[0],
+        Constants.getHeight(settlement_data.center[0], settlement_data.center[2]),
+        settlement_data.center[2] + 1, books["villageNameBook"], world_modification, 'east')
 
 
 def generateStructure(structureData:dict, settlementData:SettlementData, resources:Resources, worldModif:WorldModification, chestGeneration:ChestGeneration) -> None:

@@ -1,8 +1,7 @@
-import utils.util as util
-from generation.structures.baseStructure import * 
+from generation.structures.baseStructure import *
 
 class GeneratedWell(BaseStructure):
-    def __init__(self) :
+    def __init__(self):
         super(BaseStructure, self).__init__()
         self.uselessBlocks = [
         'minecraft:air', 'minecraft:cave_air', 'minecraft:water', 'minecraft:lava'
@@ -15,6 +14,7 @@ class GeneratedWell(BaseStructure):
     def setupInfoAndGetCorners(self):
         self.setSize([6, 9, 6])
         self.info["mainEntry"]["position"] = [int(self.size[0] / 2), self.size[1] - 5, 0]
+
         return self.getCornersLocalPositionsAllFlipRotation(self.info["mainEntry"]["position"])
     
 
