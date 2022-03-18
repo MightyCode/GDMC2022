@@ -29,9 +29,14 @@ class BaseStructure:
     info : dictionary containing information about the structures
     """
 
-    def __init__(self, info: dict):
-        self.info: dict = info
+    def __init__(self):
+        self.info: dict = {}
         self.size: list = [0, 0, 0]
+        self.computed_orientation: dict = {}
+
+    def setInfo(self, info: dict):
+        self.info = info
+        self.size = [0, 0, 0]
         self.computed_orientation = {}
 
     """

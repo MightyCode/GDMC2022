@@ -29,7 +29,8 @@ class Structures(BaseStructure):
     """
 
     def __init__(self, nbt_file, info, name):
-        super(BaseStructure, self).__init__(info)
+        super(BaseStructure, self).__init__()
+        self.setInfo(info)
 
         self.setSize([nbt_file["size"][0].value, nbt_file["size"][1].value, nbt_file["size"][2].value])
         self.file = nbt_file

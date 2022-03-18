@@ -61,7 +61,7 @@ class Resources :
         with open(Resources.STRUCTURE_PATH + infoPath) as json_file:
            info = json.load(json_file)
 
-        assert(not name in self.structures.keys())
+        assert(name not in self.structures.keys())
         self.structures[name] = Structures(nbtfile, info, name)
 
 
