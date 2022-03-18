@@ -72,36 +72,36 @@ class StructureManager:
         if structure["type"] == StructureManager.HOUSES:
             numberToAdd = struct.info["villageInfo"]["villager"]
             self.settlementData.structures[-1]["villagersId"] = []
-            size = len(self.settlementData.villagerNames)
+            size = len(self.settlementData.villager_names)
             for i in range(numberToAdd):
-                self.settlementData.villagerNames.append(self.nameGenerator.generateVillagerName(True))
+                self.settlementData.villager_names.append(self.nameGenerator.generateVillagerName(True))
 
-                self.settlementData.villagerProfession.append("Unemployed")
-                self.settlementData.villagerGameProfession.append("nitwit")
+                self.settlementData.villager_profession.append("Unemployed")
+                self.settlementData.villager_game_profession.append("nitwit")
 
                 self.settlementData.structures[-1]["villagersId"].append(size + i)
-            self.settlementData.freeVillager += numberToAdd
+            self.settlementData.free_villager += numberToAdd
 
         # Functionnals or representatives structure
         elif structure["type"] == StructureManager.FUNCTIONALS or structure["type"] == StructureManager.REPRESENTATIVES:
             numberToAttribute = struct.info["villageInfo"]["villager"]
             self.settlementData.structures[-1]["villagersId"] = []
-            size = len(self.settlementData.villagerNames)
+            size = len(self.settlementData.villager_names)
             idFound = 0
             for i in range(numberToAttribute):
                 # Find unemployed villager
 
-                while idFound < len(self.settlementData.villagerProfession):
-                    if self.settlementData.villagerProfession[idFound] == "Unemployed":
+                while idFound < len(self.settlementData.villager_profession):
+                    if self.settlementData.villager_profession[idFound] == "Unemployed":
                         break
                     idFound += 1
 
-                self.settlementData.villagerProfession[idFound] = struct.info["villageInfo"]["profession"]
-                self.settlementData.villagerGameProfession[idFound] = struct.info["villageInfo"]["gameProfession"]
+                self.settlementData.villager_profession[idFound] = struct.info["villageInfo"]["profession"]
+                self.settlementData.villager_game_profession[idFound] = struct.info["villageInfo"]["gameProfession"]
 
                 self.settlementData.structures[-1]["villagersId"].append(idFound)
 
-            self.settlementData.freeVillager -= numberToAttribute
+            self.settlementData.free_villager -= numberToAttribute
 
     def removeLastStructure(self):
         group = self.settlementData.structures[-1]["group"]
@@ -113,21 +113,21 @@ class StructureManager:
             for villagerIndex in self.settlementData.structures[-1]["villagersId"]:
                 self.removeOneVillager(villagerIndex)
 
-            self.settlementData.freeVillager -= number
+            self.settlementData.free_villager -= number
         elif type == StructureManager.REPRESENTATIVES or type == StructureManager.FUNCTIONALS:
             number = len(self.settlementData.structures[-1]["villagersId"])
             for villagerIndex in self.settlementData.structures[-1]["villagersId"]:
-                self.settlementData.villagerProfession[villagerIndex] = "Unemployed"
-                self.settlementData.villagerGameProfession[villagerIndex] = "nitwit"
+                self.settlementData.villager_profession[villagerIndex] = "Unemployed"
+                self.settlementData.villager_game_profession[villagerIndex] = "nitwit"
 
-            self.settlementData.freeVillager += number
+            self.settlementData.free_villager += number
 
         del self.settlementData.structures[-1]
 
     def removeOneVillager(self, index: int):
-        del self.settlementData.villagerNames[index]
-        del self.settlementData.villagerProfession[index]
-        del self.settlementData.villagerGameProfession[index]
+        del self.settlementData.villager_names[index]
+        del self.settlementData.villager_profession[index]
+        del self.settlementData.villager_game_profession[index]
 
         for structureData in self.settlementData.structures:
             for i in range(len(structureData["villagersId"])):
@@ -187,7 +187,7 @@ class StructureManager:
         valueToCheck = 0
 
         if name == "villagerNeeded":
-            valueToCheck = self.settlementData.freeVillager
+            valueToCheck = self.settlementData.free_villager
 
         # Ex : dirtResources, woordResources
         elif "Resources" in name:

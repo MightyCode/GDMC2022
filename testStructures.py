@@ -9,7 +9,7 @@ import utils.util as util
 from utils.worldModification import *
 import utils.argumentParser as argParser
 import lib.interfaceUtils as iu
-import generation.loremaker as loremaker
+import generation.loreMaker as loremaker
 import utils.book as book
 import lib.toolbox as toolbox
 import copy

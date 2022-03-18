@@ -148,12 +148,12 @@ Spawn a villager at his house if unemployed or at his building of work
 """
 def spawnVillagerForStructure(settlementData, structureData, position):
     for id in structureData["villagersId"]:
-        if (structureData["type"] == "houses" and settlementData.villagerProfession[id] == "Unemployed") or (structureData["type"] != "houses" and settlementData.villagerProfession[id] != "Unemployed") : 
+        if (structureData["type"] == "houses" and settlementData.villager_profession[id] == "Unemployed") or (structureData["type"] != "houses" and settlementData.villager_profession[id] != "Unemployed") :
             # get a random level for the profession of the villager (2: Apprentice, 3: Journeyman, 4: Expert, 5: Master)
             randomProfessionLevel = rd.randint(2, 5)
 
-            spawnVillager(position[0], position[1] + 1, position[2], "minecraft:villager", 
-                settlementData.villagerNames[id], settlementData.villagerGameProfession[id], randomProfessionLevel, settlementData.biomeName)
+            spawnVillager(position[0], position[1] + 1, position[2], "minecraft:villager",
+                          settlementData.villager_names[id], settlementData.villager_game_profession[id], randomProfessionLevel, settlementData.biome_name)
 
 
 def spawnVillager(x, y, z, entity, name, profession, level, type):

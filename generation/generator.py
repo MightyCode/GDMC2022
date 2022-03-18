@@ -7,7 +7,7 @@ from generation.data.settlementData import SettlementData
 from representation.village import Village
 from utils.constants import Constants
 
-import generation.loremaker as loremaker
+import generation.loreMaker as lore_maker
 import utils.util as util
 import utils.book as book
 import lib.toolbox as toolbox
@@ -17,39 +17,39 @@ import random
 import copy
 
 
-def createSettlementData(area:tuple, villageModel:Village, resources:Resources) -> SettlementData:
-    settlementData:SettlementData = SettlementData(villageModel)
-    settlementData.setArea(area)
+def createSettlementData(area: list, village_model: Village, resources: Resources) -> SettlementData:
+    settlement_data:SettlementData = SettlementData(village_model)
+    settlement_data.setArea(area)
 
     # Biome 
-    settlementData.setVillageBiome(util.getBiome(settlementData.center[0], settlementData.center[2], 1, 1), resources) # TODO get mean
+    settlement_data.setVillageBiome(util.getBiome(settlement_data.center[0], settlement_data.center[2], 1, 1), resources) # TODO get mean
 
-    # Load replaceements for structure biome
-    for aProperty in resources.biomesBlocks[settlementData.biomeBlockId]:
+    # Load replacements for structure biome
+    for aProperty in resources.biomesBlocks[settlement_data.biome_block_id]:
         if aProperty in resources.biomesBlocks["rules"]["village"]:
-            settlementData.setMaterialReplacement(aProperty, resources.biomesBlocks[settlementData.biomeBlockId][aProperty])
+            settlement_data.setMaterialReplacement(aProperty, resources.biomesBlocks[settlement_data.biome_block_id][aProperty])
 
-    # Per default, choosen color is white
-    loremaker.fillSettlementDataWithColor(settlementData, "white")
+    # Per default, chosen color is white
+    lore_maker.fillSettlementDataWithColor(settlement_data, "white")
     
-    settlementData.structuresNumberGoal = random.randint(20, 70)
+    settlement_data.structure_number_goal = random.randint(20, 70)
 
-    return settlementData
+    return settlement_data
 
 
 def generateBooks(settlementData:SettlementData, nameGenerator:NameGenerator) -> dict:
     # Create books for the village
-    strVillagers:str = settlementData.villagerNames[0] + " : " + settlementData.villagerProfession[0] + ";"
+    strVillagers:str = settlementData.villager_names[0] + " : " + settlementData.villager_profession[0] + ";"
 
-    for i in range(1, len(settlementData.villagerNames)):
-        strVillagers += settlementData.villagerNames[i] + " : " + settlementData.villagerProfession[i] + ";"
+    for i in range(1, len(settlementData.villager_names)):
+        strVillagers += settlementData.villager_names[i] + " : " + settlementData.villager_profession[i] + ";"
     listOfVillagers: list = strVillagers.split(";")
 
     textVillagersNames = book.createTextForVillagersNames(listOfVillagers)
     textDeadVillagers = book.createTextForDeadVillagers(listOfVillagers, nameGenerator)
     settlementData.villagerDeadNames = textDeadVillagers[2]
-    textVillagePresentationBook = book.createTextOfPresentationVillage(settlementData.villageModel.name,
-                settlementData.structuresNumberGoal, settlementData.structures, textDeadVillagers[1], listOfVillagers)
+    textVillagePresentationBook = book.createTextOfPresentationVillage(settlementData.village_model.name,
+                                                                       settlementData.structure_number_goal, settlementData.structures, textDeadVillagers[1], listOfVillagers)
                 
     settlementData.textOfBooks = [textVillagersNames, textDeadVillagers]
     
@@ -100,14 +100,14 @@ def generateStructure(structureData:dict, settlementData:SettlementData, resourc
     buildMurdererCache = False
     
     buildingCondition = BaseStructure.createBuildingCondition() 
-    murdererData = settlementData.murdererData
+    murdererData = settlementData.murderer_data
 
     for index in structureData["villagersId"]:
         if index == murdererData.villagerIndex:
             if "murdererTrap" in info["villageInfo"].keys():
                 buildMurdererCache = True
 
-        buildingCondition["villager"].append(settlementData.villagerNames[index])
+        buildingCondition["villager"].append(settlementData.villager_names[index])
 
     buildingCondition["flip"] = structureData["flip"]
     buildingCondition["rotation"] = structureData["rotation"]
@@ -121,7 +121,7 @@ def generateStructure(structureData:dict, settlementData:SettlementData, resourc
     structureBiomeBlockId = str(resources.biomesBlockId[structureBiomeName])
 
     if structureBiomeBlockId == "-1" :
-        structureBiomeBlockId = settlementData.biomeBlockId  
+        structureBiomeBlockId = settlementData.biome_block_id
     
     buildingCondition["replacements"] = settlementData.getMatRepDeepCopy()
     # Load block for structure biome
@@ -208,10 +208,10 @@ def modifyBuildingConditionDependingOnStructure(buildingCondition:dict, settleme
             i += 1
 
     elif structureName == "murderercache":
-        murdererData = settlementData.murdererData
+        murdererData = settlementData.murderer_data
 
         buildingCondition["special"] = { "sign" : ["Next target :", "", "", ""] }
-        name = settlementData.villagerNames[murdererData.villagerTargetIndex]
+        name = settlementData.villager_names[murdererData.villagerTargetIndex]
         util.parseVillagerNameInLines([name], buildingCondition["special"]["sign"], 1)
 
     elif structureName == "adventurerhouse":
@@ -220,11 +220,11 @@ def modifyBuildingConditionDependingOnStructure(buildingCondition:dict, settleme
 
     if structureData["type"] == "houses":
         for villagerIndex in structureData["villagersId"]:
-            if len(settlementData.villagerDiary[villagerIndex]) > 0 :
+            if len(settlementData.villager_diaries[villagerIndex]) > 0 :
                 if not "bedroomhouse" in buildingCondition["special"]:
                     buildingCondition["special"]["bedroomhouse"] = []
 
-                buildingCondition["special"]["bedroomhouse"].append(settlementData.villagerDiary[villagerIndex][0])
+                buildingCondition["special"]["bedroomhouse"].append(settlementData.villager_diaries[villagerIndex][0])
                 #print("add diary of", settlementData["villagerNames"][villagerIndex])
 
 

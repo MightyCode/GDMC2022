@@ -171,7 +171,7 @@ def createTextForDeadVillagers(listOfVillagers: list, nameGenerator:NameGenerato
 
 
 def createBookForVillager(settlementData, villagerIndex):
-    villagerName = settlementData.villagerNames[villagerIndex]
+    villagerName = settlementData.villager_names[villagerIndex]
     gift = ""
 
     # 1 / 2 chance to a gift
@@ -217,9 +217,9 @@ def createBookForVillager(settlementData, villagerIndex):
             targetedVillager = availableIndices[rd.randint(0, len(availableIndices) - 1)]
             if randomGift == 1:
                 if rd.randint(1, 2) == 1:
-                    textDiaryVillager += (f'I love {settlementData.villagerNames[targetedVillager]}\\\\n')
+                    textDiaryVillager += (f'I love {settlementData.villager_names[targetedVillager]}\\\\n')
                 else : 
-                    textDiaryVillager += (f'{settlementData.villagerNames[targetedVillager]} is my best friend\\\\n')
+                    textDiaryVillager += (f'{settlementData.villager_names[targetedVillager]} is my best friend\\\\n')
 
                 if rd.randint(1, 2) == 1:
                     textDiaryVillager += (', I left a surprise under the door.\\\\n')
@@ -228,9 +228,9 @@ def createBookForVillager(settlementData, villagerIndex):
                     
             elif randomGift == 2:
                 if rd.randint(1, 2) == 1:
-                    textDiaryVillager += (f'I hate {settlementData.villagerNames[targetedVillager]}\\\\n')
+                    textDiaryVillager += (f'I hate {settlementData.villager_names[targetedVillager]}\\\\n')
                 else : 
-                    textDiaryVillager += (f'{settlementData.villagerNames[targetedVillager]} is a jerk\\\\n')
+                    textDiaryVillager += (f'{settlementData.villager_names[targetedVillager]} is a jerk\\\\n')
 
                 if rd.randint(1, 2) == 1:
                     textDiaryVillager += (', I placed a tnt under the door.\\\\n')
@@ -239,9 +239,9 @@ def createBookForVillager(settlementData, villagerIndex):
             continue
         
         # Murderer suspicion
-        murdererData = settlementData.murdererData
+        murdererData = settlementData.murderer_data
         if rd.randint(1, 5) == 1 and not murdererSuspicious and murdererData.villagerIndex != -1 :
-            textDiaryVillager += (f'I think that {settlementData.villagerNames[murdererData.villagerIndex]} is really strange. \\\\n')
+            textDiaryVillager += (f'I think that {settlementData.villager_names[murdererData.villagerIndex]} is really strange. \\\\n')
             murdererSuspicious = True
             continue
 

@@ -11,7 +11,7 @@ class FloodFill:
     def __init__(self, world_modification, settlement_data):
         self.numberOfDecoration = 0
         self.world_modification = world_modification
-        self.set_number_of_houses(settlement_data.structuresNumberGoal)
+        self.set_number_of_houses(settlement_data.structure_number_goal)
         self.listHouse = []
         random.seed(None, 2)
         self.startPosRange = [0.98, 0.98]
