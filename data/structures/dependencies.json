@@ -1,286 +1,343 @@
 {
-    "haybaleHouses" : {
-        "structures" : [
-            "haybalehouse1",
-            "haybalehouse2",
-            "haybalehouse3",
-            "haybalehouse4"
-        ],
-        "type" : "houses",
-        "conditions" : {
-            "previous" : [
-                {  "name" : "haybaleHouses", "max" : 5 } 
+    "houses": {
+        "tier": {
+            "0": [
+                "basichouse1",
+                "basichouse2",
+                "basichouse3"
+            ],
+            "1" : [
+                "mediumhouse1",
+                "mediumhouse2",
+                "mediumhouse3"
+            ],
+            "2" : [
+                "mediumhouse1",
+                "mediumhouse2",
+                "mediumhouse3"
             ]
         },
-        "upgrade" : [ "basicHouses" ]
-    },
-    "basicLumberJackHut" : {
-        "structures" : [
-            "basiclumberjachut"
-        ],
-        "type" : "functionals",
-        "conditions" : {
-            "villagerNeeded" : { "min" : 1 },
-            "woodResources" : { "min" : 1 },
-            "previous" : [
-                {  "name" : "basicLumberJackHut", "max" : 3 } 
-            ]
-        }
-    },
-    "basicHouses" : {
-        "structures" : [
-            "basichouse1",
-            "basichouse2",
-            "basichouse3"
-        ],
         "type" : "houses",
         "conditions" : {
-            "previous" : [
-                {  "name" : "basicLumberJackHut", "min" : 1 },
-                { "name" : "basicHouses", "max" : 10 } 
-            ]
         }
     },
-    "basicFarm" : {
-        "structures" : [
-            "basicfarm"
-        ],
-        "type" : "functionals",
-        "conditions" : {
-            "villagerNeeded" : { "min" : 2 },
-            "dirtResources" : { "min" : 1},
-            "previous" :  [ 
-                { "name" : "basicLumberJackHut", "min" : 1 },
-                { "name" : "basicFarm", "max" : 4 } 
-            ]
-        }
-    },
-    "basicQuarry" : {
-        "structures" : [
-            "basicgeneratedquarry"
-        ],
-        "type" : "functionals",
-        "conditions" : {
-            "villagerNeeded" : { "min" : 2 },
-            "previous" : [
-                { "name" : "basicLumberJackHut", "min" : 1 },
-                { "name" : "basicQuarry", "max" : 3 } 
+    "lumberJackHut": {
+        "tier": {
+            "0": [
+                "basiclumberjachut"
             ],
-            "stoneResources" : { "min" : 1}
-        }
-    },
-    "basicWell" : {
-        "structures" : [
-            "basicgeneratedwell"
-        ],
-        "type" : "representatives",
-        "conditions" : {
-            "previous" : [
-                { "name" : "basicQuarry", "min" : 1 },
-                { "name" : "basicWell", "max" : 1 }
+            "1": [
+                "basiclumberjachut"
+            ],
+            "2": [
+                "basiclumberjachut"
             ]
-        }
-    },
-    "basicFurnace" : {
-        "structures" : [
-            "basicfurnace1"
-        ],
-        "type" : "functionals",
-        "conditions" : {
-            "villagerNeeded" : { "min" : 2 },
-            "previous" : [
-                { "name" : "basicQuarry", "min" : 1 },
-                { "name" : "basicFurnace", "max" : 3 } 
-            ]
-        }
-    },
-    "basicStoneCutter" : {
-        "structures" : [
-            "basicstonecutter"
-        ],
+        },
         "type" : "functionals",
         "conditions" : {
             "villagerNeeded" : { "min" : 1 },
             "previous" : [
-                { "name" : "basicQuarry", "min" : 1 },
-                { "name" : "basicStoneCutter", "max" : 3 } 
+                {  "name" : "lumberJackHut", "max" : 3 }
             ]
         }
     },
-    "basicSmeltery" : {
-        "structures" : [
-            "basicsmeltery"
-        ],
+    "farm" : {
+        "tier": {
+            "0": [
+                "basicfarm"
+            ],
+            "1": [
+                "mediumfarm1"
+            ],
+            "2" : [
+                "mediumfarm1"
+            ]
+        },
+        "type" : "functionals",
+        "conditions" : {
+            "villagerNeeded" : { "min" : 2 },
+            "previous" :  [
+                { "name" : "farm", "max" : 4 }
+            ]
+        }
+    },
+    "quarry" : {
+        "tier": {
+            "0": [
+                "basicgeneratedquarry"
+            ],
+            "1": [
+                "basicgeneratedquarry"
+            ],
+            "2": [
+                "basicgeneratedquarry"
+            ]
+        },
         "type" : "functionals",
         "conditions" : {
             "villagerNeeded" : { "min" : 2 },
             "previous" : [
-                { "name" : "basicQuarry", "min" : 1 },
-                { "name" : "basicSmeltery", "max" : 3 } 
+                { "name" : "quarry", "max" : 3 }
             ]
         }
     },
-    "basicWorkshop" : {
-        "structures" : [
-            "basicworkshop"
-        ],
-        "type" : "functionals",
-        "conditions" : {
-            "villagerNeeded" : { "min" : 2 },
-            "previous" : [
-                { "name" : "basicStoneCutter", "min" : 1 },
-                { "name" : "basicSmeltery", "min" : 1 },
-                { "name" : "basicWorkshop", "max" : 3 } 
+    "well" : {
+        "tier": {
+            "0": [
+                "basicgeneratedwell"
+            ],
+            "1": [
+                "basicgeneratedwell"
+            ],
+            "2": [
+                "basicgeneratedwell"
             ]
-        }
-    },
-    "basicGraveyard" : {
-        "structures" : [
-            "basicgraveyard"
-        ],
+        },
         "type" : "representatives",
         "conditions" : {
             "previous" : [
-                { "name" : "basicFurnace", "min" : 1 },
-                { "name" : "basicGraveyard", "max" : 1 } 
+                { "name" : "well", "max" : 1 }
+            ]
+        }
+    },
+    "furnace" : {
+        "tier": {
+            "0": [
+                "basicfurnace1"
+            ],
+            "1": [
+                "basicfurnace1"
+            ],
+            "2": [
+                "basicfurnace1"
+            ]
+        },
+        "type" : "functionals",
+        "conditions" : {
+            "villagerNeeded" : { "min" : 2 },
+            "previous" : [
+                { "name" : "furnace", "max" : 3 }
+            ]
+        }
+    },
+    "stoneCutter" : {
+        "tier": {
+            "0": [
+                "basicstonecutter"
+            ],
+            "1": [
+                "basicstonecutter"
+            ],
+            "2": [
+                "basicstonecutter"
+            ]
+        },
+        "type" : "functionals",
+        "conditions" : {
+            "villagerNeeded" : { "min" : 1 },
+            "previous" : [
+                { "name" : "stoneCutter", "max" : 3 }
+            ]
+        }
+    },
+    "smeltery" : {
+        "tier": {
+            "0": [
+                "basicsmeltery"
+            ],
+            "1": [
+                "basicsmeltery"
+            ],
+            "2": [
+                "basicsmeltery"
+            ]
+        },
+        "type" : "functionals",
+        "conditions" : {
+            "villagerNeeded" : { "min" : 2 },
+            "previous" : [
+                { "name" : "smeltery", "max" : 3 }
+            ]
+        }
+    },
+    "workshop" : {
+        "tier": {
+            "0": [
+                "basicworkshop"
+            ],
+            "1": [
+                "basicworkshop"
+            ],
+            "2": [
+                "basicworkshop"
+            ]
+        },
+        "type" : "functionals",
+        "conditions" : {
+            "villagerNeeded" : { "min" : 2 },
+            "previous" : [
+                { "name" : "workshop", "max" : 3 }
+            ]
+        }
+    },
+    "graveyard" : {
+        "tier": {
+            "0": [
+                "basicgraveyard"
+            ],
+            "1": [
+                "basicgraveyard"
+            ],
+            "2": [
+                "basicgraveyard"
+            ]
+        },
+        "type" : "representatives",
+        "conditions" : {
+            "previous" : [
+                { "name" : "graveyard", "max" : 1 }
             ]
         },
         "priority" : "full"
     },
-    "mediumHouses" : {
-        "structures" : [
-            "mediumhouse1", 
-            "mediumhouse2",
-            "mediumhouse3"
-        ],
-        "type" : "houses",
-        "conditions" : {
-            "previous" : [
-                { "name" : "basicStoneCutter", "min" : 1 },
-                { "name" : "mediumHouses", "max" : 13 } 
+    "jail" : {
+        "tier": {
+            "0": [
+                "basicjail"
+            ],
+            "1": [
+                "basicjail"
+            ],
+            "2": [
+                "basicjail"
             ]
-        }
-    },
-    "basicJail" : {
-        "structures" : [
-            "basicjail"
-        ],
+        },
         "type" : "representatives",
         "conditions" : {
             "villagerNeeded" : { "min" : 0 },
             "previous" : [
-                { "name" : "basicStoneCutter", "min" : 1 },
-                { "name" : "basicJail", "max" : 2 } 
+                { "name" : "jail", "max" : 2 }
             ]
         }
     },
-    "basicTownHall" : {
-        "structures" : [
-            "basictownhall"
-        ],
+    "townHall" : {
+        "tier": {
+            "0": [
+                "basictownhall"
+            ],
+            "1": [
+                "basictownhall"
+            ],
+            "2": [
+                "basictownhall"
+            ]
+        },
         "type" : "representatives",
         "conditions" : {
             "villagerNeeded" : { "min" : 1 },
             "previous" : [
-                { "name" : "basicSmeltery", "min" : 1 },
-                { "name" : "basicTownHall", "max" : 1 } 
+                { "name" : "townHall", "max" : 1 }
             ]
         },
         "priority" : "full"
     },
-    "mediumFarm" : {
-        "structures" : [
-            "mediumfarm1"
-        ],
-        "type" : "functionals",
-        "conditions" : {
-            "villagerNeeded" : { "min" : 2 },
-            "dirtResources" : { "min" : 1},
-            "previous" :  [ 
-                { "name" : "basicStoneCutter", "min" : 1 },
-                { "name" : "basicFarm", "min" : 1 },
-                { "name" : "mediumFarm", "max" : 2 } 
+    "windmill" : {
+        "tier": {
+            "0": [
+                "basicwindmill"
+            ],
+            "1": [
+                "mediumwindmill"
+            ],
+            "2": [
+                "mediumwindmill"
             ]
-        }
-    },
-    "basicWindmill" : {
-        "structures" : [
-            "basicwindmill"
-        ],
+        },
         "type" : "functionals",
         "conditions" : {
             "villagerNeeded" : { "min" : 2 },
             "previous" : [
-                { "name" : "basicWorkshop", "min" : 1 },
-                { "name" : "basicWindmill", "max" : 1 } 
+                { "name" : "windmill", "max" : 1 }
             ]
         }
     },
-    "basicBarrack" : {
-        "structures" : [
-            "basicbarrack"
-        ],
+    "barrack" : {
+        "tier": {
+            "0": [
+                "basicbarrack"
+            ],
+            "1": [
+                "basicbarrack"
+            ],
+            "2": [
+                "basicbarrack"
+            ]
+        },
         "type" : "representatives",
         "conditions" : {
             "villagerNeeded" : { "min" : 3 },
             "previous" : [
-                { "name" : "basicWorkshop", "min" : 1 },
-                { "name" : "basicBarrack", "max" : 2 } 
+                { "name" : "barrack", "max" : 2 }
             ]
         }
     },
-    "basicTavern" : {
-        "structures" : [
-            "basictavern"
-        ],
+    "tavern" : {
+        "tier": {
+            "0": [
+                "basictavern"
+            ],
+            "1": [
+                "basictavern"
+            ],
+            "2": [
+                "basictavern"
+            ]
+        },
         "type" : "representatives",
         "conditions" : {
             "villagerNeeded" : { "min" : 1 },
             "previous" : [
-                { "name" : "basicWindmill", "min" : 1 },
-                { "name" : "basicFarm", "min" : 2 },
-                { "name" : "basicFurnace", "min" : 1 },
-                { "name" : "basicTavern", "max" : 1 } 
+                { "name" : "tavern", "max" : 1 }
             ]
         },
         "priority" : "full"
     },
-    "basicWeaverHouse" : {
-        "structures" : [
-            "basicweaverhouse"
-        ],
-        "type" : "functionals",
-        "conditions" : {
-            "villagerNeeded" : { "min" : 2 },
-            "previous" : [
-                { "name" : "basicWorkshop", "min" : 1 },
-                { "name" : "basicWeaverHouse", "max" : 3 } 
+    "weaverHouse" : {
+        "tier": {
+            "0": [
+                "basicweaverhouse"
+            ],
+            "1": [
+                "basicweaverhouse"
+            ],
+            "2": [
+                "basicweaverhouse"
             ]
-        }
-    },
-    "mediumWindmill" : {
-        "structures" : [
-            "mediumwindmill"
-        ],
+        },
         "type" : "functionals",
         "conditions" : {
             "villagerNeeded" : { "min" : 2 },
             "previous" : [
-                { "name" : "basicWeaverHouse", "min" : 1 },
-                { "name" : "basicWindmill", "min" : 1 },
-                { "name" : "mediumWindmill", "max" : 1 } 
+                { "name" : "weaverHouse", "max" : 3 }
             ]
         }
     },
     "adventurerHouse" : {
-        "structures" : [
-            "adventurerhouse"
-        ],
+        "tier": {
+            "0": [
+                "adventurerhouse"
+            ],
+            "1": [
+                "adventurerhouse"
+            ],
+            "2": [
+                "adventurerhouse"
+            ]
+        },
         "type" : "representatives",
         "conditions" : {
             "previous" : [
-                { "name" : "basicTavern", "min" : 1 },
-                { "name" : "adventurerHouse", "max" : 1 } 
+                { "name" : "adventurerHouse", "max" : 1 }
             ]
         },
         "priority" : "full"

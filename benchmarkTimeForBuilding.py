@@ -4,7 +4,7 @@ milliseconds = int(round(time.time() * 1000))
 
 from generation.resources import *
 from generation.chestGeneration import *
-from generation.structures.structures import *
+from generation.structures.nbtStructures import *
 from generation.structureManager import *
 from generation.floodFill import *
 import generation.resourcesLoader as resLoader

@@ -1,5 +1,6 @@
 import random
 
+
 class NameGenerator:
     VILLAGER_NAME_PATH = "data/names/"
 
@@ -23,8 +24,7 @@ class NameGenerator:
             print(self.villageNames)
             f.close()
 
-
-    def generateVillagerName(self, removeName:bool=True)->str:
+    def generateVillagerName(self, removeName: bool = True) -> str:
         if len(self.nameToGenerate) <= 0:
             print("No name remaining to generate")
             exit()
@@ -35,8 +35,7 @@ class NameGenerator:
             del self.nameToGenerate[index]
         return name
 
-
-    def generateVillageName(self, removeName:bool=True)->str:
+    def generateVillageName(self, removeName: bool = True) -> str:
         index = random.randint(0, len(self.villageNames) - 1)
         name = self.villageNames[index]
         if removeName:

@@ -1,11 +1,13 @@
 from generation.chestGeneration import ChestGeneration
-from utils.worldModification import WorldModification
 from generation.resources import Resources
-from utils.nameGenerator import NameGenerator
 from generation.structures.baseStructure import BaseStructure
 from generation.data.settlementData import SettlementData
 from representation.village import Village
+from representation.loreStructure import LoreStructure
+from representation.villager import Villager
 from utils.constants import Constants
+from utils.nameGenerator import NameGenerator
+from utils.worldModification import WorldModification
 
 import generation.loreMaker as lore_maker
 import utils.util as util
@@ -18,45 +20,62 @@ import copy
 
 
 def createSettlementData(area: list, village_model: Village, resources: Resources) -> SettlementData:
-    settlement_data:SettlementData = SettlementData(village_model)
+    settlement_data: SettlementData = SettlementData(village_model)
     settlement_data.setArea(area)
 
     # Biome 
-    settlement_data.setVillageBiome(util.getBiome(settlement_data.center[0], settlement_data.center[2], 1, 1), resources) # TODO get mean
+    settlement_data.setVillageBiome(util.getBiome(settlement_data.center[0], settlement_data.center[2], 1, 1),
+                                    resources)  # TODO get mean
 
     # Load replacements for structure biome
     for aProperty in resources.biomesBlocks[settlement_data.biome_block_id]:
         if aProperty in resources.biomesBlocks["rules"]["village"]:
-            settlement_data.setMaterialReplacement(aProperty, resources.biomesBlocks[settlement_data.biome_block_id][aProperty])
+            settlement_data.setMaterialReplacement(aProperty,
+                                                   resources.biomesBlocks[settlement_data.biome_block_id][aProperty])
 
     # Per default, chosen color is white
     lore_maker.fillSettlementDataWithColor(settlement_data, "white")
-    
+
+    # settlement_data.structure_number_goal = 8
     settlement_data.structure_number_goal = random.randint(20, 70)
 
     return settlement_data
 
 
-def generateBooks(settlementData:SettlementData, nameGenerator:NameGenerator) -> dict:
-    # Create books for the village
-    strVillagers:str = settlementData.villager_names[0] + " : " + settlementData.villager_profession[0] + ";"
+def generateVillageBooks(settlementData: SettlementData, nameGenerator: NameGenerator) -> dict:
+    village_model: Village = settlementData.village_model
 
-    for i in range(1, len(settlementData.villager_names)):
-        strVillagers += settlementData.villager_names[i] + " : " + settlementData.villager_profession[i] + ";"
+    # Create books for the village
+    strVillagers: str = ""
+
+    for villager in village_model.villagers:
+        strVillagers += villager.name + " : " + villager.job + ";"
+
     listOfVillagers: list = strVillagers.split(";")
 
     textVillagersNames = book.createTextForVillagersNames(listOfVillagers)
     textDeadVillagers = book.createTextForDeadVillagers(listOfVillagers, nameGenerator)
-    settlementData.villagerDeadNames = textDeadVillagers[2]
-    textVillagePresentationBook = book.createTextOfPresentationVillage(settlementData.village_model.name,
-                                                                       settlementData.structure_number_goal, settlementData.structures, textDeadVillagers[1], listOfVillagers)
-                
+
+    for name in textDeadVillagers[2]:
+        dead_villager = Villager(village_model)
+        dead_villager.name = name
+        village_model.deadVillager.append(dead_villager)
+
+    textVillagePresentationBook = book.createTextOfPresentationVillage(village_model.name,
+                                                                       settlementData.structure_number_goal,
+                                                                       village_model.lore_structures,
+                                                                       textDeadVillagers[1],
+                                                                       listOfVillagers)
+
     settlementData.textOfBooks = [textVillagersNames, textDeadVillagers]
-    
-    books:dict = {}
-    books["villageNameBook"] = toolbox.writeBook(textVillagePresentationBook, title="Village Presentation", author="Mayor", description="Presentation of the village")
-    books["villagerNamesBook"] = toolbox.writeBook(textVillagersNames, title="List of all villagers", author="Mayor", description="List of all villagers")
-    books["deadVillagersBook"] = toolbox.writeBook(textDeadVillagers[0], title="List of all dead villagers", author="Mayor", description="List of all dead villagers")
+
+    books: dict = {
+        "villageNameBook": toolbox.writeBook(textVillagePresentationBook, title="Village Presentation", author="Mayor",
+                                             description="Presentation of the village"),
+        "villagerNamesBook": toolbox.writeBook(textVillagersNames, title="List of all villagers", author="Mayor",
+                                               description="List of all villagers"),
+        "deadVillagersBook": toolbox.writeBook(textDeadVillagers[0], title="List of all dead villagers", author="Mayor",
+                                               description="List of all dead villagers")}
 
     return books
 
@@ -83,7 +102,6 @@ def placeBooks(settlement_data: SettlementData, books: dict, world_modification:
                       Constants.getHeight(settlement_data.center[0], settlement_data.center[2]),
                       settlement_data.center[2], items)
 
-
     # Set a lectern for the book of village presentation
     toolbox.placeLectern(
         settlement_data.center[0],
@@ -91,106 +109,119 @@ def placeBooks(settlement_data: SettlementData, books: dict, world_modification:
         settlement_data.center[2] + 1, books["villageNameBook"], world_modification, 'east')
 
 
-def generateStructure(structureData:dict, settlementData:SettlementData, resources:Resources, worldModif:WorldModification, chestGeneration:ChestGeneration) -> None:
-    #print(structureData["name"])
-    #print(structureData["validPosition"])
-    structure = resources.structures[structureData["name"]]
-    info = structure.info
+def generateStructure(lore_structure: LoreStructure, settlement_data: SettlementData, resources: Resources,
+                      world_modification: WorldModification, chest_generation: ChestGeneration) -> None:
+    # print(structureData["name"])
+    # print(structureData["validPosition"])
+    structure = resources.structures[lore_structure.name]
+    info: dict = structure.info
+    current_Village: Village = settlement_data.village_model
 
     buildMurdererCache = False
-    
-    buildingCondition = BaseStructure.createBuildingCondition() 
-    murdererData = settlementData.murderer_data
 
-    for index in structureData["villagersId"]:
-        if index == murdererData.villagerIndex:
+    buildingCondition = BaseStructure.createBuildingCondition()
+    murdererData = current_Village.murderer_data
+
+    for villager in current_Village.villagers:
+        if villager == murdererData.villagerMurderer:
             if "murdererTrap" in info["villageInfo"].keys():
                 buildMurdererCache = True
 
-        buildingCondition["villager"].append(settlementData.villager_names[index])
+        buildingCondition["villager"].append(villager.name)
 
-    buildingCondition["flip"] = structureData["flip"]
-    buildingCondition["rotation"] = structureData["rotation"]
-    buildingCondition["position"] = structureData["position"]
+    buildingCondition["flip"] = lore_structure.flip
+    buildingCondition["rotation"] = lore_structure.rotation
+    buildingCondition["position"] = lore_structure.position
     buildingCondition["replaceAllAir"] = 3
-    buildingCondition["referencePoint"] = structureData["prebuildingInfo"]["entry"]["position"]
-    buildingCondition["size"] = structureData["prebuildingInfo"]["size"]
-    buildingCondition["prebuildingInfo"] = structureData["prebuildingInfo"]
+    buildingCondition["referencePoint"] = lore_structure.prebuildingInfo["entry"]["position"]
+    buildingCondition["size"] = lore_structure.prebuildingInfo["size"]
+    buildingCondition["prebuildingInfo"] = lore_structure.prebuildingInfo
     structureBiomeId = util.getBiome(buildingCondition["position"][0], buildingCondition["position"][2], 1, 1)
     structureBiomeName = resources.biomeMinecraftId[int(structureBiomeId)]
     structureBiomeBlockId = str(resources.biomesBlockId[structureBiomeName])
 
-    if structureBiomeBlockId == "-1" :
-        structureBiomeBlockId = settlementData.biome_block_id
-    
-    buildingCondition["replacements"] = settlementData.getMatRepDeepCopy()
+    if structureBiomeBlockId == "-1":
+        structureBiomeBlockId = settlement_data.biome_block_id
+
+    buildingCondition["replacements"] = settlement_data.getMatRepDeepCopy()
     # Load block for structure biome
     for aProperty in resources.biomesBlocks[structureBiomeBlockId]:
         if aProperty in resources.biomesBlocks["rules"]["structure"]:
             buildingCondition["replacements"][aProperty] = resources.biomesBlocks[structureBiomeBlockId][aProperty]
 
-    modifyBuildingConditionDependingOnStructure(buildingCondition, settlementData, structureData, structureData["name"])
+    modifyBuildingConditionDependingOnStructure(buildingCondition, settlement_data, lore_structure)
 
-    structure.build(worldModif,  buildingCondition, chestGeneration)
-    
+    structure.build(world_modification, buildingCondition, chest_generation)
+
     """util.spawnVillagerForStructure(settlementData, structureData,
         [structureData["position"][0], 
          structureData["position"][1] + 1, 
          structureData["position"][2]])"""
 
     if buildMurdererCache:
-        buildMurdererHouse(structureData, settlementData, resources, worldModif, chestGeneration, buildingCondition)
+        buildMurdererHouse(lore_structure, settlement_data, resources, world_modification, chest_generation,
+                           buildingCondition)
 
-    if "gift" in structureData.keys():
-        position = structureData["position"]
-        position[1] = position[1] - structureData["prebuildingInfo"]["entry"]["position"][1]
-        worldModif.setBlock(position[0], position[1], position[2], structureData["gift"])
+    if lore_structure.gift != "Undefined":
+        position = lore_structure.position
+        position[1] = position[1] - lore_structure.prebuildingInfo["entry"]["position"][1]
+        world_modification.setBlock(position[0], position[1], position[2], lore_structure.gift)
 
 
-def buildMurdererHouse(structureData:dict, settlementData:SettlementData, resources:Resources, 
-        worldModif:WorldModification, chestGeneration:ChestGeneration, buildingCondition:dict):
-
-    #print("Build a house hosting a murderer")
-    structure = resources.structures[structureData["name"]]
+def buildMurdererHouse(lore_structure: LoreStructure, settlement_data: SettlementData, resources: Resources,
+                       world_modification: WorldModification, chest_generation: ChestGeneration,
+                       building_conditions: dict):
+    # print("Build a house hosting a murderer")
+    structure = resources.structures[lore_structure.name]
     info = structure.info
 
-    buildingCondition = copy.deepcopy(buildingCondition)
-    buildingCondition["position"] = structure.returnWorldPosition(
-            info["villageInfo"]["murdererTrap"], buildingCondition["flip"], buildingCondition["rotation"], 
-             buildingCondition["referencePoint"], buildingCondition["position"])
+    building_conditions = copy.deepcopy(building_conditions)
+    building_conditions["position"] = structure.returnWorldPosition(
+        info["villageInfo"]["murdererTrap"], building_conditions["flip"], building_conditions["rotation"],
+        building_conditions["referencePoint"], building_conditions["position"])
 
     structureMurderer = resources.structures["murderercache"]
     buildingInfo = structureMurderer.setupInfoAndGetCorners()
 
     # Temporary
-    buildingCondition["flip"] = 0
-    buildingCondition["rotation"] = 0  
+    building_conditions["flip"] = 0
+    building_conditions["rotation"] = 0
 
-    buildingInfo = structureMurderer.getNextBuildingInformation( buildingCondition["flip"], buildingCondition["rotation"])
-    buildingCondition["referencePoint"] = buildingInfo["entry"]["position"]
-    buildingCondition["size"] = buildingInfo["size"]
-    buildingCondition["flip"], buildingCondition["rotation"] = structureMurderer.returnFlipRotationThatIsInZone(buildingCondition["position"],
-                                 buildingCondition["referencePoint"], settlementData.area)
+    buildingInfo = structureMurderer.getNextBuildingInformation(building_conditions["flip"],
+                                                                building_conditions["rotation"])
+    building_conditions["referencePoint"] = buildingInfo["entry"]["position"]
+    building_conditions["size"] = buildingInfo["size"]
+    building_conditions["flip"], building_conditions["rotation"] = structureMurderer.returnFlipRotationThatIsInZone(
+        building_conditions["position"],
+        building_conditions["referencePoint"], settlement_data.area)
 
-    modifyBuildingConditionDependingOnStructure(buildingCondition, settlementData, { "type" : "decorations"}, "murderercache")
+    lore_structure: LoreStructure = LoreStructure()
+    lore_structure.name = "murderercache"
+    lore_structure.type = "decorations"
 
-    structureMurderer.build(worldModif, buildingCondition, chestGeneration)
-    facing = structureMurderer.getFacingMainEntry(buildingCondition["flip"], buildingCondition["rotation"])
+    modifyBuildingConditionDependingOnStructure(building_conditions, settlement_data,
+                                                lore_structure)
+
+    structureMurderer.build(world_modification, building_conditions, chest_generation)
+    facing = structureMurderer.getFacingMainEntry(building_conditions["flip"], building_conditions["rotation"])
 
     # Generate murderer trap
-    worldModif.setBlock(buildingCondition["position"][0], buildingCondition["position"][1] + 2, buildingCondition["position"][2], "minecraft:ladder[facing=" + facing + "]")
-    worldModif.setBlock(buildingCondition["position"][0], buildingCondition["position"][1] + 3, buildingCondition["position"][2], 
-        "minecraft:" + buildingCondition["replacements"]["woodType"] + "_trapdoor[half=bottom,facing=" + facing  +"]")
+    world_modification.setBlock(building_conditions["position"][0], building_conditions["position"][1] + 2,
+                                building_conditions["position"][2], "minecraft:ladder[facing=" + facing + "]")
+    world_modification.setBlock(building_conditions["position"][0], building_conditions["position"][1] + 3,
+                                building_conditions["position"][2],
+                                "minecraft:" + building_conditions["replacements"][
+                                    "woodType"] + "_trapdoor[half=bottom,facing=" + facing + "]")
 
 
-
-def modifyBuildingConditionDependingOnStructure(buildingCondition:dict, settlementData:SettlementData, structureData:dict, structureName:str):
-    if structureName == "basicgraveyard":
+def modifyBuildingConditionDependingOnStructure(buildingCondition: dict, settlementData: SettlementData,
+                                                structure: LoreStructure):
+    if structure.name == "basicgraveyard":
         number = 8
 
-        buildingCondition["special"] = { "sign" : [] }
+        buildingCondition["special"] = {"sign": []}
 
-        listOfDead = settlementData.villagerDeadNames.copy()
+        listOfDead = settlementData.village_model.deadVillager.copy()
         i = 0
         while i < number:
             buildingCondition["special"]["sign"].append("")
@@ -199,41 +230,40 @@ def modifyBuildingConditionDependingOnStructure(buildingCondition:dict, settleme
             buildingCondition["special"]["sign"].append("")
 
             if len(listOfDead) > 0:
-                index = random.randint(0, len(listOfDead) -1 )
-                name = listOfDead[index]
+                index = random.randint(0, len(listOfDead) - 1)
+                name = listOfDead[index].name
                 util.parseVillagerNameInLines([name], buildingCondition["special"]["sign"], i * 4)
 
                 del listOfDead[index]
 
             i += 1
 
-    elif structureName == "murderercache":
-        murdererData = settlementData.murderer_data
+    elif structure.name == "murderercache":
+        murdererData = settlementData.village_model.murderer_data
 
-        buildingCondition["special"] = { "sign" : ["Next target :", "", "", ""] }
-        name = settlementData.villager_names[murdererData.villagerTargetIndex]
+        buildingCondition["special"] = {"sign": ["Next target :", "", "", ""]}
+        name = murdererData.villagerTarget.name
         util.parseVillagerNameInLines([name], buildingCondition["special"]["sign"], 1)
 
-    elif structureName == "adventurerhouse":
+    elif structure.name == "adventurerhouse":
         buildingCondition["special"]["adventurerhouse"] = [book.createBookForAdventurerHouse(buildingCondition["flip"])]
 
-
-    if structureData["type"] == "houses":
-        for villagerIndex in structureData["villagersId"]:
-            if len(settlementData.villager_diaries[villagerIndex]) > 0 :
-                if not "bedroomhouse" in buildingCondition["special"]:
+    if structure.type == "houses":
+        for villager in settlementData.village_model.villagers:
+            if len(villager.diary) > 0:
+                if "bedroomhouse" not in buildingCondition["special"]:
                     buildingCondition["special"]["bedroomhouse"] = []
 
-                buildingCondition["special"]["bedroomhouse"].append(settlementData.villager_diaries[villagerIndex][0])
-                #print("add diary of", settlementData["villagerNames"][villagerIndex])
+                buildingCondition["special"]["bedroomhouse"].append(villager.diary[0])
+                # print("add diary of", settlementData["villagerNames"][villagerIndex])
 
 
-def returnVillagerAvailableForGift(settlementData:SettlementData, exceptions:tuple):
+def returnVillagerAvailableForGift(village_model: Village, villagers_excepted: list) -> list:
     available = []
-    for structureData in settlementData.structures:
-        if not "gift" in structureData.keys():
-            for index in structureData["villagersId"]:
-                if not index in exceptions:
-                    available.append(index)
+    for structure in village_model.lore_structures:
+        if structure.gift != "Undefined":
+            for villager in village_model.villagers:
+                if villager not in villagers_excepted:
+                    available.append(villager)
 
     return available

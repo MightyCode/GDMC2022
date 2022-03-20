@@ -2,7 +2,7 @@ from generation.structures.generated.generatedWell import *
 import sys
 import lib.interfaceUtils as interfaceUtils
 import utils.utils as _utils
-from generation.structures.structures import *
+from generation.structures.nbtStructures import *
 from generation.structures.generated.generatedQuarry import *
 from utils.worldModification import *
 from generation.resources import *
@@ -43,7 +43,7 @@ if len(sys.argv) <= 1:
     ## Find highest non-air block
     cy = _utils.getHighestNonAirBlock(cx, cy, cz)
 
-    buildingConditions = Structures.BUILDING_CONDITIONS.copy()
+    buildingConditions = NbtStructures.BUILDING_CONDITIONS.copy()
     buildingConditions["position"] = [cx, cy, cz]
 
     quarry = GeneratedQuarry()

@@ -1,5 +1,4 @@
 from generation.resources import Resources
-from generation.data.murdererData import MurdererData
 from representation.village import Village
 import copy
 
@@ -26,27 +25,14 @@ class SettlementData:
         self.biome_block_id: int = 0
 
         self.__materials_replacement["villageName"] = self.village_model.name
-
-        self.villager_names: list = []
-        self.villager_profession: list = []
-        self.villager_game_profession: list = []
-
-        # [[0 -> content, 1 -> isGift], [...] , ...]
-        self.villager_diaries: list = []
         
-        self.structure_number_goal: list = []
-
-        # structures contains "position", "rotation", "flip" "name", "type", "group", "villagersId", "gift"
-        self.structures: list = []
-        self.free_villager: int = 0
+        self.structure_number_goal: int = 0
 
         self.resources: dict = {
             "woodResources": 0,
             "dirtResources": 0,
             "stoneResources": 0
         }
-
-        self.murderer_data: MurdererData = MurdererData()
 
     def setArea(self, new_area: list) -> None:
         self.area = new_area

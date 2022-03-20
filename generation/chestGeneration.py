@@ -28,6 +28,7 @@ class ChestGeneration:
 
         if numberItem + len(additionalObject) >= 28:
             print(numberItem + len(additionalObject))
+
         itemPlaces = self.generatePlaces(numberItem + len(additionalObject))
         itemPlaces.sort()
         items = []

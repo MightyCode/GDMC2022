@@ -186,15 +186,16 @@ def initRoad(listHouse: list, settlement_data: SettlementData, world_modificatio
     }
 
     square_list: list = []
+    lore_structures: list = settlement_data.village_model.lore_structures
 
-    for index in range(0, len(settlement_data.structures)):
+    for index in range(0, len(lore_structures)):
         entry_temp: list = [listHouse[index][0], listHouse[index][1], listHouse[index][2]]
 
         square_list.append([entry_temp[0] + listHouse[index][3][0], entry_temp[2] + listHouse[index][3][1],
                             entry_temp[0] + listHouse[index][3][2], entry_temp[2] + listHouse[index][3][3]])
 
     # print(square_list)
-    for indexFrom in range(0, len(settlement_data.structures)):
+    for indexFrom in range(0, len(lore_structures)):
         # To know if the house doesn't have parent...
         start: list = [0, 0]
         goal: list = [0, 0]
@@ -204,8 +205,8 @@ def initRoad(listHouse: list, settlement_data: SettlementData, world_modificatio
             continue
 
         # House From
-        facingStructFrom = settlement_data.structures[indexFrom]["prebuildingInfo"]["entry"]["facing"]
-        cornerStructFrom = settlement_data.structures[indexFrom]["prebuildingInfo"]["corner"]
+        facingStructFrom = lore_structures[indexFrom].prebuildingInfo["entry"]["facing"]
+        cornerStructFrom = lore_structures[indexFrom].prebuildingInfo["corner"]
         entryStructFrom = [listHouse[indexFrom][0], listHouse[indexFrom][1], listHouse[indexFrom][2]]
 
         x = computeXEntry(entryStructFrom[0], cornerProjection, facingStructFrom, cornerStructFrom)
@@ -221,8 +222,8 @@ def initRoad(listHouse: list, settlement_data: SettlementData, world_modificatio
         start = [x, z]
 
         # House to
-        facingStructTo = settlement_data.structures[indexTo]["prebuildingInfo"]["entry"]["facing"]
-        cornerStructTo = settlement_data.structures[indexTo]["prebuildingInfo"]["corner"]
+        facingStructTo = lore_structures[indexTo].prebuildingInfo["entry"]["facing"]
+        cornerStructTo = lore_structures[indexTo].prebuildingInfo["corner"]
 
         entryStructTo = [listHouse[indexTo][0], listHouse[indexTo][1] - 1, listHouse[indexTo][2]]
 
@@ -252,8 +253,7 @@ Generating the path among 2 houses
 
 
 def generateRoad(world_modification: WorldModification, start: list, goal: list, list_house: list,
-				 square_list: list, settlement_data: SettlementData, entryStructFrom):
-
+                 square_list: list, settlement_data: SettlementData, entryStructFrom):
     path = astar(start, goal, square_list)
     temp = 1
 

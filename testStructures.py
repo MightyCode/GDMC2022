@@ -1,7 +1,7 @@
 from importlib.resources import Resource
 from generation.resources import *
 from generation.chestGeneration import *
-from generation.structures.structures import *
+from generation.structures.nbtStructures import *
 from generation.structureManager import *
 from generation.floodFill import *
 import generation.resourcesLoader as resLoader
@@ -22,7 +22,7 @@ iu.setCaching(True)
 iu.setBuffering(True)
 worldModif:WorldModification = WorldModification(interface)
 args, parser = argParser.giveArgsAndParser()
-area:tuple = argParser.getBuildArea(args)
+area: tuple = argParser.getBuildArea(args)
 
 if area == -1:
     exit()

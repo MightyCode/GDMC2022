@@ -1,16 +1,17 @@
 import random 
 
 
-def alterSettlementDataWithNewStructures(settlementData, indexNewStructure):
-    structureName = settlementData.structures[indexNewStructure]["name"]
-
-    if structureName == "basictownhall":
+def alterSettlementDataWithNewStructures(settlementData, structure):
+    if structure.name == "basictownhall":
         voteForColor(settlementData)
 
 
 def voteForColor(settlementData):
     colors = ["white", "orange", "magenta", "light_blue", "yellow", "lime", "pink", "gray", "light_gray", "cyan", "purple", "blue", "brown", "green", "red", "black"]
     color = colors[random.randint(0, len(colors) - 1)]
+
+    settlementData.village_model.color = color
+
     fillSettlementDataWithColor(settlementData, color)
     
 
