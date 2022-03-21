@@ -33,6 +33,7 @@ class BaseStructure:
         self.info: dict = {}
         self.size: list = [0, 0, 0]
         self.computed_orientation: dict = {}
+        self.block_transformation: list = []
 
     def setInfo(self, info: dict):
         self.info = info
@@ -72,8 +73,8 @@ class BaseStructure:
     """
     Return a position in the world 
     localPoint : position of the block inside the local space, [0, 0, 0]
-    flip : flip applied to localspace, [0|1|2|3]
-    rotation : rotation applied to localspace, [0|1|2|3]
+    flip : flip applied to local space, [0|1|2|3]
+    rotation : rotation applied to local space, [0|1|2|3]
     referencePoint : the origin of the local space, what should be the 0, 0, [0, 0, 0]
     worldStructurePosition : position of the structure in real world, position in relation with reference point
     """
@@ -173,7 +174,7 @@ class BaseStructure:
             self.computed_orientation["z"] = "x"
 
     def parseSpecialRule(self, buildingCondition, worldModification):
-        if not "special" in self.info.keys():
+        if "special" not in self.info.keys():
             return
 
         for key in self.info["special"].keys():
@@ -378,6 +379,19 @@ class BaseStructure:
                 world_modification.fillBlocks(block_from[0], block_from[1], block_from[2], block_to[0], block_to[1],
                                               block_to[2],
                                               BaseStructure.AIR_BLOCKS[0])
+
+    def applyBlockTransformation(self, block: str):
+        return util.applyBlockTransformation(block, self.block_transformation)
+
+    def applyBlockTransformationThenPlace(self, world_modification, position_x: int, position_y: int, position_z: int,
+                                          block: str) -> None:
+        util.applyBlockTransformationThenPlace(world_modification, position_x, position_y, position_z,
+                                               block, self.block_transformation)
+
+    def applyBlockTransformationThenFill(self, world_modification, from_x: int, from_y: int, from_z: int,
+                                         to_x: int, to_y: int, to_z: int, block: str):
+        util.applyBlockTransformationThenFill(world_modification, from_x, from_y, from_z,
+                                               to_x, to_y, to_z, block, self.block_transformation)
 
     """
     Get the facing of the main entry depending of the flip and rotation

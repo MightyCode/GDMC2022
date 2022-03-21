@@ -257,3 +257,25 @@ def compareTwoDictBlock(a, b):
             return False
 
     return True
+
+
+def applyBlockTransformation(block: str, block_transformations: list):
+    for block_transformation in block_transformations:
+        block = block_transformation.replaceBlock(block)
+
+    return block
+
+
+def applyBlockTransformationThenPlace(world_modification, position_x: int, position_y: int, position_z: int,
+                                      block: str, block_transformations: list) -> None:
+    world_modification.setBlock(position_x, position_y, position_z,
+                                applyBlockTransformation(block, block_transformations))
+
+
+def applyBlockTransformationThenFill(world_modification, from_x: int, from_y: int, from_z: int,
+                                     to_x: int, to_y: int, to_z: int, block: str,
+                                     block_transformations: list):
+    for x in range(from_x, to_x):
+        for y in range(from_y, to_y):
+            for z in range(from_z, to_z):
+                applyBlockTransformationThenPlace(world_modification, x, y, z, block, block_transformations)

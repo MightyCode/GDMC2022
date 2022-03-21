@@ -3,9 +3,9 @@
 
 __all__ = ['loop2d', 'loop3d', 'writeBook', 'placeLectern',
            'placeInventoryBlock', 'placeSign', 'getOptimalDirection']
-__version__ = 'v4.2_dev'
-__year__ = '2021'
-__author__ = 'Yusuf & Lucien & Maxence'
+__version__ = 'v1.0'
+__year__ = '2022'
+__author__ = 'Maxence'
 
 from functools import lru_cache
 from random import choice

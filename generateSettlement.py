@@ -4,6 +4,7 @@ from representation.loreStructure import LoreStructure
 from generation.data.murdererData import MurdererData
 from generation.chestGeneration import ChestGeneration
 from generation.structureManager import StructureManager
+from generation.structures.blockTransformation.oldStructureTransformation import OldStructureTransformation
 from generation.resources import Resources
 from generation.floodFill import FloodFill
 import generation.generator as generator
@@ -55,6 +56,8 @@ for i in range(7):
 
 settlement_index: int = 0
 current_village: Village
+
+block_transformation: list = [OldStructureTransformation()]
 
 # Five main steps : init settlement Data, choose structures and find its positions, make road between these
 # structures, and finally build structures.
@@ -111,6 +114,7 @@ if not args.remove:
 
         current_village = villages[settlement_index]
         current_village.generated = True
+        block_transformation[0].age = current_village.age
 
         """ First main step : init settlementData """
         settlementData = generator.createSettlementData(area, current_village, resources)
@@ -135,6 +139,7 @@ if not args.remove:
                 settlementData.structure_number_goal -= 1
                 continue
 
+            current_village.lore_structures[i].generateAge(current_village)
             baseStructure = resources.structures[current_village.lore_structures[i].name]
             structureManager.printStructureChoose()
 
@@ -155,8 +160,7 @@ if not args.remove:
 
             current_village.lore_structures[i].prebuildingInfo = baseStructure.getNextBuildingInformation(
                 result["flip"],
-                result[
-                    "rotation"])
+                result["rotation"])
 
             # If new chunk discovered, add new resources
             chunk = [int(current_village.lore_structures[i].position[0] / 16),
@@ -227,14 +231,13 @@ if not args.remove:
         """ Fourth main step : creates the roads of the village """
         road.initRoad(floodFill.listHouse, settlementData, world_modification)
 
-        """ Five main step : places every structrure and after that every decorations """
+        """ Five main step : places every structure and after that every decorations """
         i: int = 0
         current_time: int = int(round(time.time() * 1000)) - milliseconds
         while i < len(current_village.lore_structures) and current_time / 1000 < TIME_LIMIT:
             print("Build structure " + str(i + 1) + "/" + str(settlementData.structure_number_goal) + "  ", end="\r")
             generator.generateStructure(current_village.lore_structures[i], settlementData, resources,
-                                        world_modification,
-                                        chest_generation)
+                                        world_modification, chest_generation, block_transformation)
             util.spawnVillagerForStructure(settlementData, current_village.lore_structures[i],
                                            current_village.lore_structures[i].position)
             current_time = int(round(time.time() * 1000)) - milliseconds

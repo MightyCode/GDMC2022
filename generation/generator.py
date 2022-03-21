@@ -110,9 +110,12 @@ def placeBooks(settlement_data: SettlementData, books: dict, world_modification:
 
 
 def generateStructure(lore_structure: LoreStructure, settlement_data: SettlementData, resources: Resources,
-                      world_modification: WorldModification, chest_generation: ChestGeneration) -> None:
+                      world_modification: WorldModification, chest_generation: ChestGeneration,
+                      block_transformation: list) -> None:
+
     # print(structureData["name"])
     # print(structureData["validPosition"])
+    block_transformation[0].age = lore_structure.age
     structure = resources.structures[lore_structure.name]
     info: dict = structure.info
     current_Village: Village = settlement_data.village_model
@@ -151,7 +154,7 @@ def generateStructure(lore_structure: LoreStructure, settlement_data: Settlement
 
     modifyBuildingConditionDependingOnStructure(buildingCondition, settlement_data, lore_structure)
 
-    structure.build(world_modification, buildingCondition, chest_generation)
+    structure.build(world_modification, buildingCondition, chest_generation, block_transformation)
 
     """util.spawnVillagerForStructure(settlementData, structureData,
         [structureData["position"][0], 
@@ -160,7 +163,7 @@ def generateStructure(lore_structure: LoreStructure, settlement_data: Settlement
 
     if buildMurdererCache:
         buildMurdererHouse(lore_structure, settlement_data, resources, world_modification, chest_generation,
-                           buildingCondition)
+                           buildingCondition, block_transformation)
 
     if lore_structure.gift != "Undefined":
         position = lore_structure.position
@@ -170,6 +173,7 @@ def generateStructure(lore_structure: LoreStructure, settlement_data: Settlement
 
 def buildMurdererHouse(lore_structure: LoreStructure, settlement_data: SettlementData, resources: Resources,
                        world_modification: WorldModification, chest_generation: ChestGeneration,
+                       block_transformation: list,
                        building_conditions: dict):
     # print("Build a house hosting a murderer")
     structure = resources.structures[lore_structure.name]
@@ -202,7 +206,7 @@ def buildMurdererHouse(lore_structure: LoreStructure, settlement_data: Settlemen
     modifyBuildingConditionDependingOnStructure(building_conditions, settlement_data,
                                                 lore_structure)
 
-    structureMurderer.build(world_modification, building_conditions, chest_generation)
+    structureMurderer.build(world_modification, building_conditions, chest_generation, block_transformation)
     facing = structureMurderer.getFacingMainEntry(building_conditions["flip"], building_conditions["rotation"])
 
     # Generate murderer trap

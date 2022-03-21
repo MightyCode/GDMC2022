@@ -52,6 +52,9 @@ class Village:
             if random.uniform(0, 1) <= Village.CHANCE_TIER_3_OLD:
                 self.age = 1
 
+        print(self.tier)
+        print(self.age)
+
     def makeRelation(self, otherVillages: list):
         for village in otherVillages:
             relation: VillageInteraction = VillageInteraction(self, village)

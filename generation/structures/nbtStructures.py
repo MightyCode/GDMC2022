@@ -51,11 +51,12 @@ class NbtStructures(BaseStructure):
                         block.tags.append(nbt.TAG_Int(name=NbtStructures.CHANGE_STATE,
                                                       value=self.info[NbtStructures.REPLACEMENTS][block_name]["state"]))
                         #  """AND states equals"""
-                        if block[NbtStructures.CHANGE_STATE].value == 1 or (block[NbtStructures.CHANGE_STATE].value == 0):
+                        if block[NbtStructures.CHANGE_STATE].value == 1 or (
+                                block[NbtStructures.CHANGE_STATE].value == 0):
                             block.tags.append(nbt.TAG_Byte(name=NbtStructures.CHANGE, value=True))
 
                             block.tags.append(nbt.TAG_String(name=NbtStructures.CHANGE_TO, value=
-                                self.info[NbtStructures.REPLACEMENTS][block["Name"].value]["type"]))
+                            self.info[NbtStructures.REPLACEMENTS][block["Name"].value]["type"]))
                             block.tags.append(
                                 nbt.TAG_String(name=NbtStructures.CHANGE_ORIGINAL_BLOCK, value=block["Name"].value))
                             block.tags.append(
@@ -77,18 +78,20 @@ class NbtStructures(BaseStructure):
                             if self.info[NbtStructures.REPLACEMENTS][replacementWord]["state"] == 2:
                                 block.tags.append(nbt.TAG_Byte(name=NbtStructures.CHANGE, value=True))
                                 block.tags.append(nbt.TAG_String(name=NbtStructures.CHANGE_TO, value=
-                                    self.info[NbtStructures.REPLACEMENTS][replacementWord]["type"]))
+                                self.info[NbtStructures.REPLACEMENTS][replacementWord]["type"]))
 
                                 block.tags.append(nbt.TAG_Int(name=NbtStructures.CHANGE_STATE, value=2))
                                 block.tags.append(
-                                    nbt.TAG_String(name=NbtStructures.CHANGE_ORIGINAL_BLOCK, value=(block["Name"].value)))
+                                    nbt.TAG_String(name=NbtStructures.CHANGE_ORIGINAL_BLOCK,
+                                                   value=(block["Name"].value)))
                                 block.tags.append(
                                     nbt.TAG_String(name=NbtStructures.CHANGE_REPLACEMENT_WORD, value=replacementWord))
 
                                 # True or False
                                 block.tags.append(nbt.TAG_Byte(name=NbtStructures.CHANGE_EXCLUDED_ZONES,
-                                                               value=("excluded" in self.info[NbtStructures.REPLACEMENTS][
-                                                                   replacementWord].keys())))
+                                                               value=("excluded" in
+                                                                      self.info[NbtStructures.REPLACEMENTS][
+                                                                          replacementWord].keys())))
                                 break
 
             block.tags.append(nbt.TAG_Byte(name=NbtStructures.CHANGE, value=False))
@@ -120,10 +123,13 @@ class NbtStructures(BaseStructure):
             "corner": self.getCornersLocalPositions(self.info["mainEntry"]["position"].copy(), flip, rotation)
         }
 
-    def build(self, world_modification, building_conditions, chest_generation: ChestGeneration) -> None:
+    def build(self, world_modification, building_conditions: dict, chest_generation: ChestGeneration,
+              block_transformations: list) -> None:
+
         ## Pre computing :
         building_conditions["referencePoint"] = building_conditions["referencePoint"].copy()
         self.computeOrientation(building_conditions["rotation"], building_conditions["flip"])
+        self.block_transformation = block_transformations
 
         if building_conditions["flip"] == 1 or building_conditions["flip"] == 3:
             building_conditions["referencePoint"][0] = self.size[0] - 1 - building_conditions["referencePoint"][0]
@@ -179,6 +185,7 @@ class NbtStructures(BaseStructure):
             self.checkBeforePlacing(block_name)
             new_block_id = self.convertNbtBlockToStr(
                 self.file["palette"][block["state"].value],
+                block_transformations,
                 should_take_original_block
             )
 
@@ -237,8 +244,7 @@ class NbtStructures(BaseStructure):
 
             for key in self.info["lectern"].keys():
                 position = self.info["lectern"][key]
-                if block["pos"][0].value == position[0] and block["pos"][1].value == position[1] and block["pos"][
-                    2].value == position[2]:
+                if block["pos"][0].value == position[0] and block["pos"][1].value == position[1] and block["pos"][2].value == position[2]:
                     result = util.changeNameWithBalise(key, buildingCondition["replacements"])
                     if result[0] >= 0:
                         util.addBookToLectern(blockPosition[0], blockPosition[1], blockPosition[2], result[1])
@@ -246,11 +252,13 @@ class NbtStructures(BaseStructure):
                         print("Can't add a book to a lectern at pos : " + str(blockPosition))
                     break
 
-    def convertNbtBlockToStr(self, blockPalette, takeOriginalBlockName=False):
+    def convertNbtBlockToStr(self, blockPalette, block_transformations: list,  takeOriginalBlockName=False):
         if takeOriginalBlockName:
             block = blockPalette[NbtStructures.CHANGE_ORIGINAL_BLOCK].value
         else:
             block = blockPalette["Name"].value
+
+        block = self.applyBlockTransformation(block)
 
         properties = "["
         if "Properties" in blockPalette.keys():
