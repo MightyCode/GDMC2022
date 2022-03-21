@@ -12,6 +12,7 @@
                 "mediumhouse3"
             ],
             "2" : [
+                "advancedhouse1",
                 "mediumhouse1",
                 "mediumhouse2",
                 "mediumhouse3"
@@ -24,13 +25,13 @@
     "lumberJackHut": {
         "tier": {
             "0": [
-                "basiclumberjachut"
+                "basiclumberjackhut"
             ],
             "1": [
-                "basiclumberjachut"
+                "basiclumberjackhut"
             ],
             "2": [
-                "basiclumberjachut"
+                "basiclumberjackhut"
             ]
         },
         "type" : "functionals",
@@ -106,10 +107,10 @@
                 "basicfurnace1"
             ],
             "1": [
-                "basicfurnace1"
+                "mediumfurnace1"
             ],
             "2": [
-                "basicfurnace1"
+                "advancedfurnace1"
             ]
         },
         "type" : "functionals",
@@ -267,10 +268,10 @@
                 "basicbarrack"
             ],
             "1": [
-                "basicbarrack"
+                "mediumbarrack"
             ],
             "2": [
-                "basicbarrack"
+                "mediumbarrack"
             ]
         },
         "type" : "representatives",

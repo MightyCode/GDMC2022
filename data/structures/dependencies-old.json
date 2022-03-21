@@ -15,7 +15,7 @@
     },
     "basicLumberJackHut" : {
         "structures" : [
-            "basiclumberjachut"
+            "basiclumberjackhut"
         ],
         "type" : "functionals",
         "conditions" : {

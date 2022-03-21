@@ -37,7 +37,7 @@ def createSettlementData(area: list, village_model: Village, resources: Resource
     lore_maker.fillSettlementDataWithColor(settlement_data, "white")
 
     # settlement_data.structure_number_goal = 8
-    settlement_data.structure_number_goal = random.randint(20, 70)
+    settlement_data.structure_number_goal = random.randint(20, 40)
 
     return settlement_data
 
