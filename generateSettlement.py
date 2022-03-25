@@ -48,11 +48,9 @@ build_area: tuple = (
 size_area: list = [build_area[3] - build_area[0] + 1, build_area[5] - build_area[2] + 1]
 
 """Generate village involving on our generation"""
-villages: list = []
-for i in range(7):
-    villages.append(Village())
-    villages[i].generateVillageInformation(nameGenerator)
-    villages[i].defineTierAndAge()
+villages: list = loremaker.initializedVillages(7, nameGenerator)
+villageInteractions: list = loremaker.createVillageRelationAndAssign(villages)
+loremaker.checkForImpossibleInteractions(villages, villageInteractions)
 
 settlement_index: int = 0
 current_village: Village
@@ -86,7 +84,7 @@ if not args.remove:
         current_time: int = int(round(time.time() * 1000)) - milliseconds
 
         if current_time / 1000 >= TIME_LIMIT - TIME_TO_BUILD_A_VILLAGE:
-            print("Abord immediatly not time to generate")
+            print("Aboard immediately, not time to generate")
             current_zone_z = zone_number_z
             continue
 

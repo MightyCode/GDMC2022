@@ -52,18 +52,17 @@ class Village:
             if random.uniform(0, 1) <= Village.CHANCE_TIER_3_OLD:
                 self.age = 1
 
-        print(self.tier)
-        print(self.age)
+        print("Tier : " + str(self.tier) + ", Age : " + str(self.age))
 
-    def makeRelation(self, otherVillages: list):
+    def makeRelations(self, otherVillages: list):
         for village in otherVillages:
             relation: VillageInteraction = VillageInteraction(self, village)
 
-            self.villageInteractions[village.id] = relation
             village.addRelation(self, relation)
+            self.addRelation(village, relation)
 
     def addRelation(self, otherVillage, relation):
-        self.villageInteractions[otherVillage.id] = relation
+        self.villageInteractions[otherVillage] = relation
 
     def generateVillageInformation(self, name_generator: NameGenerator):
         self.name = name_generator.generateVillageName(True)
