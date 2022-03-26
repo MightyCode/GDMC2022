@@ -9,15 +9,15 @@ from generation.resources import Resources
 from generation.floodFill import FloodFill
 import generation.generator as generator
 from utils.nameGenerator import NameGenerator
-from utils.worldModification import *
+from utils.worldModification import WorldModification
 from utils.constants import Constants
 
 import generation.resourcesLoader as resLoader
 import utils.util as util
 import utils.argumentParser as argParser
-import generation.loreMaker as loremaker
+import generation.loreMaker as loreMaker
 import generation.road as road
-import lib.interfaceUtils as iu
+import lib.interfaceUtils as interfaceUtil
 import lib.toolbox as toolbox
 import utils.book as book
 
@@ -29,11 +29,12 @@ TIME_LIMIT: int = 600
 TIME_TO_BUILD_A_VILLAGE: int = 30
 
 file: str = "temp.txt"
-interface: interfaceUtils.Interface = interfaceUtils.Interface()
+interface: interfaceUtil.Interface = interfaceUtil.Interface()
 interface.setCaching(True)
 interface.setBuffering(True)
-iu.setCaching(True)
-iu.setBuffering(True)
+interfaceUtil.setCaching(True)
+interfaceUtil.setBuffering(True)
+
 world_modification: WorldModification = WorldModification(interface)
 args, parser = argParser.giveArgsAndParser()
 build_area = argParser.getBuildArea(args)
@@ -43,15 +44,14 @@ nameGenerator: NameGenerator = NameGenerator()
 if build_area == -1:
     exit()
 
-build_area: tuple = (
-    build_area[0], build_area[1], build_area[2], build_area[3] - 1, build_area[4] - 1, build_area[5] - 1)
+build_area: tuple = (build_area[0], build_area[1], build_area[2], build_area[3] - 1, build_area[4] - 1, build_area[5] - 1)
 size_area: list = [build_area[3] - build_area[0] + 1, build_area[5] - build_area[2] + 1]
 
 """Generate village involving on our generation"""
 print("Generate lore of the world")
-villages: list = loremaker.initializedVillages(7, nameGenerator)
-villageInteractions: list = loremaker.createVillageRelationAndAssign(villages)
-loremaker.checkForImpossibleInteractions(villages, villageInteractions)
+villages: list = loreMaker.initializedVillages(7, nameGenerator)
+villageInteractions: list = loreMaker.createVillageRelationAndAssign(villages)
+loreMaker.checkForImpossibleInteractions(villages, villageInteractions)
 
 settlement_index: int = 0
 current_village: Village
@@ -106,9 +106,9 @@ if not args.remove:
             current_zone_z += 1
             current_zone_x = 0
 
-        iu.setBuildArea(area[0], area[1], area[2], area[3] + 1, area[4] + 1, area[5] + 1)
+        interfaceUtil.setBuildArea(area[0], area[1], area[2], area[3] + 1, area[4] + 1, area[5] + 1)
         print("Make global slice")
-        iu.makeGlobalSlice()
+        interfaceUtil.makeGlobalSlice()
         print("Global slice done")
 
         current_village = villages[settlement_index]
@@ -174,7 +174,7 @@ if not args.remove:
                 settlementData.discovered_chunks.append(chunk)
                 util.addResourcesFromChunk(resources, settlementData, structureBiomeBlockId)
 
-            loremaker.alterSettlementDataWithNewStructures(settlementData, current_village.lore_structures[i])
+            loreMaker.alterSettlementDataWithNewStructures(settlementData, current_village.lore_structures[i])
 
             current_time = int(round(time.time() * 1000)) - milliseconds
 
@@ -261,8 +261,8 @@ if not args.remove:
 
         settlement_index += 1
 
-    iu.setBuildArea(build_area[0], build_area[1], build_area[2], build_area[3] + 1, build_area[4] + 1,
-                    build_area[5] + 1)
+    interfaceUtil.setBuildArea(build_area[0], build_area[1], build_area[2], build_area[3] + 1, build_area[4] + 1,
+                               build_area[5] + 1)
 else:
     if args.remove == "r":
         world_modification.loadFromFile(file)

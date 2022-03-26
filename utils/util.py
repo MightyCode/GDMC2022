@@ -1,6 +1,10 @@
+from representation.villager import Villager
+from representation.trade import Trade
+
 import lib.interfaceUtils as interfaceUtils
 import lib.worldLoader as worldLoader
 import lib.lookup as lookup
+
 import math
 import requests
 from io import BytesIO
@@ -159,21 +163,64 @@ def spawnVillagerForStructure(settlementData, structure, position):
     for villager in structure.villagers:
         if (structure.type == "houses" and villager.job == "Unemployed") or (
                 structure.type != "houses" and villager.job != "Unemployed"):
-            # get a random level for the profession of the villager (2: Apprentice, 3: Journeyman, 4: Expert, 5: Master)
-            randomProfessionLevel = rd.randint(2, 5)
 
-            spawnVillager(position[0], position[1] + 1, position[2], "minecraft:villager",
-                          villager.name, villager.minecraftJob,
-                          randomProfessionLevel, settlementData.biome_name)
+            spawnVillager(position[0], position[1] + 1, position[2], villager, settlementData.biome_name)
 
 
-def spawnVillager(x, y, z, entity, name, profession, level, villagerType):
-    command = "summon " + entity + " " + str(x) + " " + str(y) + " " + str(z) + " "
-    command += "{VillagerData:{profession:" + profession + ",level:" + str(
-        level) + ",type:" + villagerType + "},CustomName:""\"\\" + '"' + str(name) + "\\" + '""' + "}"
+def spawnVillager(x: int, y: int, z: int, villager: Villager, villagerType: str):
+    command = "summon minecraft:villager " + str(x) + " " + str(y) + " " + str(z) + " "
+    command += "{VillagerData:{profession:" + villager.minecraftJob + ",level:" + str(villager.jobLevel) + ",type:" \
+               + villagerType + "},CustomName:""\"\\" + '"' + str(villager.name) + "\\" + '""' \
+               + createOffer(villager) + "}"
+
+    print(command)
 
     interfaceUtils.runCommand(command)
 
+
+def createOffer(villager: Villager, isFirstArgument: bool=False) -> str:
+    if villager.hasNoTrade():
+        return ""
+
+    result: str = "Offers:{Recipes:["
+
+    first: bool = True
+    for trade in villager.trades:
+        result += tradeToStr(trade, first)
+
+        first = False
+
+    result += "]}"
+
+    if not isFirstArgument:
+        result = "," + result
+    return result
+
+
+def tradeToStr(trade: Trade, isFirstTrade=False) -> str:
+    result: str
+
+    if isFirstTrade:
+        result = "{"
+    else:
+        result = ",{"
+
+    # buy <-> dict
+    result += "buy:{id:\"" + trade.needing + "\", Count:" + str(trade.needing_quantity) + "}"
+    # buy B <-> dict
+    result += ", sell:{id:\"" + trade.offer + "\", Count:" + str(trade.offer_quantity) + "}"
+    # maxUses <-> int
+    result += ", maxUses:999999"
+    # Xp <-> int
+    # rewardXp <-> boolean
+    # uses <-> int
+    # specialPrice <-> float
+    # price multiplier <-> float
+    # demand <-> float
+
+    result += "}"
+
+    return result
 
 # Add items to a chest
 # Items is a list of [item string, item quantity]

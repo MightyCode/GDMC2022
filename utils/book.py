@@ -3,15 +3,14 @@ from representation.villager import Villager
 from representation.village import Village
 
 import generation.generator as generator
-import generation.data.settlementData as settlementDataClass
 
 import random as rd
 
 REASON_OF_DEATHS = ["murdered", "died because of old age", "died of creeper attack", "died of skeleton attack",
                     "died of spider attack (he did not became Spider-Man)",
                     "died of zombie attack", "died of witch attack", "died suffocating from sand falling",
-                    "died eating too much cake", "died crushing by a rock"
-    , "died suffocating from gravel falling"]
+                    "died eating too much cake", "died crushing by a rock",
+                    "died suffocating from gravel falling"]
 DIARY_TEXTS_WITHOUT_TARGETS = [" I really like the color of the village. ", " I really like the name of the village. ",
                                " I hate the color of the village.",
                                " I am afraid of spiders. ", " I am afraid of creppers. ", " I am afraid of zombies. ",
@@ -52,7 +51,7 @@ def createTextOfPresentationVillage(villageName: str, structuresNumber: int, str
         '                      \\\\n'
         '                      \\\\n'
         '--------------')
-    textVillagePresentationBook += ('\f\\\\s---------------\\\\n')
+    textVillagePresentationBook += '\f\\\\s---------------\\\\n'
 
     numberOfHouse = 0
     for structure in structures:
@@ -221,18 +220,27 @@ def createBookForVillager(village_model: Village, villager: Villager) -> list:
         # Other phrase    
         random = rd.randint(1, 5)
         if random == 1:
-            randomProfession = rd.randint(0, len(settlementDataClass.SettlementData.VILLAGE_PROFESSION_LIST) - 1)
-            textDiaryVillager += f'I hate all {settlementDataClass.SettlementData.VILLAGE_PROFESSION_LIST[randomProfession]} \\\\n'
+            randomProfession = rd.randint(0, len(Villager.VILLAGE_PROFESSION_LIST) - 1)
+            textDiaryVillager += f'I hate all {Villager.VILLAGE_PROFESSION_LIST[randomProfession]} \\\\n'
             if rd.randint(1, 5) == 1:
                 secondRandomProfession = rd.randint(0,
-                                                    len(settlementDataClass.SettlementData.VILLAGE_PROFESSION_LIST) - 1)
+                                                    len(Villager.VILLAGE_PROFESSION_LIST) - 1)
                 if secondRandomProfession != randomProfession:
-                    textDiaryVillager += f'I would like to work as a {settlementDataClass.SettlementData.VILLAGE_PROFESSION_LIST[secondRandomProfession]}.\\\\n'
+                    textDiaryVillager += f'I would like to work as a {Villager.VILLAGE_PROFESSION_LIST[secondRandomProfession]}.\\\\n'
         elif random == 2 and not targetTextDone:
             randomDiaryTextWithTarget = rd.randint(0, len(newDiaryTextWithTarget) - 1)
-            targeted = village_model.deadVillager[rd.randint(0, len(village_model.deadVillager) - 1)].name
-            textDiaryVillager += (f'{newDiaryTextWithTarget[randomDiaryTextWithTarget]}'
-                                  f'{targeted}.  \\\\n')
+
+            targeted = -1
+
+            if len(village_model.deadVillager) == 1:
+                targeted = 0
+            elif len(village_model.deadVillager) > 1:
+                targeted = village_model.deadVillager[rd.randint(0, len(village_model.deadVillager) - 1)].name
+
+            if targeted != -1:
+                textDiaryVillager += (f'{newDiaryTextWithTarget[randomDiaryTextWithTarget]}'
+                                      f'{targeted}.  \\\\n')
+
             newDiaryTextWithTarget.remove(newDiaryTextWithTarget[randomDiaryTextWithTarget])
             targetTextDone = True
         else:

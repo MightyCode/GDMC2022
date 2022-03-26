@@ -4,10 +4,6 @@ import copy
 
 
 class SettlementData:
-    VILLAGE_PROFESSION_LIST = [
-                    "farmer", "fisherman", "shepherd", "fletcher", "librarian", "cartographer",
-                    "cleric", "armorer", "weaponsmith", "toolsmith", "butcher", "leatherworker", "mason", "nitwit"]
-
     def __init__(self, village: Village):
         self.village_model = village
         self.area: list = [0, 0]
