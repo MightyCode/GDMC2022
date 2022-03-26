@@ -48,6 +48,7 @@ build_area: tuple = (
 size_area: list = [build_area[3] - build_area[0] + 1, build_area[5] - build_area[2] + 1]
 
 """Generate village involving on our generation"""
+print("Generate lore of the world")
 villages: list = loremaker.initializedVillages(7, nameGenerator)
 villageInteractions: list = loremaker.createVillageRelationAndAssign(villages)
 loremaker.checkForImpossibleInteractions(villages, villageInteractions)
@@ -187,7 +188,7 @@ if not args.remove:
                 break
 
         """ Third main step : creates lore of the village """
-        print("\nGenerate lore")
+        print("\nGenerate lore of the village")
 
         # Murderer
         murdererData: MurdererData = current_village.murderer_data

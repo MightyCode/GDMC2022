@@ -12,6 +12,9 @@ class VillageInteraction:
     STATE_FRIENDSHIP = 3
     STATE_LOVE = 4
 
+    # Why war
+    REASON_SAME_COLOR = 1
+
     def __init__(self, village1: Village, village2: Village) -> None:
         self.village1: Village = village1
         self.village2: Village = village2
@@ -19,3 +22,5 @@ class VillageInteraction:
         self.state = random.randint(0, 4)
 
         self.brokeTheirRelation: bool = False
+
+        self.reason: int = 0

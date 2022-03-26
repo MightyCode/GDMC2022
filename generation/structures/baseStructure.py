@@ -1,7 +1,10 @@
+from utils.constants import Constants
+from generation.buildingCondition import BuildingCondition
+
 import utils.util as util
 import utils.projectMath as projectMath
 import lib.interfaceUtils as interfaceUtils
-from utils.constants import Constants
+
 import random
 import math
 
@@ -56,19 +59,8 @@ class BaseStructure:
     """
 
     @staticmethod
-    def createBuildingCondition():
-        return {
-            "size": [0, 0, 0],
-            "position": [0, 0, 0],
-            "referencePoint": [0, 0, 0],
-            "flip": 0,
-            "rotation": 0,
-            "replaceAllAir": 0,
-            "replacements": {},
-            "villager": [],
-            "prebuildingInfo": {},
-            "special": {}
-        }
+    def createBuildingCondition() -> BuildingCondition:
+        return BuildingCondition()
 
     """
     Return a position in the world 
@@ -79,8 +71,10 @@ class BaseStructure:
     worldStructurePosition : position of the structure in real world, position in relation with reference point
     """
 
-    def returnWorldPosition(self, localPoint, flip, rotation, referencePoint, worldStructurePosition):
-        world_position = [0, 0, 0]
+    def returnWorldPosition(self, localPoint: list, flip: int, rotation: int,
+                            referencePoint: list, worldStructurePosition: list) -> list:
+
+        world_position: list = [0, 0, 0]
 
         # Position in building local space replacement
         if flip == 1 or flip == 3:
@@ -173,7 +167,7 @@ class BaseStructure:
             self.computed_orientation["x"] = "z"
             self.computed_orientation["z"] = "x"
 
-    def parseSpecialRule(self, buildingCondition, worldModification):
+    def parseSpecialRule(self, buildingCondition: BuildingCondition, worldModification):
         if "special" not in self.info.keys():
             return
 
@@ -183,30 +177,30 @@ class BaseStructure:
                 for sign in self.info["special"][key]:
                     signPosition = self.returnWorldPosition(
                         sign["position"],
-                        buildingCondition["flip"], buildingCondition["rotation"],
-                        buildingCondition["referencePoint"], buildingCondition["position"]
+                        buildingCondition.flip, buildingCondition.rotation,
+                        buildingCondition.referencePoint, buildingCondition.position
                     )
 
                     worldModification.setBlock(
                         signPosition[0],
                         signPosition[1] + 1,
                         signPosition[2],
-                        "minecraft:" + buildingCondition["replacements"]["woodType"]
+                        "minecraft:" + buildingCondition.replacements["woodType"]
                         + "_wall_sign[facing=" + self.computed_orientation[sign["orientation"]] + "]",
                         False,
                         True)
 
-                    if buildingCondition["special"]["sign"][i * 4] == "" and buildingCondition["special"]["sign"][
+                    if buildingCondition.special["sign"][i * 4] == "" and buildingCondition.special["sign"][
                         i * 4 + 1] == "":
-                        if buildingCondition["special"]["sign"][i * 4 + 2] == "" and \
-                                buildingCondition["special"]["sign"][i * 4 + 3] == "":
+                        if buildingCondition.special["sign"][i * 4 + 2] == "" and \
+                                buildingCondition.special["sign"][i * 4 + 3] == "":
                             continue
 
                     interfaceUtils.setSignText(
                         signPosition[0], signPosition[1] + 1, signPosition[2],
-                        buildingCondition["special"]["sign"][i * 4], buildingCondition["special"]["sign"][i * 4 + 1],
-                        buildingCondition["special"]["sign"][i * 4 + 2],
-                        buildingCondition["special"]["sign"][i * 4 + 3])
+                        buildingCondition.special["sign"][i * 4], buildingCondition.special["sign"][i * 4 + 1],
+                        buildingCondition.special["sign"][i * 4 + 2],
+                        buildingCondition.special["sign"][i * 4 + 3])
 
                     i += 1
 
@@ -279,33 +273,37 @@ class BaseStructure:
     people : people's name which should appears in the sign
     """
 
-    def generateSignatureSign(self, position, worldModification, woodType, people):
+    def generateSignatureSign(self, position, world_modification, wood_type: str, villagers: list):
         if "sign" not in self.info.keys():
             return
 
-        worldModification.setBlock(position[0], position[1], position[2], "minecraft:air", placeImmediately=True)
-        worldModification.setBlock(position[0], position[1], position[2],
-                                   "minecraft:" + woodType + "_wall_sign[facing=" + self.computed_orientation[
-                                       self.info["sign"]["facing"]] + "]",
-                                   placeImmediately=True)
+        world_modification.setBlock(position[0], position[1], position[2], "minecraft:air", placeImmediately=True)
+        world_modification.setBlock(position[0], position[1], position[2],
+                                    "minecraft:" + wood_type + "_wall_sign[facing=" + self.computed_orientation[
+                                        self.info["sign"]["facing"]] + "]",
+                                    placeImmediately=True)
 
         lines = ["", "", "", "", "", "", "", ""]
         lines[0] = "Tier " + str(self.info["sign"]["tier"])
         lines[1] = self.info["sign"]["name"]
 
-        util.parseVillagerNameInLines(people, lines, 2)
+        names: list = []
+        for villager in villagers:
+            names.append(villager.name)
+
+        util.parseVillagerNameInLines(names, lines, 2)
 
         interfaceUtils.setSignText(
             position[0], position[1], position[2],
             lines[0], lines[1], lines[2], lines[3])
 
         if len(lines[4]) > 0:
-            worldModification.setBlock(position[0], position[1] - 1, position[2], "minecraft:air",
-                                       placeImmediately=True)
-            worldModification.setBlock(position[0], position[1] - 1, position[2],
-                                       "minecraft:" + woodType + "_wall_sign[facing=" + self.computed_orientation[
-                                           self.info["sign"]["facing"]] + "]",
-                                       placeImmediately=True)
+            world_modification.setBlock(position[0], position[1] - 1, position[2], "minecraft:air",
+                                        placeImmediately=True)
+            world_modification.setBlock(position[0], position[1] - 1, position[2],
+                                        "minecraft:" + wood_type + "_wall_sign[facing=" + self.computed_orientation[
+                                            self.info["sign"]["facing"]] + "]",
+                                        placeImmediately=True)
 
             interfaceUtils.setSignText(
                 position[0], position[1] - 1, position[2],
@@ -317,7 +315,7 @@ class BaseStructure:
     buildingCondition : condition used to build a structures
     """
 
-    def placeSupportUnderStructure(self, world_modification, building_conditions) -> None:
+    def placeSupportUnderStructure(self, world_modification, building_conditions: BuildingCondition) -> None:
         if "ground" not in self.info.keys():
             return
 
@@ -333,8 +331,8 @@ class BaseStructure:
                 for z in range(zone[1], zone[3] + 1):
                     position = self.returnWorldPosition(
                         [x, 0, z],
-                        building_conditions["flip"], building_conditions["rotation"],
-                        building_conditions["referencePoint"], building_conditions["position"]
+                        building_conditions.flip, building_conditions.rotation,
+                        building_conditions.referencePoint, building_conditions.position
                     )
 
                     if world_modification.interface.getBlock(position[0], position[1],
@@ -347,7 +345,7 @@ class BaseStructure:
                         world_modification.fillBlocks(position[0], position[1], position[2], position[0],
                                                       position[1] + i,
                                                       position[2],
-                                                      building_conditions["replacements"]["ground2"])
+                                                      building_conditions.replacements["ground2"])
 
     """
     Place air at given position
@@ -355,20 +353,20 @@ class BaseStructure:
     buildingCondition : condition used to build a structures
     """
 
-    def placeAirZones(self, world_modification, building_conditions):
-        if building_conditions["replaceAllAir"] == 3:
-            building_conditions["replaceAllAir"] = self.info["air"]["preferedAirMode"]
+    def placeAirZones(self, world_modification, building_conditions: BuildingCondition):
+        if building_conditions.replaceAirMethod == 3:
+            building_conditions.replaceAirMethod = self.info["air"]["preferedAirMode"]
 
-        if building_conditions["replaceAllAir"] == 2:
+        if building_conditions.replaceAirMethod == 2:
             for zones in self.info["air"]["replacements"]:
                 block_from = self.returnWorldPosition([zones[0], zones[1] + 1, zones[2]],
-                                                      building_conditions["flip"], building_conditions["rotation"],
-                                                      building_conditions["referencePoint"],
-                                                      building_conditions["position"])
+                                                      building_conditions.flip, building_conditions.rotation,
+                                                      building_conditions.referencePoint,
+                                                      building_conditions.position)
                 block_to = self.returnWorldPosition([zones[3], zones[4] + 1, zones[5]],
-                                                    building_conditions["flip"], building_conditions["rotation"],
-                                                    building_conditions["referencePoint"],
-                                                    building_conditions["position"])
+                                                    building_conditions.flip, building_conditions.rotation,
+                                                    building_conditions.referencePoint,
+                                                    building_conditions.position)
 
                 for x in range(min(block_from[0], block_to[0]), max(block_from[0], block_to[0]) + 1):
                     for z in range(min(block_from[2], block_to[2]), max(block_from[2], block_to[2]) + 1):
@@ -391,7 +389,7 @@ class BaseStructure:
     def applyBlockTransformationThenFill(self, world_modification, from_x: int, from_y: int, from_z: int,
                                          to_x: int, to_y: int, to_z: int, block: str):
         util.applyBlockTransformationThenFill(world_modification, from_x, from_y, from_z,
-                                               to_x, to_y, to_z, block, self.block_transformation)
+                                              to_x, to_y, to_z, block, self.block_transformation)
 
     """
     Get the facing of the main entry depending of the flip and rotation
