@@ -1,6 +1,7 @@
+from importlib.resources import Resource
 from generation.resources import *
 from generation.chestGeneration import *
-from generation.structures.structures import *
+from generation.structures.nbtStructures import *
 from generation.structureManager import *
 from generation.floodFill import *
 import generation.resourcesLoader as resLoader
@@ -8,29 +9,29 @@ import utils.util as util
 from utils.worldModification import *
 import utils.argumentParser as argParser
 import lib.interfaceUtils as iu
-import generation.loremaker as loremaker
+import generation.loreMaker as loremaker
 import utils.book as book
 import lib.toolbox as toolbox
 import copy
 
-file = "temp.txt"
-interface = interfaceUtils.Interface(buffering=True, caching = True)
+file:str = "temp.txt"
+interface:interfaceUtils.Interface = interfaceUtils.Interface(buffering=True, caching = True)
 interface.setCaching(True)
 interface.setBuffering(True)
 iu.setCaching(True)
 iu.setBuffering(True)
-worldModif = WorldModification(interface)
+worldModif:WorldModification = WorldModification(interface)
 args, parser = argParser.giveArgsAndParser()
-area = argParser.getBuildArea(args)
+area: tuple = argParser.getBuildArea(args)
 
 if area == -1:
     exit()
 
 if not args.remove:
-    resources = Resources()
+    resources:Resources = Resources()
     resLoader.loadAllResources(resources)
-    chestGeneration = ChestGeneration(resources, interface)
-    structure = resources.structures["basichouse1"]
+    chestGeneration:ChestGeneration = ChestGeneration(resources, interface)
+    structure:dict = resources.structures["basichouse1"]
 
     info = structure.info
     buildingCondition = BaseStructure.createBuildingCondition()

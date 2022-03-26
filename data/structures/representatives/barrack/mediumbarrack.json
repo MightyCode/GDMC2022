@@ -1,11 +1,12 @@
 {
     "mainEntry": {
       "facing" : "north",
-      "position" : [3, 1, 0]
+      "position" : [5, 1, 0]
     },
     "replacements" : {
+      "minecraft:light_blue_bed" : { "type" : "bed", "state" : 1 },
       "oak" : { "type" : "woodType", "state" : 2 },
-      "spruce" : { "type" : "woodType2", "state" : 2}
+      "spruce" : { "type" : "woodType2", "state" : 2 }
     },
     "air" : {
       "preferedAirMode" : 1,
@@ -13,20 +14,20 @@
       ]
     },
     "lootTables" : [
-      ["basicstonecutter"]
+      ["barrack"]
     ],
     "villageInfo" : {
-      "villager" : 1,
-      "gameProfession" : "mason",
-      "profession" : "Stone worker"
+      "villager" : 3,
+      "gameProfession" : "armorer",
+      "profession" : "Guard soldier"
     },
     "ground" : {
       "info" : "all"
     },
     "sign" : {
-      "position" : [0, 3, 0],
+      "position" : [5, 5, -1],
       "facing" : "north",
-      "tier" : 1,
-      "name" : "Stone Cutter"
+      "tier" : 2,
+      "name" : "Barrack"
     }
   }

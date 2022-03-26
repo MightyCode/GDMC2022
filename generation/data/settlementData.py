@@ -1,79 +1,58 @@
 from generation.resources import Resources
-from generation.data.murdererData import MurdererData
+from representation.village import Village
 import copy
+
 
 class SettlementData:
     VILLAGE_PROFESSION_LIST = [
-                    "farmer", "fisherman", "shepherd", "fletcher", "librarian", "cartographer", 
+                    "farmer", "fisherman", "shepherd", "fletcher", "librarian", "cartographer",
                     "cleric", "armorer", "weaponsmith", "toolsmith", "butcher", "leatherworker", "mason", "nitwit"]
 
-    def __init__(self):
-        self.area = [0, 0]
-        self.center = [0, 0]
-        self.size = []
+    def __init__(self, village: Village):
+        self.village_model = village
+        self.area: list = [0, 0]
+        self.center: list = [0, 0]
+        self.size: list = []
 
-        self.discoveredChunks = []
+        self.discovered_chunks: list = []
 
         # Materials replacement
-        self.__materialsReplacement = {}
+        self.__materials_replacement: dict = {}
 
         # Biome 
-        self.biomeId = 0
-        self.biomeName = ""
-        self.biomeBlockId = 0
+        self.biome_id: int = 0
+        self.biome_name: str = ""
+        self.biome_block_id: int = 0
 
-        self.villageName = ""
-        self.__materialsReplacement["villageName"] = self.villageName
-
-        self.villagerNames = []
-        self.villagerProfession = []
-        self.villagerGameProfession = []
-
-        # [0 -> content, 1 -> isGift]
-        self.villagerDiary = []
+        self.__materials_replacement["villageName"] = self.village_model.name
         
-        self.structuresNumberGoal = []
+        self.structure_number_goal: int = 0
 
-        # structures contains "position", "rotation", "flip" "name", "type", "group", "villagersId", "gift"
-        self.structures = []
-        self.freeVillager = 0
-
-        self.ressources = {
-            "woodResources" : 0,
-            "dirtResources" : 0,
-            "stoneResources" : 0
+        self.resources: dict = {
+            "woodResources": 0,
+            "dirtResources": 0,
+            "stoneResources": 0
         }
 
-        self.murdererData = MurdererData()
-
-
-    def setArea(self, newArea:tuple):
-        self.area = newArea
+    def setArea(self, new_area: list) -> None:
+        self.area = new_area
         self.center = [int((self.area[0] + self.area[3]) / 2), 80, int((self.area[2] + self.area[5]) / 2)]
         self.size = [self.area[3] - self.area[0] + 1, self.area[5] - self.area[2] + 1]
 
-    
-    def setVillageBiome(self, biomeId:int, resources:Resources):
-        self.biomeId = biomeId
-        self.biomeName = resources.biomeMinecraftId[int(self.biomeId)]
-        self.biomeBlockId =  str(resources.biomesBlockId[self.biomeName])
+    def setVillageBiome(self, biome_id: int, resources: Resources) -> None:
+        self.biome_id = biome_id
+        self.biome_name = resources.biomeMinecraftId[int(self.biome_id)]
+        self.biome_block_id = str(resources.biomesBlockId[self.biome_name])
 
-        if self.biomeBlockId == "-1": 
+        if self.biome_block_id == "-1":
             print("Generation on biome block id -1")
-            self.biomeBlockId = "0"
+            self.biome_block_id = "0"
 
+    def setMaterialReplacement(self, property_name: str, replacement: str) -> None:
+        self.__materials_replacement[property_name] = replacement
 
-    def setMaterialReplacement(self, propertyName:str, replacement:str):
-        self.__materialsReplacement[propertyName] = replacement
-    
+    def getMaterialReplacement(self, propertyName: str) -> str:
+        return self.__materials_replacement[propertyName]
 
-    def getMaterialReplacement(self, propertyName:str):
-        return self.__materialsReplacement[propertyName]
-
-
-    def getMatRep(self, propertyName:str):
-        return self.getMaterialReplacement(propertyName)
-
-
-    def getMatRepDeepCopy(self):
-        return copy.deepcopy(self.__materialsReplacement)
+    def getMatRepDeepCopy(self) -> dict:
+        return copy.deepcopy(self.__materials_replacement)

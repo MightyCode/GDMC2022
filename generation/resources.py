@@ -1,8 +1,9 @@
-from generation.structures.structures import *
+from generation.structures.nbtStructures import NbtStructures
 import json
 from nbt import nbt
 
-class Resources :
+
+class Resources:
     STRUCTURE_PATH = "data/structures/"
     LOOT_TABLE_PATH = "data/lootTables/"
     BIOME = "data/biome.txt"
@@ -10,26 +11,23 @@ class Resources :
 
     def __init__(self):
         # Each structures
-        self.structures = {}
-        self.lootTables = {}
-
+        self.structures: dict = {}
+        self.lootTables: dict = {}
 
         # Contains for each biome, its minecraft id
         # biomename -> id minecraft
-        self.biomes = {}
+        self.biomes: dict = {}
         # Contains for each id biome, its name
         # id minecraft -> biomename
-        self.biomeMinecraftId = {}
+        self.biomeMinecraftId: dict = {}
 
         # Contains for each id biome, its block id
         # biomename -> id block (decoration)
-        self.biomesBlockId = {}
-
+        self.biomesBlockId: dict = {}
 
         # Indicates for each block id, what should be blocks for types (ex : wookType)
-        self.biomesBlocks = {}
+        self.biomesBlocks: dict = {}
 
-        
         with open(Resources.BIOME_BLOCK) as json_file:
             self.biomesBlocks = json.load(json_file)
 
@@ -38,13 +36,14 @@ class Resources :
         lines = filin.readlines()
         i = 0
         for line in lines:
-            if len(line.split(":")) > 1 :
+            if len(line.split(":")) > 1:
                 biomename = line.split(":")[0]
                 value = int(line.split(":")[1])
 
                 self.biomeMinecraftId[i] = biomename
                 self.biomes[biomename] = i
                 self.biomesBlockId[biomename] = value
+
             i = i + 1
 
     """ 
@@ -53,14 +52,15 @@ class Resources :
     infoPath : path of info json file related to the structure
     name : name of the structure that will be used on the system
     """
+
     def loadStructures(self, path, infoPath, name):
-        nbtfile = nbt.NBTFile(Resources.STRUCTURE_PATH + path,'rb')
+        nbt_file: nbt.NBTFile = nbt.NBTFile(Resources.STRUCTURE_PATH + path, 'rb')
+
         with open(Resources.STRUCTURE_PATH + infoPath) as json_file:
-           info = json.load(json_file)
+            info = json.load(json_file)
 
-        assert(not name in self.structures.keys())
-        self.structures[name] = Structures(nbtfile, info, name)
-
+        assert (name not in self.structures.keys())
+        self.structures[name] = NbtStructures(nbt_file, info, name)
 
     """ 
     Add an hand made structure
@@ -68,24 +68,22 @@ class Resources :
     infoPath : path of info json file related to the structure
     name : name of the structure that will be used on the system
     """
-    def addGeneratedStructures(self, object, infoPath, name):
+
+    def addGeneratedStructures(self, structureObject, infoPath, name) -> None:
         with open(Resources.STRUCTURE_PATH + infoPath) as json_file:
-           info = json.load(json_file)
-           
-        object.setInfo(info)
+            info = json.load(json_file)
 
-        assert(not name in self.structures.keys())
-        self.structures[name] = object
+        structureObject.setInfo(info)
 
+        assert (name not in self.structures.keys())
+        self.structures[name] = structureObject
 
     """ 
     Load and add new loot table from files
     path : path of json file
     name : name of the loot table that will be used on the system
     """
-    def loadLootTable(self, path, name):
+
+    def loadLootTable(self, path, name) -> None:
         with open(Resources.LOOT_TABLE_PATH + path) as json_file:
-           self.lootTables[name] = json.load(json_file)
-
-
-
+            self.lootTables[name] = json.load(json_file)

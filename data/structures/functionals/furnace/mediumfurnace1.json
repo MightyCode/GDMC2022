@@ -1,14 +1,14 @@
 {
   "mainEntry": {
     "facing" : "north",
-    "position" : [1, 1, 0]
+    "position" : [2, 1, 0]
   },
   "replacements" : {
   },
   "air" : {
     "preferedAirMode" : 2,
     "replacements" : [
-      [0, 1, 1, 2, 4, 4]
+      [0, 1, 1, 4, 6, 4]
     ]
   },
   "lootTables" : [
@@ -24,9 +24,9 @@
     ]
   },
   "sign" : {
-    "position" : [2, 2, 0],
+    "position" : [3, 2, 0],
     "facing" : "north",
-    "tier" : 1,
+    "tier" : 2,
     "name" : "Furnace"
   }
 }

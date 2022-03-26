@@ -19,5 +19,25 @@
       [0, 11, 0, 12, 14, 10],
       [3, 15, 4, 11, 18, 9]
     ]
+  },
+  "lootTables" : [
+    ["kitchenhouse", [2, 1, 2, 11, 4, 8]],
+    ["bedroomhouse", [2, 6, 2, 11, 11, 8]]
+  ],
+  "villageInfo" : {
+    "villager" : 3,
+    "murdererTrap" : [10, -1, 4]
+  },
+  "ground" : {
+    "zones" : [
+      [3, 0, 4, 1],
+      [2, 2, 11, 8]
+    ]
+  },
+  "sign" : {
+    "position" : [3, 4, 1],
+    "facing" : "north",
+    "tier" : 2,
+    "name" : "House"
   }
 }

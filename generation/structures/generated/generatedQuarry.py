@@ -1,141 +1,164 @@
-import collections, numpy
-import random
+from generation.chestGeneration import ChestGeneration
+from generation.structures.baseStructure import BaseStructure
+from generation.buildingCondition import BuildingCondition
+
 import utils.util as util
+import random
+
+import collections
+import numpy
 import math
-from generation.structures.baseStructure import * 
 
 """
 Hand made generated quarry
 """
+
+
 class GeneratedQuarry(BaseStructure):
-    def __init__(self) :
+    def __init__(self):
         super(BaseStructure, self).__init__()
-        self.listOfBlocks = numpy.array([])
-        self.computedOrientation = {}
+        self.list_of_blocks: numpy.ndarray = numpy.array([])
+        self.computed_orientation: dict = {}
 
-        self.uselessBlocks = [
-        'minecraft:air', 'minecraft:cave_air', 'minecraft:water', 'minecraft:lava'
-        'minecraft:oak_leaves',  'minecraft:leaves',  'minecraft:birch_leaves', 'minecraft:spruce_leaves'
-        'minecraft:oak_log',  'minecraft:spruce_log',  'minecraft:birch_log',  'minecraft:jungle_log', 'minecraft:acacia_log', 'minecraft:dark_oak_log',
-        'minecraft:grass', 'minecraft:snow', 'minecraft:poppy'
-        'minecraft:dead_bush', "minecraft:cactus", "minecraft:sugar_cane"]
+        self.useless_blocks = [
+            'minecraft:air', 'minecraft:cave_air', 'minecraft:water', 'minecraft:lava'
+                                                                      'minecraft:oak_leaves', 'minecraft:leaves',
+            'minecraft:birch_leaves', 'minecraft:spruce_leaves'
+                                      'minecraft:oak_log', 'minecraft:spruce_log', 'minecraft:birch_log',
+            'minecraft:jungle_log', 'minecraft:acacia_log', 'minecraft:dark_oak_log',
+            'minecraft:grass', 'minecraft:snow', 'minecraft:poppy'
+                                                 'minecraft:dead_bush', "minecraft:cactus", "minecraft:sugar_cane"]
 
-    
+        self.entry: list = []
+        self.fence_type: str = "minecraft:oak_fence"
+        self.fence_gate_type: str = self.fence_type + "_gate"
+        self.stripped_wood_type: str = "minecraft:stripped_oak_wood"
+
     def setupInfoAndGetCorners(self):
         self.setSize([random.randint(7, 14), random.randint(9, 21), random.randint(7, 14)])
 
         self.info["mainEntry"]["position"] = [int(self.size[0] / 2), self.size[1] - 5, 0]
-        
+
         return self.getCornersLocalPositionsAllFlipRotation(self.info["mainEntry"]["position"])
 
-
-    def getNextBuildingInformation(self, flip, rotation):
-        info = {}
+    def getNextBuildingInformation(self, flip: int, rotation: int) -> dict:
         self.info["mainEntry"]["facing"] = "north"
-        info["entry"] = { 
-            "position" : self.info["mainEntry"]["position"], 
-            "facing" : self.getFacingMainEntry(flip, rotation) 
-            }
-        info["size"] = self.size
-        info["corner"] = self.getCornersLocalPositions(self.info["mainEntry"]["position"].copy(), flip, rotation)
 
-        return info
+        return {
+            "entry": {
+                "position": self.info["mainEntry"]["position"],
+                "facing": self.getFacingMainEntry(flip, rotation)
+            },
+            "size": self.size,
+            "corner": self.getCornersLocalPositions(self.info["mainEntry"]["position"].copy(), flip, rotation)
+        }
 
+    def build(self, world_modification, building_conditions: BuildingCondition, chest_generation: ChestGeneration,
+              block_transformations: list):
+        self.setSize(building_conditions.size)
+        self.entry = building_conditions.referencePoint.copy()
+        self.computeOrientation(building_conditions.rotation, building_conditions.flip)
+        self.block_transformation = block_transformations
 
-    def build(self, worldModif, buildingCondition, chestGeneration):
-        self.setSize(buildingCondition["size"])
-        self.entry = buildingCondition["referencePoint"].copy()
-        self.computeOrientation(buildingCondition["rotation"], buildingCondition["flip"])
+        if building_conditions.flip == 1 or building_conditions.flip == 3:
+            building_conditions.referencePoint[0] = self.size[0] - 1 - building_conditions.referencePoint[0]
+        if building_conditions.flip == 2 or building_conditions.flip == 3:
+            building_conditions.referencePoint[2] = self.size[2] - 1 - building_conditions.referencePoint[2]
 
-        if buildingCondition["flip"] == 1 or buildingCondition["flip"] == 3:
-            buildingCondition["referencePoint"][0] = self.size[0] - 1 - buildingCondition["referencePoint"][0] 
-        if buildingCondition["flip"] == 2 or buildingCondition["flip"] == 3:
-            buildingCondition["referencePoint"][2] = self.size[2] - 1 - buildingCondition["referencePoint"][2] 
-
-        woodType = "*woodType*"
-        result = util.changeNameWithBalise(woodType, buildingCondition["replacements"])
+        woodType: str = "*woodType*"
+        result = util.changeNameWithBalise(woodType, building_conditions.replacements)
         if result[0] >= 0:
             woodType = result[1]
-        else :
+        else:
             woodType = "oak"
 
-        self.fenceType = "minecraft:" + woodType + "_fence"
-        self.fenceGateType = self.fenceType + "_gate"
-        self.strippedWoodType = "minecraft:stripped_" + woodType + "_wood"
+        self.fence_type = "minecraft:" + woodType + "_fence"
+        self.fence_gate_type = self.fence_type + "_gate"
+        self.stripped_wood_type = "minecraft:stripped_" + woodType + "_wood"
 
-        self.listOfBlocks = numpy.array([])
+        self.list_of_blocks = numpy.array([])
         ## Building the quarry.
         for dy in range(self.size_y()):
             for dx in range(1, self.size_x() - 1):
-                for dz in range(1, self.size_z() -1):
+                for dz in range(1, self.size_z() - 1):
                     # Get all the block we chunk
-                    position = self.returnWorldPosition([dx, dy, dz], buildingCondition["flip"], 
-                        buildingCondition["rotation"], buildingCondition["referencePoint"], buildingCondition["position"])
+                    position = self.returnWorldPosition([dx, dy, dz], building_conditions.flip,
+                                                        building_conditions.rotation,
+                                                        building_conditions.referencePoint,
+                                                        building_conditions.position)
 
-                    block = worldModif.interface.getBlock(position[0], position[1], position[2])
-                    if block not in self.uselessBlocks:
-                        self.listOfBlocks = numpy.append(self.listOfBlocks, block) 
-        
+                    block = world_modification.interface.getBlock(position[0], position[1], position[2])
+                    if block not in self.useless_blocks:
+                        self.list_of_blocks = numpy.append(self.list_of_blocks, block)
 
-        # Fill the area with air block
-        
-        fromBlock = self.returnWorldPosition([1, 0, 1], buildingCondition["flip"], 
-                        buildingCondition["rotation"], buildingCondition["referencePoint"], buildingCondition["position"])
-        toBlock = self.returnWorldPosition([self.size_x() - 2, self.size_y() - 1 , self.size_z() - 2], buildingCondition["flip"], 
-                        buildingCondition["rotation"], buildingCondition["referencePoint"], buildingCondition["position"])
+                        # Fill the area with air block
 
-        worldModif.fillBlocks(fromBlock[0], fromBlock[1], fromBlock[2], toBlock[0], toBlock[1], toBlock[2], "minecraft:air")
+        from_block = self.returnWorldPosition([1, 0, 1], building_conditions.flip,
+                                              building_conditions.rotation, building_conditions.referencePoint,
+                                              building_conditions.position)
+        to_block = self.returnWorldPosition([self.size_x() - 2, self.size_y() - 1, self.size_z() - 2],
+                                            building_conditions.flip,
+                                            building_conditions.rotation, building_conditions.referencePoint,
+                                            building_conditions.position)
+
+        world_modification.fillBlocks(from_block[0], from_block[1], from_block[2], to_block[0], to_block[1],
+                                      to_block[2],
+                                      "minecraft:air")
 
         # Add the fences
-        self.addFencesToQuarry(worldModif, buildingCondition)
+        self.addFencesToQuarry(world_modification, building_conditions)
         # Add the fence gate and the ladders
-        self.addFenceGateToQuarry(worldModif, buildingCondition)   
+        self.addFenceGateToQuarry(world_modification, building_conditions)
         # Add the items to the chests
-        self.addChestToQuarry(worldModif, buildingCondition, self.listOfBlocks)
+        self.addChestToQuarry(world_modification, building_conditions, self.list_of_blocks)
 
-        torchPositions = [[1, int(self.size_z() / 2)], [int(self.size_x() / 2), self.size_z() - 2], [self.size_x() - 2, int(self.size_z()/2)]]
-        orientations = ["east", "north", "west"]
+        torch_positions: list = [[1, int(self.size_z() / 2)], [int(self.size_x() / 2), self.size_z() - 2],
+                                 [self.size_x() - 2, int(self.size_z() / 2)]]
+        orientations: list = ["east", "north", "west"]
 
-        for i in range(len(torchPositions)):
+        for i in range(len(torch_positions)):
             position = self.returnWorldPosition(
-                        [torchPositions[i][0], int(self.size_y() / 3), torchPositions[i][1]], 
-                        buildingCondition["flip"], buildingCondition["rotation"], 
-                        buildingCondition["referencePoint"], buildingCondition["position"])
+                [torch_positions[i][0], int(self.size_y() / 3), torch_positions[i][1]],
+                building_conditions.flip, building_conditions.rotation,
+                building_conditions.referencePoint, building_conditions.position)
             # Set a chest
-            worldModif.setBlock(position[0], position[1], position[2], "minecraft:wall_torch[" +  self.convertProperty("facing", orientations[i])  +"]")
+            self.applyBlockTransformationThenPlace(world_modification, position[0], position[1], position[2],
+                                                   "minecraft:wall_torch[" + self.convertProperty("facing",
+                                                                                                  orientations[
+                                                                                                      i]) + "]")
 
     """
     Add chest at the bottom of quarry and fill it with blocks removed by the quarry
     """
-    def addChestToQuarry(self, worldModif, buildingCondition, list):  
-        position = self.returnWorldPosition(
-                        [1, 0, 1], buildingCondition["flip"], 
-                        buildingCondition["rotation"], buildingCondition["referencePoint"], buildingCondition["position"])
-        # Set a chest
-        worldModif.setBlock(position[0], position[1], position[2], "minecraft:chest[" +  self.convertProperty("facing", "south")  +"]", placeImmediately=True)
 
-        counter = collections.Counter(list)
+    def addChestToQuarry(self, world_modification, building_conditions: BuildingCondition, list_of_blocks: numpy.ndarray):
+        position = self.returnWorldPosition(
+            [1, 0, 1], building_conditions.flip,
+            building_conditions.rotation, building_conditions.referencePoint, building_conditions.position)
+
+        # Set a chest
+        world_modification.setBlock(position[0], position[1], position[2],
+                                    "minecraft:chest[" + self.convertProperty("facing", "south") + "]",
+                                    placeImmediately=True)
+
+        counter = collections.Counter(list_of_blocks)
         items = counter.items()
-        itemsList = []
+        itemsList: list_of_blocks = []
         for i in items:
             # If there is more than one stack of block (64)
             if i[1] > 64:
                 x = i[1] / 64
                 y = math.floor(x)
                 for z in range(0, y):
-                    newList = []
-                    newList.append(i[0])
-                    newList.append(64)
+                    newList: list_of_blocks = [i[0], 64]
                     itemsList.append(newList)
             else:
-                sublist = []
-                sublist.append(i[0])
-                sublist.append(i[1])
+                sublist: list_of_blocks = [i[0], i[1]]
                 itemsList.append(sublist)
-        util.addItemChest(position[0], position[1], position[2], itemsList)
-        
 
-    def addFencesToQuarry(self, worldModif, buildingCondition):
+        util.addItemChest(position[0], position[1], position[2], itemsList)
+
+    def addFencesToQuarry(self, world_modification, building_conditions: BuildingCondition):
         # Add the fences for the quarry
 
         fenceSideUpperPosition = self.size_y() - 3
@@ -146,63 +169,72 @@ class GeneratedQuarry(BaseStructure):
         for i in [0, 1, 2, 3]:
             for j in range(lengths[i]):
                 for y in range(fenceSideUpperPosition):
-                    localPosition = [positions[i][0] + j * multiplier[i][0], y , positions[i][1] + j * multiplier[i][1]] 
+                    localPosition = [positions[i][0] + j * multiplier[i][0], y, positions[i][1] + j * multiplier[i][1]]
                     position = self.returnWorldPosition(
-                        localPosition, buildingCondition["flip"], 
-                        buildingCondition["rotation"], buildingCondition["referencePoint"], buildingCondition["position"])
-                    
-                    block = worldModif.interface.getBlock(position[0], position[1], position[2])
-                    if  block in self.uselessBlocks or y == fenceSideUpperPosition - 1:
-                        worldModif.setBlock(position[0], position[1], position[2], self.fenceType + "[waterlogged=false]")
+                        localPosition, building_conditions.flip,
+                        building_conditions.rotation, building_conditions.referencePoint,
+                        building_conditions.position)
 
-    
-    def addFenceGateToQuarry(self, worldModif, buildingCondition):
+                    block = world_modification.interface.getBlock(position[0], position[1], position[2])
+                    if block in self.useless_blocks or y == fenceSideUpperPosition - 1:
+                        self.applyBlockTransformationThenPlace(world_modification, position[0], position[1],
+                                                               position[2],
+                                                               self.fence_type + "[waterlogged=false]")
+
+    def addFenceGateToQuarry(self, world_modification, building_conditions: BuildingCondition):
         # Add the fence gate
-        position = self.returnWorldPosition(
-                        [self.entry[0], self.entry[1] + 2, self.entry[2]],
-                        buildingCondition["flip"], buildingCondition["rotation"], buildingCondition["referencePoint"],
-                        buildingCondition["position"])
-        
-        worldModif.setBlock(position[0], position[1], position[2],  "minecraft:air")
+        position: list = self.returnWorldPosition(
+            [self.entry[0], self.entry[1] + 2, self.entry[2]],
+            building_conditions.flip, building_conditions.rotation, building_conditions.referencePoint,
+            building_conditions.position)
 
-        worldModif.setBlock(position[0], position[1] - 1, position[2], self.fenceGateType + "[" + self.convertProperty("facing", "north") + "]")
+        world_modification.setBlock(position[0], position[1], position[2], "minecraft:air")
 
-        positions = [[-2, 2], [-1, 2], [-1, 3], [0, 3], [1, 3], [1, 2], [2, 2]]
+        self.applyBlockTransformationThenPlace(world_modification, position[0], position[1] - 1, position[2],
+                                               self.fence_gate_type + "[" + self.convertProperty("facing",
+                                                                                                 "north") + "]")
+
+        positions: list = [[-2, 2], [-1, 2], [-1, 3], [0, 3], [1, 3], [1, 2], [2, 2]]
         for pos in positions:
             position = self.returnWorldPosition(
-                        [   self.entry[0] + pos[0], 
-                            self.entry[1] + pos[1], 
-                            self.entry[2]],
-                        buildingCondition["flip"], buildingCondition["rotation"], buildingCondition["referencePoint"],
-                        buildingCondition["position"])
-            worldModif.setBlock(position[0], position[1], position[2], self.fenceType + "[waterlogged=false]")
-        
-        positions = [ [-1, 4], [0, 4], [1, 4]]
+                [self.entry[0] + pos[0],
+                 self.entry[1] + pos[1],
+                 self.entry[2]],
+                building_conditions.flip, building_conditions.rotation, building_conditions.referencePoint,
+                building_conditions.position)
+
+            self.applyBlockTransformationThenPlace(world_modification, position[0], position[1], position[2],
+                                                   self.fence_type + "[waterlogged=false]")
+
+        positions = [[-1, 4], [0, 4], [1, 4]]
         for pos in positions:
             position = self.returnWorldPosition(
-                        [   self.entry[0] + pos[0], 
-                            self.entry[1] + pos[1], 
-                            self.entry[2]],
-                        buildingCondition["flip"], buildingCondition["rotation"], buildingCondition["referencePoint"],
-                        buildingCondition["position"])
-            worldModif.setBlock(position[0], position[1], position[2], "minecraft:torch")
-        
+                [self.entry[0] + pos[0],
+                 self.entry[1] + pos[1],
+                 self.entry[2]],
+                building_conditions.flip, building_conditions.rotation, building_conditions.referencePoint,
+                building_conditions.position)
+
+            self.applyBlockTransformationThenPlace(world_modification, position[0], position[1], position[2],
+                                                   "minecraft:torch")
 
         # Add the ladders
         for wood in range(self.entry[1] + 1):
             position = self.returnWorldPosition(
                 [self.entry[0], wood, self.entry[2]],
-                buildingCondition["flip"], buildingCondition["rotation"], buildingCondition["referencePoint"],
-                buildingCondition["position"])
+                building_conditions.flip, building_conditions.rotation, building_conditions.referencePoint,
+                building_conditions.position)
 
-            worldModif.setBlock(position[0], position[1], position[2], self.strippedWoodType)
+            self.applyBlockTransformationThenPlace(world_modification, position[0], position[1], position[2],
+                                                   self.stripped_wood_type)
 
             position = self.returnWorldPosition(
                 [self.entry[0], wood, self.entry[2] + 1],
-                buildingCondition["flip"], buildingCondition["rotation"], buildingCondition["referencePoint"],
-                buildingCondition["position"])
-       
-            worldModif.setBlock(position[0], position[1], position[2], "minecraft:ladder[" + self.convertProperty("facing", "south")  +  ",waterlogged=false]")
-    
-        #print("Finish building : basicQuarry")
-        
+                building_conditions.flip, building_conditions.rotation, building_conditions.referencePoint,
+                building_conditions.position)
+
+            self.applyBlockTransformationThenPlace(world_modification, position[0], position[1], position[2],
+                                                   "minecraft:ladder[" + self.convertProperty("facing",
+                                                                                              "south") + ",waterlogged=false]")
+
+        # print("Finish building : basicQuarry")

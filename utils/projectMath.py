@@ -12,7 +12,7 @@ def isPointInCube(point, cube):
 def isPointInSquare(point, square):
     if (square[0] <= point[0] and square[2] >= point[0]):
         if (square[1] <= point[1] and square[3] >= point[1]):
-                return True
+            return True
 
     return False
 
@@ -23,12 +23,14 @@ zPos = z position of reference block
 CornersPos = Corners of house related to referenceBlock
 house = Corners of other house we want to check
 """
+
+
 def isTwoRectOverlapse(position1, size1, position2, size2):
     if position1[0] + size1[2] < position2[0] + size2[0]:
         return False
 
     if position1[0] + size1[0] > position2[0] + size2[2]:
-        return False 
+        return False
 
     if position1[1] + size1[3] < position2[1] + size2[1]:
         return False
@@ -44,7 +46,7 @@ def isTwoRectOverlapse(position1, size1, position2, size2, moreSize):
         return False
 
     if position1[0] + size1[0] - moreSize > position2[0] + size2[2]:
-        return False 
+        return False
 
     if position1[1] + size1[3] + moreSize < position2[1] + size2[1]:
         return False
@@ -55,9 +57,21 @@ def isTwoRectOverlapse(position1, size1, position2, size2, moreSize):
     return True
 
 
-def rotatePointAround(origin, point, angle) :
-    return [  
+def rotatePointAround(origin, point, angle):
+    return [
         round(math.cos(angle) * (point[0] - origin[0]) - math.sin(angle) * (point[1] - origin[1]) + origin[0], 4),
         round(math.sin(angle) * (point[0] - origin[0]) + math.cos(angle) * (point[1] - origin[1]) + origin[1], 4),
     ]
-      
+
+
+def isInHouse(list_house: list, coord: list):
+    houses_to_verify: list = list_house.copy()
+
+    while houses_to_verify:
+        house: list = houses_to_verify.pop()
+        if isPointInSquare(coord,
+                           [house[0] + house[3][0], house[2] + house[3][1], house[0] + house[3][2],
+                            house[2] + house[3][3]]):
+            return True
+
+    return False
