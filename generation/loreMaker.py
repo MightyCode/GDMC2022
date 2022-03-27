@@ -41,8 +41,8 @@ def createVillageRelationAndAssign(villages: list) -> VillageInteraction:
 
     for i in range(len(villages) - 1):
         villages[i].makeRelations(otherVillages)
-        for villageId in villages[i].villageInteractions.keys():
-            interactions.append(villages[i].villageInteractions[villageId])
+        for villageId in villages[i].village_interactions.keys():
+            interactions.append(villages[i].village_interactions[villageId])
 
         del otherVillages[0]
 
@@ -66,8 +66,8 @@ def checkForImpossibleInteractions(villages: list, interactions: list):
             if interaction.state != VillageInteraction.STATE_WAR:
                 continue
 
-            interaction1 = village.villageInteractions[interaction.village1]
-            interaction2 = village.villageInteractions[interaction.village2]
+            interaction1 = village.village_interactions[interaction.village1]
+            interaction2 = village.village_interactions[interaction.village2]
 
             if (
                     interaction1.state != VillageInteraction.STATE_LOVE and interaction1.state != VillageInteraction.STATE_FRIENDSHIP) or \

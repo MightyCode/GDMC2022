@@ -60,7 +60,7 @@ def generateVillageBooks(settlementData: SettlementData, nameGenerator: NameGene
     for name in textDeadVillagers[2]:
         dead_villager = Villager(village_model)
         dead_villager.name = name
-        village_model.deadVillager.append(dead_villager)
+        village_model.dead_villagers.append(dead_villager)
 
     textVillagePresentationBook = book.createTextOfPresentationVillage(village_model.name,
                                                                        settlementData.structure_number_goal,
@@ -225,7 +225,7 @@ def modifyBuildingConditionDependingOnStructure(building_conditions: BuildingCon
 
         building_conditions.special = {"sign": []}
 
-        listOfDead = settlementData.village_model.deadVillager.copy()
+        listOfDead = settlementData.village_model.dead_villagers.copy()
         i = 0
         while i < number:
             building_conditions.special["sign"].append("")
@@ -252,12 +252,18 @@ def modifyBuildingConditionDependingOnStructure(building_conditions: BuildingCon
     elif structure.name == "adventurerhouse":
         building_conditions.special["adventurerhouse"] = [book.createBookForAdventurerHouse(building_conditions.flip)]
     elif structure.name == "mediumstatue":
-        building_conditions.special = {"sign": ["", "", "", ""]}
-        index = random.randint(0, len(settlementData.village_model.deadVillager) - 1)
-        name = settlementData.village_model.deadVillager[index].name
+        building_conditions.special = {"sign": ["", "", "", "", "", "", "", ""]}
+        index: int = 0
+        if len(settlementData.village_model.dead_villagers) > 1:
+            index = random.randint(0, len(settlementData.village_model.dead_villagers) - 1)
+
+        name = settlementData.village_model.dead_villagers[index].name
         util.parseVillagerNameInLines([
             "In tribute to " + name + ", hero who died in the war"
         ], building_conditions.special["sign"])
+
+        if building_conditions.special["sign"][4] == "":
+            building_conditions.special["sign"] = building_conditions.special["sign"][0:4]
 
     if structure.type == "houses":
         for villager in settlementData.village_model.villagers:

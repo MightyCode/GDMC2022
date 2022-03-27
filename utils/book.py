@@ -232,10 +232,10 @@ def createBookForVillager(village_model: Village, villager: Villager) -> list:
 
             targeted = -1
 
-            if len(village_model.deadVillager) == 1:
+            if len(village_model.dead_villagers) == 1:
                 targeted = 0
-            elif len(village_model.deadVillager) > 1:
-                targeted = village_model.deadVillager[rd.randint(0, len(village_model.deadVillager) - 1)].name
+            elif len(village_model.dead_villagers) > 1:
+                targeted = village_model.dead_villagers[rd.randint(0, len(village_model.dead_villagers) - 1)].name
 
             if targeted != -1:
                 textDiaryVillager += (f'{newDiaryTextWithTarget[randomDiaryTextWithTarget]}'

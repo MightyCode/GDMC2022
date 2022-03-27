@@ -93,7 +93,7 @@ class StructureManager:
 
             self.village_model.free_villager += numberToAdd
 
-        # Functionnals or representatives structure
+        # Functionals or representatives structure
         elif structure["type"] == StructureManager.FUNCTIONALS or structure["type"] == StructureManager.REPRESENTATIVES:
             numberToAttribute = struct.info["villageInfo"]["villager"]
 
@@ -197,6 +197,8 @@ class StructureManager:
 
     def checkOneCondition(self, name: str, conditionValues: dict):
         valueToCheck = 0
+
+        # TODO taking into account relation
 
         if name == "villagerNeeded":
             valueToCheck = self.village_model.free_villager

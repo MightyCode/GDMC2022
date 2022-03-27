@@ -12,8 +12,6 @@ class Villager:
 
         self.village: Village = village
 
-        self.isDead = False
-
         self.parentOf: list = []
         self.childOf: list = []
 

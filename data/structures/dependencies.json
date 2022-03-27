@@ -356,5 +356,67 @@
                 { "name" : "statue", "max" : 1 }
             ]
         }
+    },
+    "shop" : {
+        "tier": {
+            "0": [
+                "basicshop"
+            ],
+            "1": [
+                "mediumshop"
+            ],
+            "2": [
+                "mediumshop"
+            ]
+        },
+        "type" : "functionals",
+        "conditions" : {
+            "villagerNeeded" : { "min" : 1 },
+            "previous" : [
+                { "name" : "shop", "max" : 2 }
+            ]
+        }
+    },
+    "horsebox" : {
+        "tier": {
+            "0": [
+                "basichorseboxl", "basichorseboxh"
+            ],
+            "1": [
+                "mediumhorseboxl", "mediumhorseboxh"
+            ],
+            "2": [
+                "advancedhorseboxl", "advancedhorseboxh"
+            ]
+        },
+        "type" : "functionals",
+        "conditions" : {
+            "previous" : [
+                { "name" : "horsebox", "max" : 4 }
+            ]
+        }
+    },
+    "exchanger" : {
+        "tier": {
+            "0": [
+                "basicexchanger"
+            ],
+            "1": [
+                "mediumexchanger"
+            ],
+            "2": [
+                "mediumexchanger"
+            ]
+        },
+        "type" : "functionals",
+        "conditions" : {
+            "villagerNeeded" : { "min" : 1 },
+            "previous" : [
+                { "name" : "exchanger", "max" : 1 }
+            ],
+            "relations": [
+                { "name" : "love", "min" : 1 }
+            ]
+        }, "priority" : "full"
     }
 }

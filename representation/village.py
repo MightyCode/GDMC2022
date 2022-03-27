@@ -29,7 +29,7 @@ class Village:
 
         self.position: list = [0, 0]
 
-        self.villageInteractions: dict = {}
+        self.village_interactions: dict = {}
         # Could be in war
         self.status = "peaceful"
 
@@ -39,7 +39,7 @@ class Village:
 
         # Within generation information
         self.villagers: list = []
-        self.deadVillager: list = []
+        self.dead_villagers: list = []
         self.lore_structures: list = []
 
         self.free_villager: int = 0
@@ -90,15 +90,14 @@ class Village:
             self.addRelation(village, relation)
 
     def addRelation(self, otherVillage, relation):
-        self.villageInteractions[otherVillage] = relation
+        self.village_interactions[otherVillage] = relation
 
     def generateLoreAfterRelation(self):
         self.status = Village.STATE_PEACEFUL
 
-        for key in self.villageInteractions.keys():
-            interaction = self.villageInteractions[key]
+        for key in self.village_interactions.keys():
+            interaction = self.village_interactions[key]
 
-            print(interaction.state)
             if interaction.state == VillageInteraction.STATE_WAR:
                 self.status = Village.STATE_WAR
 

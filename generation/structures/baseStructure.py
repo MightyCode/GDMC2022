@@ -175,6 +175,9 @@ class BaseStructure:
             if key == "sign":
                 i = 0
                 for sign in self.info["special"][key]:
+                    if len(buildingCondition.special["sign"]) <= i * 4:
+                        break
+
                     signPosition = self.returnWorldPosition(
                         sign["position"],
                         buildingCondition.flip, buildingCondition.rotation,
@@ -190,7 +193,6 @@ class BaseStructure:
                         False,
                         True)
 
-                    print(buildingCondition.special.keys())
                     if buildingCondition.special["sign"][i * 4] == "" and buildingCondition.special["sign"][i * 4 + 1] == "":
                         if buildingCondition.special["sign"][i * 4 + 2] == "" and \
                                 buildingCondition.special["sign"][i * 4 + 3] == "":

@@ -17,6 +17,15 @@ import generation.loreMaker as loreMaker
 import lib.interfaceUtils as interfaceUtil
 import generation.generator as generator
 
+
+"""
+Important information
+"""
+
+structure_name: str = "mediumshop"
+structure_type: str = "functionals"
+
+
 file: str = "temp.txt"
 interface: interfaceUtil.Interface = interfaceUtil.Interface(buffering=True, caching=True)
 interface.setCaching(True)
@@ -48,10 +57,12 @@ if not args.remove:
     villagers[2].name = "Rodriguez 3"
     villagers[2].minecraftJob = "leatherworker"
     villagers[3].name = "Rodriguez 4"
-    villagers[4].name = "Rodriguez 5"
-    villagers[4].dead = True
+
+    deadVillagers: list = [Villager(village)]
+    deadVillagers[0].name = "Rodriguez 5"
 
     village.villagers = villagers
+    village.dead_villagers = deadVillagers
 
     trade: Trade = Trade()
     trade.offer = "minecraft:gold_nugget"
@@ -64,60 +75,22 @@ if not args.remove:
     resources: Resources = Resources()
     resLoader.loadAllResources(resources)
     chestGeneration: ChestGeneration = ChestGeneration(resources, interface)
-    structure: BaseStructure = resources.structures["mediumstatue"]
+    structure: BaseStructure = resources.structures[structure_name]
 
     lore_structure: LoreStructure = LoreStructure()
     lore_structure.age = 1
     lore_structure.flip = 1
     lore_structure.rotation = 1
+    lore_structure.name = structure_name
     lore_structure.villagers = [villagers[0], villagers[2]]
-    lore_structure.type = "decorations"
+    lore_structure.type = structure_type
     lore_structure.position = [build_area[0] + size_area[0] / 2, 64, build_area[2] + size_area[1] / 2]
+    lore_structure.prebuildingInfo = structure.getNextBuildingInformation(lore_structure.flip, lore_structure.rotation)
 
     settlementData: SettlementData = generator.createSettlementData(build_area, village, resources)
     loreMaker.voteForColor(settlementData)
 
-    info = structure.info
-    buildingCondition = structure.createBuildingCondition()
-    # buildingInfo = structure.setupInfoAndGetCorners()
-    buildingCondition.loreStructure = lore_structure
-    buildingCondition.flip = lore_structure.flip
-    buildingCondition.rotation = lore_structure.rotation
-    buildingInfo: dict = structure.getNextBuildingInformation(buildingCondition.flip, buildingCondition.rotation)
-    buildingCondition.position = lore_structure.position
-    buildingCondition.referencePoint = buildingInfo["entry"]["position"]
-    buildingCondition.size = buildingInfo["size"]
-
-    buildingCondition.replaceAllAir = 3
-
-    structureBiomeId = util.getBiome(buildingCondition.position[0], buildingCondition.position[2], 1, 1)
-    structureBiomeName = resources.biomeMinecraftId[int(structureBiomeId)]
-
-    structureBiomeBlockId = str(resources.biomesBlockId[structureBiomeName])
-
-    if structureBiomeBlockId == "-1":
-        structureBiomeBlockId = "0"
-
-    buildingCondition.replacements = settlementData.getMatRepDeepCopy()
-
-    # Load block for structure biome
-    for aProperty in resources.biomesBlocks[structureBiomeBlockId]:
-        if aProperty in resources.biomesBlocks["rules"]["village"]:
-            buildingCondition.replacements[aProperty] = resources.biomesBlocks[structureBiomeBlockId][aProperty]
-
-    # Load block for structure biome
-    for aProperty in resources.biomesBlocks[structureBiomeBlockId]:
-        if aProperty in resources.biomesBlocks["rules"]["structure"]:
-            buildingCondition.replacements[aProperty] = resources.biomesBlocks[structureBiomeBlockId][aProperty]
-
-    for key in info["special"].keys():
-        buildingCondition.special[key] = info["special"][key]
-
-    """buildingCondition.special["bedroomhouse"] = ["minecraft:written_book" + toolbox.writeBook(
-        book.createBookForVillager(village, villagers[0])[0],
-        title="jean ", author="abcd", description="abcd")]"""
-
-    structure.build(world_modifications, buildingCondition, chestGeneration, block_transformation)
+    generator.generateStructure(lore_structure, settlementData, resources, world_modifications, chestGeneration, block_transformation)
 
     util.spawnVillagerForStructure(settlementData, lore_structure, lore_structure.position)
     world_modifications.saveToFile(file)
