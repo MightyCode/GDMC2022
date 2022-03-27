@@ -73,16 +73,17 @@ def loadAllResources(resources: Resources) -> None:
     resources.loadStructures("representatives/tavern/basictavern.nbt", "representatives/tavern/basictavern.json",
                              "basictavern")
 
-
     resources.loadStructures("representatives/barrack/basicbarrack.nbt", "representatives/barrack/basicbarrack.json",
                              "basicbarrack")
 
     resources.loadStructures("representatives/barrack/mediumbarrack.nbt", "representatives/barrack/mediumbarrack.json",
                              "mediumbarrack")
 
-
     resources.loadStructures("representatives/adventurerhouse/adventurerhouse.nbt",
                              "representatives/adventurerhouse/adventurerhouse.json", "adventurerhouse")
+
+    resources.loadStructures("decorations/mediumstatue.nbt",
+                             "decorations/mediumstatue.json", "mediumstatue")
 
     resources.addGeneratedStructures(GeneratedWell(), "representatives/well/basicgeneratedwell.json",
                                      "basicgeneratedwell")

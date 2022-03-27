@@ -4,6 +4,9 @@ import random
 
 
 class Village:
+    STATE_PEACEFUL = "peaceful"
+    STATE_WAR = "war"
+
     TIER_LOW = 0
     TIER_MID = 1
     TIER_HIGH = 2
@@ -24,7 +27,11 @@ class Village:
         # 0 is young village, 1 represents old village
         self.age: int = 0
 
+        self.position: list = [0, 0]
+
         self.villageInteractions: dict = {}
+        # Could be in war
+        self.status = "peaceful"
 
         self.isDestroyed: bool = False
 
@@ -41,6 +48,9 @@ class Village:
 
         self.color: str = "Undefined"
 
+    def generateVillageInformation(self, name_generator: NameGenerator):
+        self.name = name_generator.generateVillageName(True)
+
     def defineTierAndAge(self):
         self.tier = random.randint(0, 2)
         self.age = 0
@@ -52,22 +62,11 @@ class Village:
             if random.uniform(0, 1) <= Village.CHANCE_TIER_3_OLD:
                 self.age = 1
 
-        print("Tier : " + str(self.tier) + ", Age : " + str(self.age))
-
-    def makeRelations(self, otherVillages: list):
-        for village in otherVillages:
-            relation: VillageInteraction = VillageInteraction(self, village)
-
-            village.addRelation(self, relation)
-            self.addRelation(village, relation)
-
-    def addRelation(self, otherVillage, relation):
-        self.villageInteractions[otherVillage] = relation
-
-    def generateVillageInformation(self, name_generator: NameGenerator):
-        self.name = name_generator.generateVillageName(True)
+        #print("Tier : " + str(self.tier) + ", Age : " + str(self.age))
 
     def generateVillageLore(self):
+        self.defineTierAndAge()
+
         if len(self.villagers) > 1:
             index = random.choice([i for i in range(0, len(self.villagers)) if
                                    self.villagers[i].job != "Mayor"])
@@ -82,6 +81,26 @@ class Village:
         for structure in self.lore_structures:
             if self.murderer_data.villagerTarget in structure.villagers:
                 structure.gift = "minecraft:tnt"
+
+    def makeRelations(self, otherVillages: list):
+        for village in otherVillages:
+            relation: VillageInteraction = VillageInteraction(self, village)
+
+            village.addRelation(self, relation)
+            self.addRelation(village, relation)
+
+    def addRelation(self, otherVillage, relation):
+        self.villageInteractions[otherVillage] = relation
+
+    def generateLoreAfterRelation(self):
+        self.status = Village.STATE_PEACEFUL
+
+        for key in self.villageInteractions.keys():
+            interaction = self.villageInteractions[key]
+
+            print(interaction.state)
+            if interaction.state == VillageInteraction.STATE_WAR:
+                self.status = Village.STATE_WAR
 
 
 from generation.data.murdererData import MurdererData

@@ -190,8 +190,8 @@ class BaseStructure:
                         False,
                         True)
 
-                    if buildingCondition.special["sign"][i * 4] == "" and buildingCondition.special["sign"][
-                        i * 4 + 1] == "":
+                    print(buildingCondition.special.keys())
+                    if buildingCondition.special["sign"][i * 4] == "" and buildingCondition.special["sign"][i * 4 + 1] == "":
                         if buildingCondition.special["sign"][i * 4 + 2] == "" and \
                                 buildingCondition.special["sign"][i * 4 + 3] == "":
                             continue

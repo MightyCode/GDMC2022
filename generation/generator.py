@@ -251,6 +251,13 @@ def modifyBuildingConditionDependingOnStructure(building_conditions: BuildingCon
 
     elif structure.name == "adventurerhouse":
         building_conditions.special["adventurerhouse"] = [book.createBookForAdventurerHouse(building_conditions.flip)]
+    elif structure.name == "mediumstatue":
+        building_conditions.special = {"sign": ["", "", "", ""]}
+        index = random.randint(0, len(settlementData.village_model.deadVillager) - 1)
+        name = settlementData.village_model.deadVillager[index].name
+        util.parseVillagerNameInLines([
+            "In tribute to " + name + ", hero who died in the war"
+        ], building_conditions.special["sign"])
 
     if structure.type == "houses":
         for villager in settlementData.village_model.villagers:

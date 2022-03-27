@@ -325,12 +325,6 @@
     },
     "adventurerHouse" : {
         "tier": {
-            "0": [
-                "adventurerhouse"
-            ],
-            "1": [
-                "adventurerhouse"
-            ],
             "2": [
                 "adventurerhouse"
             ]
@@ -339,8 +333,28 @@
         "conditions" : {
             "previous" : [
                 { "name" : "adventurerHouse", "max" : 1 }
+            ],
+            "tier" : {"values" : [2]}
+        }
+    },
+    "statue" : {
+        "tier" : {
+            "0": [
+                "mediumstatue"
+            ],
+            "1": [
+                "mediumstatue"
+            ],
+            "2": [
+                "mediumstatue"
             ]
         },
-        "priority" : "full"
+        "type" : "decorations",
+        "conditions" : {
+            "status" : {"values" : ["war"]},
+            "previous" : [
+                { "name" : "statue", "max" : 1 }
+            ]
+        }
     }
 }

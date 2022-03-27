@@ -14,12 +14,13 @@ from utils.constants import Constants
 
 import generation.resourcesLoader as resLoader
 import utils.util as util
+import utils.book as book
+import utils.projectMath as projectMath
 import utils.argumentParser as argParser
 import generation.loreMaker as loreMaker
 import generation.road as road
 import lib.interfaceUtils as interfaceUtil
 import lib.toolbox as toolbox
-import utils.book as book
 
 import random
 
@@ -44,19 +45,9 @@ nameGenerator: NameGenerator = NameGenerator()
 if build_area == -1:
     exit()
 
-build_area: tuple = (build_area[0], build_area[1], build_area[2], build_area[3] - 1, build_area[4] - 1, build_area[5] - 1)
+build_area: tuple = (
+    build_area[0], build_area[1], build_area[2], build_area[3] - 1, build_area[4] - 1, build_area[5] - 1)
 size_area: list = [build_area[3] - build_area[0] + 1, build_area[5] - build_area[2] + 1]
-
-"""Generate village involving on our generation"""
-print("Generate lore of the world")
-villages: list = loreMaker.initializedVillages(7, nameGenerator)
-villageInteractions: list = loreMaker.createVillageRelationAndAssign(villages)
-loreMaker.checkForImpossibleInteractions(villages, villageInteractions)
-
-settlement_index: int = 0
-current_village: Village
-
-block_transformation: list = [OldStructureTransformation()]
 
 # Five main steps : init settlement Data, choose structures and find its positions, make road between these
 # structures, and finally build structures.
@@ -67,42 +58,45 @@ if not args.remove:
     chest_generation: ChestGeneration = ChestGeneration(resources, interface)
 
     # Each zone for takes 500 blocks, division begin after 1000
-    zone_number_x: int = int(size_area[0] / 500)
-    if zone_number_x == 0:
-        zone_number_x = 1
+    defined_zone_size = [500, 500]
+    settlement_zones_number: list = [int(size_area[0] / defined_zone_size[0]), int(size_area[1] / defined_zone_size[1])]
+    if settlement_zones_number[0] == 0:
+        settlement_zones_number[0] = 1
 
-    zone_size_x = int(size_area[0] / zone_number_x)
+    if settlement_zones_number[1] == 0:
+        settlement_zones_number[1] = 1
 
-    zone_number_z = int(size_area[1] / 500)
-    if zone_number_z == 0:
-        zone_number_z = 1
-    zone_size_z = int(size_area[1] / zone_number_z)
+    settlement_zones = projectMath.compute_squared_zone_with_number(settlement_zones_number, build_area)
+
+    """Generate village involving on our generation"""
+    print("Generate lore of the world")
+    number_of_existing_village_in_lore = 7
+    villages: list = loreMaker.initializedVillages(loreMaker.gen_position_of_village(settlement_zones, number_of_existing_village_in_lore), nameGenerator)
+    villageInteractions: list = loreMaker.createVillageRelationAndAssign(villages)
+    loreMaker.checkForImpossibleInteractions(villages, villageInteractions)
+
+    settlement_index: int = 0
+    current_village: Village
+
+    block_transformation: list = [OldStructureTransformation()]
 
     current_zone_x: int = 0
     current_zone_z: int = 0
 
-    while current_zone_z < zone_number_z:
+    while current_zone_z < settlement_zones_number[1]:
         current_time: int = int(round(time.time() * 1000)) - milliseconds
 
         if current_time / 1000 >= TIME_LIMIT - TIME_TO_BUILD_A_VILLAGE:
             print("Aboard immediately, not time to generate")
-            current_zone_z = zone_number_z
+            current_zone_z = settlement_zones_number[1]
             continue
 
         # Area of the local village
-        area: list = [
-            build_area[0] + current_zone_x * zone_size_x,
-            build_area[1],
-            build_area[2] + current_zone_z * zone_size_z,
-            build_area[3] if current_zone_x == zone_number_x - 1 else build_area[0] + (
-                    current_zone_x + 1) * zone_size_x,
-            build_area[4],
-            build_area[5] if current_zone_z == zone_number_z - 1 else build_area[2] + (
-                    current_zone_z + 1) * zone_size_z]
+        area: list = settlement_zones[current_zone_z * settlement_zones_number[1] + current_zone_x]
 
         print("\n-------------\nBuild a village in subarea", area)
         current_zone_x += 1
-        if current_zone_x >= zone_number_x:
+        if current_zone_x >= settlement_zones_number[0]:
             current_zone_z += 1
             current_zone_x = 0
 
@@ -112,6 +106,9 @@ if not args.remove:
         print("Global slice done")
 
         current_village = villages[settlement_index]
+        print("Make village named " + current_village.name)
+        print("Tier :" + str(current_village.tier) + ", age : " + str(current_village.age) + ", status : " + current_village.status)
+
         current_village.generated = True
         block_transformation[0].age = current_village.age
 
@@ -192,7 +189,6 @@ if not args.remove:
 
         # Murderer
         murdererData: MurdererData = current_village.murderer_data
-        current_village.generateVillageLore()
 
         books: dict = generator.generateVillageBooks(settlementData, nameGenerator)
         generator.placeBooks(settlementData, books, world_modification)
@@ -249,11 +245,12 @@ if not args.remove:
 
         print("\nBuild decoration")
         floodFill.placeDecorations(settlementData)
-        print("Position of lectern for village", current_zone_z * zone_number_x, ":", [settlementData.center[0],
-                                                                                       Constants.getHeight(
-                                                                                           settlementData.center[0],
-                                                                                           settlementData.center[2]),
-                                                                                       settlementData.center[1]])
+        print("Position of lectern for village", current_zone_z * settlement_zones_number[0], ":",
+              [settlementData.center[0],
+               Constants.getHeight(
+                   settlementData.center[0],
+                   settlementData.center[2]),
+               settlementData.center[1]])
         print("Position of first structure",
               [floodFill.listHouse[0][0], floodFill.listHouse[0][1], floodFill.listHouse[0][2]])
         # iu.runCommand("tp {} {} {}".format(floodFill.listHouse[0][0], floodFill.listHouse[0][1], floodFill.listHouse[0][2]))

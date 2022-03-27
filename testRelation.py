@@ -33,9 +33,12 @@ if __name__ == "__main__":
 
     """Generate village involving on our generation"""
 
-    number_to_generate = 7
+    number_to_generate = 10
+    positions_of_village = []
+    for i in range(number_to_generate):
+        positions_of_village.append([500 * i, 0])
 
-    villages: list = loremaker.initializedVillages(number_to_generate, nameGenerator)
+    villages: list = loremaker.initializedVillages(positions_of_village, nameGenerator)
     villageInteractions: list = loremaker.createVillageRelationAndAssign(villages)
 
     positions_x_on_graph: dict = {}

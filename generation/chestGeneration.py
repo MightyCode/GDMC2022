@@ -18,47 +18,47 @@ class ChestGeneration:
     additionnalObjects : refers to items that must appear in the chest
     """
 
-    def generate(self, x, y, z, lootTableName, changeItemName: dict = None, additionalObject: list = None):
-        if changeItemName is None:
-            changeItemName = {}
-        if additionalObject is None:
-            additionalObject = []
-        lootTable = self.resources.lootTables[lootTableName]["pools"][0]
+    def generate(self, x, y, z, loot_table_name, change_item_name: dict = None, additional_object: list = None):
+        if change_item_name is None:
+            change_item_name = {}
+        if additional_object is None:
+            additional_object = []
 
-        if isinstance(lootTable["rolls"], dict):
-            numberItem = random.randint(lootTable["rolls"]["min"], lootTable["rolls"]["max"])
+        loot_table = self.resources.lootTables[loot_table_name]["pools"][0]
+
+        if isinstance(loot_table["rolls"], dict):
+            numberItem = random.randint(loot_table["rolls"]["min"], loot_table["rolls"]["max"])
         else:
-            numberItem = lootTable["rolls"]
+            numberItem = loot_table["rolls"]
 
-        if numberItem + len(additionalObject) >= 28:
-            print(numberItem + len(additionalObject))
+        if numberItem + len(additional_object) >= 28:
+            print(numberItem + len(additional_object))
 
-        itemPlaces = self.generatePlaces(numberItem + len(additionalObject) - 1)
-        itemPlaces.sort()
+        item_places = self.generatePlaces(numberItem + len(additional_object) - 1)
+        item_places.sort()
         items = []
 
-        additionalPlaces, additionalIndices = self.generateAdditionalPlacesIndices(itemPlaces.copy(),
-                                                                                   len(additionalObject))
+        additional_places, additional_indices = self.generateAdditionalPlacesIndices(item_places.copy(), len(additional_object))
 
-        sumWeight = 0
-        for item in lootTable["entries"]:
-            sumWeight += item["weight"]
+        sum_weight = 0
+        for item in loot_table["entries"]:
+            sum_weight += item["weight"]
 
         j = 0
-        for i in range(len(itemPlaces)):
-            if j < len(additionalPlaces):
-                if itemPlaces[i] == additionalPlaces[j]:
-                    items.append([additionalObject[additionalIndices[j]], 1])
+        for i in range(len(item_places)):
+            if j < len(additional_places):
+                if item_places[i] == additional_places[j]:
+                    items.append([additional_object[additional_indices[j]], 1])
                     j += 1
                     continue
 
-            currentWeight = random.randint(0, sumWeight)
+            current_weight = random.randint(0, sum_weight)
 
-            for item in lootTable["entries"]:
-                currentWeight -= item["weight"]
+            for item in loot_table["entries"]:
+                current_weight -= item["weight"]
 
                 # This item is choosen
-                if currentWeight <= 0:
+                if current_weight <= 0:
                     numberOfItem = 1
 
                     # Compute number of items
@@ -68,7 +68,7 @@ class ChestGeneration:
                                                           item["functions"][0]["count"]["max"])
 
                     # Compute item's name if balise *, means that one word should change
-                    result = util.changeNameWithBalise(item["name"], changeItemName)
+                    result = util.changeNameWithBalise(item["name"], change_item_name)
 
                     if result[0] >= 0:
                         items.append([result[1], numberOfItem])
@@ -77,7 +77,7 @@ class ChestGeneration:
 
                     break
 
-        interfaceUtils.addItemChest(x, y, z, items, itemPlaces)
+        interfaceUtils.addItemChest(x, y, z, items, item_places)
 
     """
     Generate places of items

@@ -201,7 +201,7 @@ class StructureManager:
         if name == "villagerNeeded":
             valueToCheck = self.village_model.free_villager
 
-        # Ex : dirtResources, woordResources
+        # Ex : dirtResources, woodResources
         elif "Resources" in name:
             valueToCheck = self.settlementData.resources[name]
         elif name == "previous":
@@ -220,6 +220,24 @@ class StructureManager:
         if "max" in conditionValues:
             if valueToCheck >= conditionValues["max"]:
                 return False
+
+        if name == "status":
+            for oneStatus in conditionValues["values"]:
+                if oneStatus == self.settlementData.village_model.status:
+                    return True
+            return False
+
+        elif name == "tier":
+            for oneStatus in conditionValues["values"]:
+                if oneStatus == self.settlementData.village_model.tier:
+                    return True
+            return False
+
+        elif name == "age":
+            for oneStatus in conditionValues["values"]:
+                if oneStatus == self.settlementData.village_model.age:
+                    return True
+            return False
 
         return True
 

@@ -13,7 +13,7 @@ class FloodFill:
         self.world_modification = world_modification
         self.set_number_of_houses(settlement_data.structure_number_goal)
         self.listHouse = []
-        random.seed(None, 2)
+        #random.seed(None, 2)
         self.startPosRange = [0.98, 0.98]
 
         self.distanceFirstHouse = 40
@@ -149,8 +149,8 @@ class FloodFill:
         while verif_houses and verif_corners:
             house = verif_houses.pop()
 
-            if not projectMath.isTwoRectOverlapse(position, chosen_corner, [house[0], house[2]], house[3],
-                                                  self.minDistanceHouse):
+            if not projectMath.isTwoRectOverlaps(position, chosen_corner, [house[0], house[2]], house[3],
+                                                 self.minDistanceHouse):
                 verif_overlaps_house = True
             else:
                 """print("N " + str(xPos) + " " + str(zPos) + " " + str(chosenCorner) +  " : flip " + str(rand1) + 

@@ -1,0 +1,19 @@
+{
+  "mainEntry": {
+    "facing" : "north",
+    "position" : [4, 1, 0]
+  },
+  "replacements" : {
+  },
+  "air" : {
+    "preferedAirMode" : 2,
+    "replacements" : [
+      [0, 0, 0, 8, 13, 7]
+    ]
+  },
+  "lootTables" : [
+  ],
+  "special" : {
+    "sign" : [{ "position" : [4, 1, 0], "orientation" : "north"}]
+  } 
+}

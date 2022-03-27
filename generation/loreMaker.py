@@ -3,13 +3,33 @@ from representation.village import Village
 from representation.village import VillageInteraction
 
 
-def initializedVillages(number_of_village: int, nameGenerator) -> list:
+def gen_position_of_village(existing_areas: list, goal_number) -> list:
+    positions: list = []
+
+    for area in existing_areas:
+        positions.append([int((area[0] + area[3]) / 2),
+                          int((area[2] + area[5]) / 2)])
+
+    remaining_index_start: int = len(existing_areas)
+
+    for i in range(goal_number - remaining_index_start):
+        random_index: int = random.randint(0, len(positions) - 1)
+        positions.append([positions[random_index][0] - 500, positions[random_index][0] + 500,
+                          positions[random_index][1] - 500, positions[random_index][1] + 500])
+
+    return positions
+
+
+def initializedVillages(positions_of_villages: list, nameGenerator) -> list:
     villages: list = []
 
-    for i in range(number_of_village):
+    for i in range(len(positions_of_villages)):
         villages.append(Village())
+        villages[i].position = positions_of_villages[i]
         villages[i].generateVillageInformation(nameGenerator)
-        villages[i].defineTierAndAge()
+        villages[i].generateVillageLore()
+
+        voteForColor(villages[i])
 
     return villages
 
@@ -25,6 +45,9 @@ def createVillageRelationAndAssign(villages: list) -> VillageInteraction:
             interactions.append(villages[i].villageInteractions[villageId])
 
         del otherVillages[0]
+
+    for village in villages:
+        village.generateLoreAfterRelation()
 
     return interactions
 
@@ -46,33 +69,37 @@ def checkForImpossibleInteractions(villages: list, interactions: list):
             interaction1 = village.villageInteractions[interaction.village1]
             interaction2 = village.villageInteractions[interaction.village2]
 
-            if (interaction1.state != VillageInteraction.STATE_LOVE and interaction1.state != VillageInteraction.STATE_FRIENDSHIP) or \
-                    (interaction2.state != VillageInteraction.STATE_LOVE and interaction2.state != VillageInteraction.STATE_FRIENDSHIP):
+            if (
+                    interaction1.state != VillageInteraction.STATE_LOVE and interaction1.state != VillageInteraction.STATE_FRIENDSHIP) or \
+                    (
+                            interaction2.state != VillageInteraction.STATE_LOVE and interaction2.state != VillageInteraction.STATE_FRIENDSHIP):
                 continue
 
             if random.randint(0, 1) == 1:
                 interaction1.state = VillageInteraction.STATE_NEUTRAL
                 interaction1.brokeTheirRelation = True
-                print("Relation between " + interaction1.village1.name + " " + interaction1.village2.name + " broken")
+                interaction1.reason = VillageInteraction.REASON_TWO_FRIENDS_WENT_IN_WAR
+                # print("Relation between " + interaction1.village1.name + " " + interaction1.village2.name + " broken")
             else:
                 interaction2.state = VillageInteraction.STATE_NEUTRAL
                 interaction2.brokeTheirRelation = True
-                print("Relation between " + interaction2.village1.name + " " + interaction2.village2.name + " broken")
+                interaction2.reason = VillageInteraction.REASON_TWO_FRIENDS_WENT_IN_WAR
+                # print("Relation between " + interaction2.village1.name + " " + interaction2.village2.name + " broken")
 
 
 def alterSettlementDataWithNewStructures(settlementData, structure):
-    if structure.name == "basictownhall":
-        voteForColor(settlementData)
+    pass
 
 
-def voteForColor(settlementData):
+def applyLoreToSettlementData(settlementData):
+    fillSettlementDataWithColor(settlementData, settlementData.village_model.color)
+
+
+def voteForColor(village):
     colors = ["white", "orange", "magenta", "light_blue", "yellow", "lime", "pink", "gray", "light_gray", "cyan",
               "purple", "blue", "brown", "green", "red", "black"]
-    color = colors[random.randint(0, len(colors) - 1)]
 
-    settlementData.village_model.color = color
-
-    fillSettlementDataWithColor(settlementData, color)
+    village.color = colors[random.randint(0, len(colors) - 1)]
 
 
 def fillSettlementDataWithColor(settlementData, color):

@@ -15,8 +15,6 @@ import utils.util as util
 import utils.argumentParser as argParser
 import generation.loreMaker as loreMaker
 import lib.interfaceUtils as interfaceUtil
-import lib.toolbox as toolbox
-import utils.book as book
 import generation.generator as generator
 
 file: str = "temp.txt"
@@ -66,21 +64,21 @@ if not args.remove:
     resources: Resources = Resources()
     resLoader.loadAllResources(resources)
     chestGeneration: ChestGeneration = ChestGeneration(resources, interface)
-    structure: BaseStructure = resources.structures["basichouse1"]
+    structure: BaseStructure = resources.structures["mediumstatue"]
 
     lore_structure: LoreStructure = LoreStructure()
     lore_structure.age = 1
     lore_structure.flip = 1
     lore_structure.rotation = 1
     lore_structure.villagers = [villagers[0], villagers[2]]
-    lore_structure.type = "houses"
+    lore_structure.type = "decorations"
     lore_structure.position = [build_area[0] + size_area[0] / 2, 64, build_area[2] + size_area[1] / 2]
 
     settlementData: SettlementData = generator.createSettlementData(build_area, village, resources)
     loreMaker.voteForColor(settlementData)
 
     info = structure.info
-    buildingCondition = BaseStructure.createBuildingCondition()
+    buildingCondition = structure.createBuildingCondition()
     # buildingInfo = structure.setupInfoAndGetCorners()
     buildingCondition.loreStructure = lore_structure
     buildingCondition.flip = lore_structure.flip
@@ -112,9 +110,12 @@ if not args.remove:
         if aProperty in resources.biomesBlocks["rules"]["structure"]:
             buildingCondition.replacements[aProperty] = resources.biomesBlocks[structureBiomeBlockId][aProperty]
 
-    buildingCondition.special["bedroomhouse"] = ["minecraft:written_book" + toolbox.writeBook(
+    for key in info["special"].keys():
+        buildingCondition.special[key] = info["special"][key]
+
+    """buildingCondition.special["bedroomhouse"] = ["minecraft:written_book" + toolbox.writeBook(
         book.createBookForVillager(village, villagers[0])[0],
-        title="jean ", author="abcd", description="abcd")]
+        title="jean ", author="abcd", description="abcd")]"""
 
     structure.build(world_modifications, buildingCondition, chestGeneration, block_transformation)
 
