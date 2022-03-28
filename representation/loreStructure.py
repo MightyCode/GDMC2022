@@ -25,6 +25,10 @@ class LoreStructure:
         self.validPosition: list = []
         self.prebuildingInfo: dict = {}
 
+        self.destroyed: bool = True
+        self.causeDestroy: bool = {}
+        self.inConstruction: bool = False
+
     def generateAge(self, village):
         if village.tier == 0:
             return

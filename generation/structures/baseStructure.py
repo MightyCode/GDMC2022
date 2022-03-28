@@ -479,4 +479,11 @@ class BaseStructure:
             if block_name != "minecraft:grass_block":
                 return False
 
+        if block_name == "minecraft:air" \
+                or block_name == "minecraft:cave_air" \
+                or block_name == "minecraft:void_air" \
+                or "coal" in block_name \
+                or "cobweb" in block_name:
+            return False
+
         return True

@@ -112,11 +112,13 @@ def placeBooks(settlement_data: SettlementData, books: dict, world_modification:
 
 def generateStructure(lore_structure: LoreStructure, settlement_data: SettlementData, resources: Resources,
                       world_modification: WorldModification, chest_generation: ChestGeneration,
-                      block_transformation: list) -> None:
+                      block_transformations: list) -> None:
 
     # print(structureData["name"])
     # print(structureData["validPosition"])
-    block_transformation[0].age = lore_structure.age
+    for block_transformation in block_transformations:
+        block_transformation.setLoreStructure(lore_structure)
+
     structure = resources.structures[lore_structure.name]
     info: dict = structure.info
     current_Village: Village = settlement_data.village_model
@@ -154,7 +156,7 @@ def generateStructure(lore_structure: LoreStructure, settlement_data: Settlement
 
     modifyBuildingConditionDependingOnStructure(buildingCondition, settlement_data, lore_structure)
 
-    structure.build(world_modification, buildingCondition, chest_generation, block_transformation)
+    structure.build(world_modification, buildingCondition, chest_generation, block_transformations)
 
     """util.spawnVillagerForStructure(settlementData, structureData,
         [structureData["position"][0], 
@@ -163,7 +165,7 @@ def generateStructure(lore_structure: LoreStructure, settlement_data: Settlement
 
     if build_murderer_cache:
         buildMurdererCache(lore_structure, settlement_data, resources, world_modification, chest_generation,
-                           buildingCondition, block_transformation)
+                           buildingCondition, block_transformations)
 
     if lore_structure.gift != "Undefined":
         position = lore_structure.position

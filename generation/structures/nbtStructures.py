@@ -186,7 +186,6 @@ class NbtStructures(BaseStructure):
             self.checkBeforePlacing(block_name)
             new_block_id = self.convertNbtBlockToStr(
                 self.file["palette"][block["state"].value],
-                block_transformations,
                 should_take_original_block
             )
 
@@ -253,7 +252,7 @@ class NbtStructures(BaseStructure):
                         print("Can't add a book to a lectern at pos : " + str(blockPosition))
                     break
 
-    def convertNbtBlockToStr(self, block_palette, block_transformations: list, take_original_block_name=False):
+    def convertNbtBlockToStr(self, block_palette, take_original_block_name=False):
         if take_original_block_name:
             block = block_palette[NbtStructures.CHANGE_ORIGINAL_BLOCK].value
         else:
