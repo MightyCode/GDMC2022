@@ -47,21 +47,15 @@ def generateVillageBooks(settlementData: SettlementData, nameGenerator: NameGene
     village_model: Village = settlementData.village_model
 
     # Create books for the village
-    strVillagers: str = ""
 
-    for villager in village_model.villagers:
-        strVillagers += villager.name + " : " + villager.job + ";"
-
-    listOfVillagers: list = strVillagers.split(";")
-
-    textVillagersNames = book.createTextForVillagersNames(listOfVillagers)
-    textDeadVillagers = book.createTextForDeadVillagers(listOfVillagers, village_model.dead_villagers)
+    textVillagersNames = book.createTextForVillagersNames(village_model.villagers)
+    textDeadVillagers = book.createTextForDeadVillagers(village_model.villagers, village_model.dead_villagers)
 
     textVillagePresentationBook = book.createTextOfPresentationVillage(village_model.name,
                                                                        settlementData.structure_number_goal,
                                                                        village_model.lore_structures,
                                                                        textDeadVillagers[1],
-                                                                       listOfVillagers)
+                                                                       village_model.villagers)
 
     settlementData.textOfBooks = [textVillagersNames, textDeadVillagers]
 

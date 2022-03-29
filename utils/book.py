@@ -1,4 +1,3 @@
-from utils.nameGenerator import NameGenerator
 from representation.villager import Villager
 from representation.village import Village
 
@@ -36,7 +35,7 @@ Return the text of the book of the village presentation
 
 
 def createTextOfPresentationVillage(villageName: str, structuresNumber: int, structures: list, deadVillagersNumber: int,
-                                    listOfVillagers):
+                                    villages: list):
     textVillagePresentationBook = (
         '\\\\s--------------\\\\n'
         '                      \\\\n'
@@ -58,7 +57,7 @@ def createTextOfPresentationVillage(villageName: str, structuresNumber: int, str
         if "house" in structure.name:
             numberOfHouse += 1
 
-    textVillagePresentationBook += (f'{len(listOfVillagers)} villagers arrived in '
+    textVillagePresentationBook += (f'{len(villages)} villagers arrived in '
                                     f'{numberOfHouse} houses \\\\n')
     textVillagePresentationBook += f'{deadVillagersNumber} villagers have died since their arrival. \\\\n'
     textVillagePresentationBook += (''
@@ -83,17 +82,25 @@ Return the text of the book of the villagers names and professions
 """
 
 
-def createTextForVillagersNames(listOfVillagers):
+def createTextForVillagersNames(villagers: list):
     textVillagerNames = 'Registry of living villagers \\\\n'
-    for i in range(len(listOfVillagers)):
+
+    villageStr: str
+    i = 0
+    for villager in villagers:
+        villageStr = villager.name + " : " + villager.job
+
         if i <= 3:
             textVillagerNames += ('-'
-                                  f'{listOfVillagers[i]}       \\\\n')
+                                  f'{villageStr}       \\\\n')
         if i % 4 == 0 and i != 0:
             textVillagerNames += '\f'
         if i >= 4:
             textVillagerNames += ('-'
-                                  f'{listOfVillagers[i]}       \\\\n')
+                                  f'{villageStr}       \\\\n')
+
+        i += 1
+
     textVillagerNames += '\f'
 
     return textVillagerNames
@@ -104,16 +111,19 @@ Return the text of the book of the dead villagers names and professions
 """
 
 
-def createTextForDeadVillagers(listOfVillagers: list, deadVillagers: list):
+def createTextForDeadVillagers(villagers: list, deadVillagers: list):
     numberOfDead = len(deadVillagers)
 
-    listOfVillagersWithoutJob = [i.split(':', 1)[0] for i in listOfVillagers]
+    names = []
+    for villager in villagers:
+        names.append(villager.name)
+
     textDeadVillagers = 'Registry of dead villagers \\\\n'
 
     i = 0
     for deadVillager in deadVillagers:
         randomDeath = rd.randint(0, len(REASON_OF_DEATHS) - 1)
-        if deadVillager.name in listOfVillagersWithoutJob:
+        if deadVillager.name in names:
             textDeadVillagers += ('-'
                                   f'{deadVillager.name} Senior : '
                                   f'{REASON_OF_DEATHS[randomDeath]} \\\\n')
