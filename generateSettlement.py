@@ -187,6 +187,7 @@ if not args.remove:
         """ Third main step : creates lore of the village """
         print("\nGenerate lore of the village")
 
+        loreMaker.createListOfDeadVillager(current_village, nameGenerator)
         # Murderer
         murdererData: MurdererData = current_village.murderer_data
 

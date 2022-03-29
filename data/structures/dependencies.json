@@ -389,7 +389,7 @@
                 "advancedhorseboxl", "advancedhorseboxh"
             ]
         },
-        "type" : "functionals",
+        "type" : "representatives",
         "conditions" : {
             "previous" : [
                 { "name" : "horsebox", "max" : 4 }

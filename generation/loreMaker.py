@@ -1,5 +1,6 @@
 import random
 from representation.village import Village
+from representation.villager import Villager
 from representation.village import VillageInteraction
 
 
@@ -117,3 +118,13 @@ def fillSettlementDataWithColor(settlementData, color):
     settlementData.setMaterialReplacement("bed", "minecraft:" + color + "_bed")
     settlementData.setMaterialReplacement("banner", "minecraft:" + color + "_banner")
     settlementData.setMaterialReplacement("wall_banner", "minecraft:" + color + "_wall_banner")
+
+
+# Minimum of 10 deaths
+def createListOfDeadVillager(village: Village, nameGenerator):
+    randomOfDeadVillagers = random.randint(10, max(len(village.villagers) - 1, 10))
+
+    for i in range(randomOfDeadVillagers):
+        dead_villager: Villager = Villager(village)
+        dead_villager.name = nameGenerator.generateVillagerName(True)
+        village.dead_villagers.append(dead_villager)

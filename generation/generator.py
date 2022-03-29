@@ -37,8 +37,8 @@ def createSettlementData(area: list, village_model: Village, resources: Resource
     # Per default, chosen color is white
     lore_maker.fillSettlementDataWithColor(settlement_data, "white")
 
-    #settlement_data.structure_number_goal = 8
-    settlement_data.structure_number_goal = random.randint(20, 50)
+    settlement_data.structure_number_goal = 8
+    #settlement_data.structure_number_goal = random.randint(20, 50)
 
     return settlement_data
 
@@ -55,12 +55,7 @@ def generateVillageBooks(settlementData: SettlementData, nameGenerator: NameGene
     listOfVillagers: list = strVillagers.split(";")
 
     textVillagersNames = book.createTextForVillagersNames(listOfVillagers)
-    textDeadVillagers = book.createTextForDeadVillagers(listOfVillagers, nameGenerator)
-
-    for name in textDeadVillagers[2]:
-        dead_villager = Villager(village_model)
-        dead_villager.name = name
-        village_model.dead_villagers.append(dead_villager)
+    textDeadVillagers = book.createTextForDeadVillagers(listOfVillagers, village_model.dead_villagers)
 
     textVillagePresentationBook = book.createTextOfPresentationVillage(village_model.name,
                                                                        settlementData.structure_number_goal,

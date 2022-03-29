@@ -104,40 +104,39 @@ Return the text of the book of the dead villagers names and professions
 """
 
 
-def createTextForDeadVillagers(listOfVillagers: list, nameGenerator: NameGenerator):
-    randomOfDeadVillagers = rd.randint(1, len(listOfVillagers) - 1)
+def createTextForDeadVillagers(listOfVillagers: list, deadVillagers: list):
+    numberOfDead = len(deadVillagers)
 
-    data = {"listOfDeadVillagers": []}
-    for i in range(randomOfDeadVillagers):
-        data["listOfDeadVillagers"].append(nameGenerator.generateVillagerName(True))
     listOfVillagersWithoutJob = [i.split(':', 1)[0] for i in listOfVillagers]
     textDeadVillagers = 'Registry of dead villagers \\\\n'
 
-    for i in range(len(data["listOfDeadVillagers"])):
-        deadVillager = data["listOfDeadVillagers"][i]
+    i = 0
+    for deadVillager in deadVillagers:
         randomDeath = rd.randint(0, len(REASON_OF_DEATHS) - 1)
-        if deadVillager in listOfVillagersWithoutJob:
+        if deadVillager.name in listOfVillagersWithoutJob:
             textDeadVillagers += ('-'
-                                  f'{deadVillager} Senior : '
+                                  f'{deadVillager.name} Senior : '
                                   f'{REASON_OF_DEATHS[randomDeath]} \\\\n')
         if i <= 2:
             if i == 2:
                 textDeadVillagers += ('-'
-                                      f'{deadVillager} : '
+                                      f'{deadVillager.name} : '
                                       f'{REASON_OF_DEATHS[0]} \\\\n')
             else:
                 textDeadVillagers += ('-'
-                                      f'{deadVillager} : '
+                                      f'{deadVillager.name} : '
                                       f'{REASON_OF_DEATHS[randomDeath]} \\\\n')
         if i % 3 == 0 and i != 0:
             textDeadVillagers += '\f'
         if i >= 3:
             textDeadVillagers += ('-'
-                                  f'{deadVillager} : '
+                                  f'{deadVillager.name} : '
                                   f'{REASON_OF_DEATHS[randomDeath]} \\\\n')
+
+        i += 1
     textDeadVillagers += '\f'
 
-    return [textDeadVillagers, randomOfDeadVillagers, data["listOfDeadVillagers"]]
+    return [textDeadVillagers, numberOfDead]
 
 
 def createBookForVillager(village_model: Village, villager: Villager) -> list:
