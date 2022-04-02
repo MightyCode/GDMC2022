@@ -9,6 +9,10 @@ class LoreStructure:
 
     EXCLUDED_FROM_AGE = ["townhall"]
 
+    TYPE_HOUSES = "houses"
+    TYPE_FUNCTIONALS = "functionals"
+    TYPE_REPRESENTATIVES = "representatives"
+
     def __init__(self):
         self.age: int = 0
         self.name: str = ""
@@ -25,7 +29,7 @@ class LoreStructure:
         self.validPosition: list = []
         self.prebuildingInfo: dict = {}
 
-        self.destroyed: bool = True
+        self.destroyed: bool = False
         self.causeDestroy: bool = {}
         self.inConstruction: bool = False
 

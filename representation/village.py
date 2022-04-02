@@ -34,6 +34,7 @@ class Village:
         self.status = "peaceful"
 
         self.isDestroyed: bool = False
+        self.destroyCause: str = ""
 
         self.generated: bool = False
 

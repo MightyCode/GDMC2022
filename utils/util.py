@@ -328,3 +328,28 @@ def applyBlockTransformationThenFill(world_modification, from_x: int, from_y: in
         for y in range(from_y, to_y):
             for z in range(from_z, to_z):
                 applyBlockTransformationThenPlace(world_modification, x, y, z, block, block_transformations)
+
+
+def selectNWithChanceForOther(elements: list, chances: list, number: int):
+    import random
+
+    if number >= len(elements):
+        return elements
+
+    results: list = []
+    cpy: list = elements.copy()
+    cpy_chances: list = chances.copy()
+
+    for i in range(number):
+        index: int = 0 if len(cpy) == 1 else random.randint(1, len(cpy) - 1)
+
+        results.append(cpy[index])
+
+        del cpy[index]
+        del cpy_chances[index]
+
+    for i in range(len(cpy)):
+        if random.uniform(0, 1) < chances[i]:
+            results.append(cpy[i])
+
+    return results

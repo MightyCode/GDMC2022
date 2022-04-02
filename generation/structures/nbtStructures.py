@@ -197,7 +197,7 @@ class NbtStructures(BaseStructure):
             self.checkAfterPlacing(block, block_name, block_position, chest_generation, building_conditions)
 
         # Place sign
-        if "sign" in self.info.keys():
+        if "sign" in self.info.keys() and not block_transformations[0].lore_structure.destroyed:
             sign_position = self.returnWorldPosition(
                 self.info["sign"]["position"],
                 building_conditions.flip, building_conditions.rotation,

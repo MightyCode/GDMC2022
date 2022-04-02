@@ -5,6 +5,9 @@ from generation.data.murdererData import MurdererData
 from generation.chestGeneration import ChestGeneration
 from generation.structureManager import StructureManager
 from generation.structures.blockTransformation.oldStructureTransformation import OldStructureTransformation
+from generation.structures.blockTransformation.damagedStructureTransformation import DamagedStructureTransformation
+from generation.structures.blockTransformation.burnedStructureTransformation import BurnedStructureTransformation
+from generation.structures.blockTransformation.abandonedStructureTransformation import AbandonedStructureTransformation
 from generation.resources import Resources
 from generation.floodFill import FloodFill
 import generation.generator as generator
@@ -71,14 +74,18 @@ if not args.remove:
     """Generate village involving on our generation"""
     print("Generate lore of the world")
     number_of_existing_village_in_lore = 7
-    villages: list = loreMaker.initializedVillages(loreMaker.gen_position_of_village(settlement_zones, number_of_existing_village_in_lore), nameGenerator)
+
+    villages: list = loreMaker.initializedVillages(
+        loreMaker.gen_position_of_village(settlement_zones, number_of_existing_village_in_lore), nameGenerator)
     villageInteractions: list = loreMaker.createVillageRelationAndAssign(villages)
     loreMaker.checkForImpossibleInteractions(villages, villageInteractions)
+    loreMaker.generateLoreAfterRelation(villages)
 
     settlement_index: int = 0
     current_village: Village
 
-    block_transformation: list = [OldStructureTransformation()]
+    block_transformation: list = [OldStructureTransformation(), DamagedStructureTransformation(),
+                                  BurnedStructureTransformation(), AbandonedStructureTransformation()]
 
     current_zone_x: int = 0
     current_zone_z: int = 0
@@ -107,7 +114,9 @@ if not args.remove:
 
         current_village = villages[settlement_index]
         print("Make village named " + current_village.name)
-        print("Tier :" + str(current_village.tier) + ", age : " + str(current_village.age) + ", status : " + current_village.status)
+        print("Tier : " + str(current_village.tier) + ", Age : " + str(
+            current_village.age) + ", Status : " + current_village.status)
+        print("Village destroyed : " + str(current_village.isDestroyed))
 
         current_village.generated = True
         block_transformation[0].age = current_village.age
@@ -188,6 +197,8 @@ if not args.remove:
         print("\nGenerate lore of the village")
 
         loreMaker.createListOfDeadVillager(current_village, nameGenerator)
+        loreMaker.handleVillageDestroy(current_village)
+
         # Murderer
         murdererData: MurdererData = current_village.murderer_data
 
@@ -234,8 +245,11 @@ if not args.remove:
             print("Build structure " + str(i + 1) + "/" + str(settlementData.structure_number_goal) + "  ", end="\r")
             generator.generateStructure(current_village.lore_structures[i], settlementData, resources,
                                         world_modification, chest_generation, block_transformation)
-            util.spawnVillagerForStructure(settlementData, current_village.lore_structures[i],
-                                           current_village.lore_structures[i].position)
+
+            if not current_village.lore_structures[i].destroyed:
+                util.spawnVillagerForStructure(settlementData, current_village.lore_structures[i],
+                                               current_village.lore_structures[i].position)
+
             current_time = int(round(time.time() * 1000)) - milliseconds
             i += 1
 
