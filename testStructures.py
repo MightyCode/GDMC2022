@@ -1,8 +1,8 @@
-from representation.village import Village
-from representation.villager import Villager
-from representation.trade import Trade
+from generation.data.village import Village
+from generation.data.villager import Villager
+from generation.data.trade import Trade
 
-from representation.loreStructure import LoreStructure
+from generation.data.loreStructure import LoreStructure
 from generation.chestGeneration import ChestGeneration
 from generation.structures.blockTransformation.oldStructureTransformation import OldStructureTransformation
 from generation.structures.blockTransformation.damagedStructureTransformation import DamagedStructureTransformation
@@ -25,7 +25,7 @@ import generation.generator as generator
 Important information
 """
 
-structure_name: str = "mediumshop"
+structure_name: str = "mediumhouse1"
 structure_type: str = "functionals"
 
 
@@ -52,13 +52,14 @@ if not args.remove:
     # Create Village
     village: Village = Village()
     village.name = "TestLand"
+    village.tier = 2
 
     villagers: list = [Villager(village), Villager(village), Villager(village), Villager(village), Villager(village)]
     villagers[0].name = "Rodriguez 1"
-    villagers[0].minecraftJob = "nitwit"
     villagers[1].name = "Rodriguez 2"
     villagers[2].name = "Rodriguez 3"
     villagers[2].minecraftJob = "leatherworker"
+    villagers[2].job = "Mayor"
     villagers[3].name = "Rodriguez 4"
 
     deadVillagers: list = [Villager(village)]
@@ -67,26 +68,18 @@ if not args.remove:
     village.villagers = villagers
     village.dead_villagers = deadVillagers
 
-    trade: Trade = Trade()
-    trade.offer = "minecraft:gold_nugget"
-    trade.offer_quantity = 23
-
-    trade.needing = "minecraft:gold_nugget"
-    trade.needing_quantity = 1
-    villagers[2].trades.append(trade)
-
     resources: Resources = Resources()
     resLoader.loadAllResources(resources)
     chestGeneration: ChestGeneration = ChestGeneration(resources, interface)
     structure: BaseStructure = resources.structures[structure_name]
-
     structure.setupInfoAndGetCorners()
+
     lore_structure: LoreStructure = LoreStructure()
     lore_structure.age = 1
     lore_structure.flip = 1
     lore_structure.rotation = 1
-    lore_structure.destroyed = True
-    lore_structure.causeDestroy = {"burned": "burned", "abandoned": "abandoned", "damaged": "damaged"}
+    """lore_structure.destroyed = True
+    lore_structure.causeDestroy = {"burned": "burned", "abandoned": "abandoned", "damaged": "damaged"}"""
 
     lore_structure.name = structure_name
     lore_structure.villagers = [villagers[0], villagers[2]]
@@ -98,8 +91,14 @@ if not args.remove:
     loreMaker.voteForColor(settlementData)
 
     generator.generateStructure(lore_structure, settlementData, resources, world_modifications, chestGeneration, block_transformation)
+    for villager in lore_structure.villagers:
+        if villager.job == Villager.DEFAULT_JOB:
+            continue
+
+        Trade.generateFromTradeTable(village, villager, resources.trades[villager.job], settlementData.getMatRepDeepCopy())
 
     util.spawnVillagerForStructure(settlementData, lore_structure, lore_structure.position)
+
     world_modifications.saveToFile(file)
 else:
     if args.remove == "r":

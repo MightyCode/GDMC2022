@@ -1,8 +1,11 @@
-from representation.village import Village
+from generation.data.village import Village
 import random
 
 
 class Villager:
+    DEFAULT_JOB = "Unemployed"
+    DEFAULT_MINECRAFT_JOB = "nitwit"
+
     VILLAGE_PROFESSION_LIST = [
         "farmer", "fisherman", "shepherd", "fletcher", "librarian", "cartographer",
         "cleric", "armorer", "weaponsmith", "toolsmith", "butcher", "leatherworker", "mason", "nitwit"]
@@ -15,8 +18,8 @@ class Villager:
         self.parentOf: list = []
         self.childOf: list = []
 
-        self.job: str = "Unemployed"
-        self.minecraftJob: str = "Unemployed"
+        self.job: str = Villager.DEFAULT_JOB
+        self.minecraftJob: str = Villager.DEFAULT_MINECRAFT_JOB
 
         # Profession level of the villager (2: Apprentice, 3: Journeyman, 4: Expert, 5: Master)
         self.jobLevel = random.randint(2, 5)

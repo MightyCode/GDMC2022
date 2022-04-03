@@ -3,9 +3,8 @@ from generation.resources import Resources
 from generation.structures.baseStructure import BaseStructure
 from generation.data.settlementData import SettlementData
 from generation.buildingCondition import BuildingCondition
-from representation.village import Village
-from representation.loreStructure import LoreStructure
-from representation.villager import Villager
+from generation.data.village import Village
+from generation.data.loreStructure import LoreStructure
 from utils.constants import Constants
 from utils.nameGenerator import NameGenerator
 from utils.worldModification import WorldModification
@@ -22,22 +21,16 @@ import copy
 
 def createSettlementData(area: list, village_model: Village, resources: Resources) -> SettlementData:
     settlement_data: SettlementData = SettlementData(village_model)
+    settlement_data.init()
     settlement_data.setArea(area)
 
     # Biome 
-    settlement_data.setVillageBiome(util.getBiome(settlement_data.center[0], settlement_data.center[2], 1, 1),
-                                    resources)  # TODO get mean
-
-    # Load replacements for structure biome
-    for aProperty in resources.biomesBlocks[settlement_data.biome_block_id]:
-        if aProperty in resources.biomesBlocks["rules"]["village"]:
-            settlement_data.setMaterialReplacement(aProperty,
-                                                   resources.biomesBlocks[settlement_data.biome_block_id][aProperty])
+    settlement_data.setVillageBiome(util.getBiome(settlement_data.center[0], settlement_data.center[2], 1, 1), resources)  # TODO get mean
 
     # Per default, chosen color is white
     lore_maker.fillSettlementDataWithColor(settlement_data, "white")
 
-    #settlement_data.structure_number_goal = 8
+    #settlement_data.structure_number_goal = 12
     settlement_data.structure_number_goal = random.randint(25, 55)
 
     return settlement_data
@@ -98,6 +91,8 @@ def placeBooks(settlement_data: SettlementData, books: dict, world_modification:
         Constants.getHeight(settlement_data.center[0], settlement_data.center[2]),
         settlement_data.center[2] + 1, books["villageNameBook"], world_modification, 'east')
 
+    print(books["villageNameBook"])
+
 
 def generateStructure(lore_structure: LoreStructure, settlement_data: SettlementData, resources: Resources,
                       world_modification: WorldModification, chest_generation: ChestGeneration,
@@ -130,6 +125,9 @@ def generateStructure(lore_structure: LoreStructure, settlement_data: Settlement
     buildingCondition.referencePoint = lore_structure.prebuildingInfo["entry"]["position"]
     buildingCondition.size = lore_structure.prebuildingInfo["size"]
     buildingCondition.prebuildingInfo = lore_structure.prebuildingInfo
+    buildingCondition.replacements = settlement_data.getMatRepDeepCopy()
+
+    ### Get the biome to change environmental blocks, like the ground by those on the biome
     structureBiomeId = util.getBiome(buildingCondition.position[0], buildingCondition.position[2], 1, 1)
     structureBiomeName = resources.biomeMinecraftId[int(structureBiomeId)]
     structureBiomeBlockId = str(resources.biomesBlockId[structureBiomeName])
@@ -137,7 +135,6 @@ def generateStructure(lore_structure: LoreStructure, settlement_data: Settlement
     if structureBiomeBlockId == "-1":
         structureBiomeBlockId = settlement_data.biome_block_id
 
-    buildingCondition.replacements = settlement_data.getMatRepDeepCopy()
     # Load block for structure biome
     for aProperty in resources.biomesBlocks[structureBiomeBlockId]:
         if aProperty in resources.biomesBlocks["rules"]["structure"]:
@@ -146,11 +143,6 @@ def generateStructure(lore_structure: LoreStructure, settlement_data: Settlement
     modifyBuildingConditionDependingOnStructure(buildingCondition, settlement_data, lore_structure)
 
     structure.build(world_modification, buildingCondition, chest_generation, block_transformations)
-
-    """util.spawnVillagerForStructure(settlementData, structureData,
-        [structureData["position"][0], 
-         structureData["position"][1] + 1, 
-         structureData["position"][2]])"""
 
     if build_murderer_cache:
         buildMurdererCache(lore_structure, settlement_data, resources, world_modification, chest_generation,

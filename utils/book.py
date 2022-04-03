@@ -1,5 +1,5 @@
-from representation.villager import Villager
-from representation.village import Village
+from generation.data.villager import Villager
+from generation.data.village import Village
 
 import generation.generator as generator
 

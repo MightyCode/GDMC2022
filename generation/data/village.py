@@ -104,4 +104,4 @@ class Village:
 
 
 from generation.data.murdererData import MurdererData
-from representation.villageInteraction import VillageInteraction
+from generation.data.villageInteraction import VillageInteraction

@@ -68,7 +68,7 @@ class ChestGeneration:
                                                           item["functions"][0]["count"]["max"])
 
                     # Compute item's name if balise *, means that one word should change
-                    result = util.changeNameWithBalise(item["name"], change_item_name)
+                    result = util.changeNameWithReplacements(item["name"], change_item_name)
 
                     if result[0] >= 0:
                         items.append([result[1], numberOfItem])

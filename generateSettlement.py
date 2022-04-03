@@ -1,6 +1,8 @@
 import time
-from representation.village import Village
-from representation.loreStructure import LoreStructure
+from generation.data.village import Village
+from generation.data.villager import Villager
+from generation.data.trade import Trade
+from generation.data.loreStructure import LoreStructure
 from generation.data.murdererData import MurdererData
 from generation.chestGeneration import ChestGeneration
 from generation.structureManager import StructureManager
@@ -69,7 +71,7 @@ if not args.remove:
     if settlement_zones_number[1] == 0:
         settlement_zones_number[1] = 1
 
-    settlement_zones = projectMath.compute_squared_zone_with_number(settlement_zones_number, build_area)
+    settlement_zones = projectMath.computeSquaredZoneWitNumber(settlement_zones_number, build_area)
 
     """Generate village involving on our generation"""
     print("Generate lore of the world")
@@ -229,11 +231,24 @@ if not args.remove:
                     structure.gift = villager.diary[1]
 
         # Add books replacements
-        settlementData.setMaterialReplacement("villageBook", "minecraft:written_book" + books["villageNameBook"])
         settlementData.setMaterialReplacement("villageLecternBook", books["villageNameBook"])
-        settlementData.setMaterialReplacement("villagerRegistry", "minecraft:written_book" + books["villagerNamesBook"])
-        settlementData.setMaterialReplacement("deadVillagerRegistry",
+
+        settlementData.setMaterialReplacement("villageBookItem", "minecraft:written_book" + books["villageNameBook"])
+        settlementData.setMaterialReplacement("villagerRegistryItem", "minecraft:written_book" + books["villagerNamesBook"])
+        settlementData.setMaterialReplacement("deadVillagerRegistryItem",
                                               "minecraft:written_book" + books["deadVillagersBook"])
+
+        settlementData.setMaterialReplacement("villageBookTrade", "\"minecraft:written_book\",tag:" + books["villageNameBook"])
+        settlementData.setMaterialReplacement("villagerRegistryTrade", "\"minecraft:written_book\",tag:" + books["villagerNamesBook"])
+        settlementData.setMaterialReplacement("deadVillagerRegistryTrade",
+                                              "\"minecraft:written_book\",tag:" + books["deadVillagersBook"])
+
+        for villager in current_village.villagers:
+            if villager.job == Villager.DEFAULT_JOB:
+                continue
+
+            Trade.generateFromTradeTable(current_village, villager, resources.trades[villager.job],
+                                         settlementData.getMatRepDeepCopy())
 
         """ Fourth main step : creates the roads of the village """
         road.initRoad(floodFill.listHouse, settlementData, world_modification)

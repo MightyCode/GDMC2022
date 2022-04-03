@@ -1,5 +1,5 @@
 from generation.resources import Resources
-from representation.village import Village
+from generation.data.village import Village
 import copy
 
 
@@ -20,8 +20,6 @@ class SettlementData:
         self.biome_name: str = ""
         self.biome_block_id: int = 0
 
-        self.__materials_replacement["villageName"] = self.village_model.name
-        
         self.structure_number_goal: int = 0
 
         self.resources: dict = {
@@ -29,6 +27,25 @@ class SettlementData:
             "dirtResources": 0,
             "stoneResources": 0
         }
+
+    def init(self) -> None:
+        self.__materials_replacement["villageName"] = self.village_model.name
+
+        nameOfItem: str = self.village_model.name + " gem"
+        self.__materials_replacement["village_currency_item"] = \
+            "minecraft:emerald{display:{Name:'{\"text\":\"" + nameOfItem + "\"}',Lore:['{\"text\":\"Currency used on that village to trade\",\"color\":\"dark_aqua\"}']}}"
+
+        self.__materials_replacement["village_currency_trade"] = \
+            "\"minecraft:emerald\", tag:{display:{Name:'{\"text\":\"" + nameOfItem + "\"}',Lore:['{\"text\":\"Currency used on that village to trade\",\"color\":\"dark_aqua\"}']}}"
+
+        self.__materials_replacement["toolMaterial"] = "wooden"
+        self.__materials_replacement["equipmentMaterial"] = "leather"
+        if self.village_model.tier == 1:
+            self.__materials_replacement["toolMaterial"] = "stone"
+            self.__materials_replacement["equipmentMaterial"] = "chainmail"
+        elif self.village_model.tier == 2:
+            self.__materials_replacement["toolMaterial"] = "iron"
+            self.__materials_replacement["equipmentMaterial"] = "iron"
 
     def setArea(self, new_area: list) -> None:
         self.area = new_area
@@ -43,6 +60,13 @@ class SettlementData:
         if self.biome_block_id == "-1":
             print("Generation on biome block id -1")
             self.biome_block_id = "0"
+
+        # Load replacements for structure biome
+        for aProperty in resources.biomesBlocks[self.biome_block_id]:
+            if aProperty in resources.biomesBlocks["rules"]["village"]:
+                self.setMaterialReplacement(aProperty,
+                                            resources.biomesBlocks[self.biome_block_id][
+                                                aProperty])
 
     def setMaterialReplacement(self, property_name: str, replacement: str) -> None:
         self.__materials_replacement[property_name] = replacement

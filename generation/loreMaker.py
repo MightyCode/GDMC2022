@@ -1,10 +1,10 @@
 import random
 
 import utils.util as util
-from representation.village import Village
-from representation.villager import Villager
-from representation.village import VillageInteraction
-from representation.loreStructure import LoreStructure
+from generation.data.village import Village
+from generation.data.villager import Villager
+from generation.data.village import VillageInteraction
+from generation.data.loreStructure import LoreStructure
 
 
 def gen_position_of_village(existing_areas: list, goal_number: int) -> list:
@@ -138,7 +138,7 @@ def fillSettlementDataWithColor(settlementData, color):
     settlementData.setMaterialReplacement("carpet", "minecraft:" + color + "_carpet")
     settlementData.setMaterialReplacement("stained_glass", "minecraft:" + color + "_stained_glass")
     settlementData.setMaterialReplacement("shulker_box", "minecraft:" + color + "_shulker_box")
-    settlementData.setMaterialReplacement("glazed_terracota", "minecraft:" + color + "_glazed_terracota")
+    settlementData.setMaterialReplacement("glazed_terracota", "minecraft:" + color + "_glazed_terracotta")
     settlementData.setMaterialReplacement("stained_glass_pane", "minecraft:" + color + "_stained_glass_pane")
     settlementData.setMaterialReplacement("concrete", "minecraft:" + color + "_concrete")
     settlementData.setMaterialReplacement("concrete_powder", "minecraft:" + color + "_concrete_powder")

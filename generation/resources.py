@@ -4,10 +4,12 @@ from nbt import nbt
 
 
 class Resources:
-    STRUCTURE_PATH = "data/structures/"
-    LOOT_TABLE_PATH = "data/lootTables/"
-    BIOME = "data/biome.txt"
-    BIOME_BLOCK = "data/biomeBlocks.json"
+    DATA = "data/"
+    STRUCTURE_PATH = DATA + "structures/"
+    LOOT_TABLE_PATH = DATA + "lootTables/"
+    BIOME = DATA + "biome.txt"
+    BIOME_BLOCK = DATA + "biomeBlocks.json"
+    TRADES = DATA + "trades.json"
 
     def __init__(self):
         # Each structures
@@ -15,14 +17,14 @@ class Resources:
         self.lootTables: dict = {}
 
         # Contains for each biome, its minecraft id
-        # biomename -> id minecraft
+        # biome name -> id minecraft
         self.biomes: dict = {}
         # Contains for each id biome, its name
-        # id minecraft -> biomename
+        # id minecraft -> biome name
         self.biomeMinecraftId: dict = {}
 
         # Contains for each id biome, its block id
-        # biomename -> id block (decoration)
+        # biome name -> id block (decoration)
         self.biomesBlockId: dict = {}
 
         # Indicates for each block id, what should be blocks for types (ex : wookType)
@@ -31,20 +33,24 @@ class Resources:
         with open(Resources.BIOME_BLOCK) as json_file:
             self.biomesBlocks = json.load(json_file)
 
-        filin = open(Resources.BIOME)
+        file_in = open(Resources.BIOME)
 
-        lines = filin.readlines()
+        lines = file_in.readlines()
         i = 0
         for line in lines:
             if len(line.split(":")) > 1:
-                biomename = line.split(":")[0]
+                biome_name = line.split(":")[0]
                 value = int(line.split(":")[1])
 
-                self.biomeMinecraftId[i] = biomename
-                self.biomes[biomename] = i
-                self.biomesBlockId[biomename] = value
+                self.biomeMinecraftId[i] = biome_name
+                self.biomes[biome_name] = i
+                self.biomesBlockId[biome_name] = value
 
-            i = i + 1
+            i += 1
+
+        self.trades: dict = {}
+        with open(Resources.TRADES) as json_file:
+            self.trades = json.load(json_file)
 
     """ 
     Load and add structures from files

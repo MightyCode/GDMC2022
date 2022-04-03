@@ -81,7 +81,7 @@ def euclideanDistance2D(position1, position2):
     return math.sqrt(math.pow(position1[0] - position2[0], 2) + math.pow(position1[1] - position2[1], 2))
 
 
-def compute_squared_zone_with_number(zone_number: list, build_area: list) -> list:
+def computeSquaredZoneWitNumber(zone_number: list, build_area: list) -> list:
     areas: list = []
 
     for x in range(zone_number[0]):

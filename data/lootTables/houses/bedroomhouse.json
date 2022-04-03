@@ -29,23 +29,23 @@
           },
           {
             "type": "item",
-            "name": "*villageBook*",
+            "name": "*villageBookItem*",
             "weight": 5
           },
           {
             "type": "item",
-            "name": "*villagerRegistry*",
+            "name": "*villagerRegistryItem*",
             "weight": 7
           },
           {
             "type": "item",
-            "name": "*deadVillagerRegistry*",
+            "name": "*deadVillagerRegistryItem*",
             "weight": 3
           },
           {
             "type" : "item",
-            "name" : "minecraft:emerald{display:{Name:'{\"text\":\"*villageName* currency\"}',Lore:['{\"text\":\"Currency used on that village to trade\",\"color\":\"dark_aqua\"}']}}",
-            "weight" : 10,
+            "name" : "*village_currency_item*",
+            "weight" : 1000,
             "functions": [
               {
                 "function": "set_count",

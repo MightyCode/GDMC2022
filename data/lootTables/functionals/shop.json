@@ -8,7 +8,7 @@
         "entries": [
           {
             "type" : "item",
-            "name" : "minecraft:emerald{display:{Name:'{\"text\":\"*villageName* currency\"}',Lore:['{\"text\":\"Currency used on that village to trade\",\"color\":\"dark_aqua\"}']}}",
+            "name" : "*village_currency_item*",
             "weight" : 10,
             "functions": [
               {

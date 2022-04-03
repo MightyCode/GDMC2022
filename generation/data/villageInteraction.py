@@ -1,4 +1,4 @@
-from representation.village import Village
+from generation.data.village import Village
 
 import random
 import utils.projectMath as projectMath

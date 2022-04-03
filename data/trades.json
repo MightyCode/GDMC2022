@@ -1,0 +1,868 @@
+{
+  "Exchanger" : {
+    "numberOfRequired" : 1,
+    "trades" : [
+      {
+        "required" : "minecraft:gold_ingot",
+        "amount" : [15, 20],
+        "offered" : "*village_currency_trade*",
+        "amountOffered" : [1, 3],
+        "chance" : 0.5
+      },
+      {
+        "required" : "*village_currency_trade*",
+        "amount" : [15, 20],
+        "offered" : "minecraft:gold_ingot",
+        "amountOffered" : [1, 3],
+        "chance" : 0.5
+      }
+    ],
+    "generateTrades" : {}
+  },
+  "Farmer" : {
+    "numberOfRequired" : 2,
+    "trades" : [
+      {
+         "required" : "*village_currency_trade*",
+         "amount" : [1, 2],
+         "offered" : "minecraft:wheat",
+         "amountOffered" : [10, 20],
+         "chance" : 0.5
+      },
+       {
+         "required" : "*village_currency_trade*",
+         "amount" : [1, 2],
+         "offered" : "minecraft:carrot",
+         "amountOffered" : [10, 20],
+         "chance" : 0.5
+      },
+      {
+        "required" : "*village_currency_trade*",
+        "amount" : [1, 2],
+        "offered" : "minecraft:potato",
+        "amountOffered" : [10, 20],
+        "chance" : 0.5
+      },
+      {
+        "required" : "*village_currency_trade*",
+        "amount" : [1, 2],
+        "offered" : "minecraft:beetroot",
+        "amountOffered" : [4, 8],
+        "chance" : 0.2
+      },
+      {
+        "required": "*village_currency_trade*",
+        "amount": [1, 2],
+        "offered": "minecraft:pumpkin",
+        "amountOffered": [2, 3],
+        "chance": 0.1
+      },
+      {
+        "required" : "minecraft:wheat_seeds",
+        "amount" : [25, 40],
+        "offered" : "*village_currency_trade*",
+        "amountOffered" : [1, 2],
+        "chance" : 0.5
+      },
+      {
+        "required" : "minecraft:bone_meal",
+        "amount" : [20, 30],
+        "offered" : "*village_currency_trade*",
+        "amountOffered" : [1, 2],
+        "chance" : 0.7
+      },
+      {
+        "required" : "minecraft:*toolMaterial*_hoe",
+        "amount" : 1,
+        "offered" : "*village_currency_trade*",
+        "amountOffered" : [4, 5],
+        "chance" : 0.3
+      }
+    ]
+  },
+  "Cooker" : {
+    "numberOfRequired" : 4,
+    "trades" : [
+      {
+         "required" : "*village_currency_trade*",
+         "amount" : [1, 2],
+         "offered" : "minecraft:cooked_porkchop",
+         "amountOffered" : [5, 10],
+         "chance" : 0.15
+      },
+      {
+         "required" : "*village_currency_trade*",
+         "amount" : [1, 2],
+         "offered" : "minecraft:cooked_cod",
+         "amountOffered" : [5, 10],
+         "chance" : 0.15
+      },
+      {
+        "required" : "*village_currency_trade*",
+        "amount" : [1, 2],
+        "offered" : "minecraft:cooked_salmon",
+        "amountOffered" : [5, 10],
+        "chance" : 0.15
+      },
+      {
+        "required" : "*village_currency_trade*",
+        "amount" : [1, 2],
+        "offered" : "minecraft:cooked_beef",
+        "amountOffered" : [5, 10],
+        "chance" : 0.15
+      },
+      {
+        "required": "*village_currency_trade*",
+        "amount": [1, 2],
+        "offered": "minecraft:baked_potato",
+        "amountOffered": [5, 10],
+        "chance": 0.15
+      },
+      {
+        "required": "*village_currency_trade*",
+        "amount": 1,
+        "offered": "minecraft:cooked_chicken",
+        "amountOffered": [5, 10],
+        "chance": 0.15
+      },
+      {
+        "required" : "minecraft:coal",
+        "amount" : [5, 7],
+        "offered" : "*village_currency_trade*",
+        "amountOffered" : [1, 2],
+        "chance" : 0.3
+      },
+      {
+        "required" : "minecraft:charcoal",
+        "amount" : [5, 7],
+        "offered" : "*village_currency_trade*",
+        "amountOffered" : [1, 2],
+        "chance" : 0.3
+      },
+      {
+        "required" : "minecraft:porkchop",
+        "amount" : [7, 14],
+        "offered" : "*village_currency_trade*",
+        "amountOffered" : [1, 2],
+        "chance" : 0.04
+      },
+      {
+        "required" : "minecraft:potato",
+        "amount" : [7, 14],
+        "offered" : "*village_currency_trade*",
+        "amountOffered" : [1, 2],
+        "chance" : 0.04
+      },
+      {
+        "required" : "minecraft:cod",
+        "amount" : [7, 14],
+        "offered" : "*village_currency_trade*",
+        "amountOffered" : [1, 2],
+        "chance" : 0.04
+      },
+      {
+        "required" : "minecraft:salmon",
+        "amount" : [7, 14],
+        "offered" : "*village_currency_trade*",
+        "amountOffered" : [1, 2],
+        "chance" : 0.04
+      },
+      {
+        "required" : "minecraft:beef",
+        "amount" : [7, 14],
+        "offered" : "*village_currency_trade*",
+        "amountOffered" : [1, 2],
+        "chance" : 0.04
+      },
+      {
+        "required" : "minecraft:chicken",
+        "amount" : [7, 14],
+        "offered" : "*village_currency_trade*",
+        "amountOffered" : [1, 2],
+        "chance" : 0.04
+      }
+    ]
+  },
+  "Lumberjack" : {
+    "numberOfRequired" : 2,
+    "trades" : [
+      {
+         "required" : "*village_currency_trade*",
+         "amount" : [1, 2],
+         "offered" : "minecraft:*woodType*_planks",
+         "amountOffered" : [20, 30],
+         "chance" : 0.5
+      },
+      {
+         "required" : "*village_currency_trade*",
+         "amount" : [1, 2],
+         "offered" : "minecraft:*woodType*_slab",
+         "amountOffered" : [20, 30],
+         "chance" : 0.5
+      },
+      {
+         "required" : "*village_currency_trade*",
+         "amount" : [1, 2],
+         "offered" : "minecraft:*woodType*_stairs",
+         "amountOffered" : [20, 30],
+         "chance" : 0.5
+      },
+      {
+        "required" : "minecraft:*woodType*_log",
+        "amount" : [10, 15],
+        "offered" : "*village_currency_trade*",
+        "amountOffered" : [1, 2],
+        "chance" : 0.4
+      },
+      {
+         "required" : "*village_currency_trade*",
+         "amount" : [1, 2],
+         "offered" : "minecraft:*woodType2*_planks",
+         "amountOffered" : [20, 30],
+         "chance" : 0.2
+      },
+      {
+         "required" : "*village_currency_trade*",
+         "amount" : [1, 2],
+         "offered" : "minecraft:*woodType2*_slab",
+         "amountOffered" : [20, 30],
+         "chance" : 0.2
+      },
+      {
+         "required" : "*village_currency_trade*",
+         "amount" : [1, 2],
+         "offered" : "minecraft:*woodType2*_stairs",
+         "amountOffered" : [20, 30],
+         "chance" : 0.2
+      },
+      {
+        "required" : "minecraft:*woodType2*_log",
+        "amount" : [10, 15],
+        "offered" : "*village_currency_trade*",
+        "amountOffered" : [1, 2],
+        "chance" : 0.1
+      },
+      {
+        "required" : "minecraft:*toolMaterial*_axe",
+        "amount" : 1,
+        "offered" : "*village_currency_trade*",
+        "amountOffered" : [2, 3],
+        "chance" : 0.1
+      }
+    ]
+  },
+  "Miner" : {
+    "numberOfRequired" : 1,
+    "trades" : [
+      {
+         "required" : "*village_currency_trade*",
+         "amount" : [1, 2],
+         "offered" : "minecraft:coal_ore",
+         "amountOffered" : [3, 4],
+         "chance" : 0.5
+      },
+      {
+         "required" : "*village_currency_trade*",
+         "amount" : 1,
+         "offered" : "minecraft:stone",
+         "amountOffered" : [20, 30],
+         "chance" : 0.4
+      },
+      {
+         "required" : "*village_currency_trade*",
+         "amount" : 1,
+         "offered" : "minecraft:cobblestone",
+         "amountOffered" : [20, 30],
+         "chance" : 0.4
+      },
+      {
+        "required" : "minecraft:*toolMaterial*_pickaxe",
+        "amount" : 1,
+        "offered" : "*village_currency_trade*",
+        "amountOffered" : [2, 3],
+        "chance" : 0.5
+      },
+      {
+        "required" : "minecraft:torch",
+        "amount" : [20, 30],
+        "offered" : "*village_currency_trade*",
+        "amountOffered" : [1, 2],
+        "chance" : 0.5
+      }
+    ]
+  },
+  "Merchant" : {
+    "numberOfRequired" : 3,
+    "trades" : [
+      {
+         "required" : "*village_currency_trade*",
+         "amount" : [1, 2],
+         "offered" : "minecraft:wheat_seeds",
+         "amountOffered" : [20, 30],
+         "chance" : 0.2
+      },
+      {
+         "required" : "*village_currency_trade*",
+         "amount" : [1, 2],
+         "offered" : "minecraft:wheat",
+         "amountOffered" : [15, 20],
+         "chance" : 0.2
+      },
+      {
+         "required" : "*village_currency_trade*",
+         "amount" : [1, 2],
+         "offered" : "minecraft:carrot",
+         "amountOffered" : [20, 30],
+         "chance" : 0.2
+      },
+      {
+         "required" : "*village_currency_trade*",
+         "amount" : [1, 2],
+         "offered" : "minecraft:potato",
+         "amountOffered" : [20, 30],
+         "chance" : 0.2
+      },
+      {
+         "required" : "*village_currency_trade*",
+         "amount" : [1, 2],
+         "offered" : "minecraft:*woodType*_button",
+         "amountOffered" : [5, 10],
+         "chance" : 0.2
+      },
+      {
+         "required" : "*village_currency_trade*",
+         "amount" : [1, 2],
+         "offered" : "minecraft:glass_bottle",
+         "amountOffered" : [5, 10],
+         "chance" : 0.3
+      },
+      {
+         "required" : "*village_currency_trade*",
+         "amount" : [1, 2],
+         "offered" : "minecraft:*woodType*_sign",
+         "amountOffered" : [7, 14],
+         "chance" : 0.3
+      },
+      {
+         "required" : "*village_currency_trade*",
+         "amount" : [1, 2],
+         "offered" : "minecraft:flower_pot",
+         "amountOffered" : [3, 5],
+         "chance" : 0.3
+      }
+    ]
+  },
+  "Smelterer" : {
+    "numberOfRequired" : 2,
+    "trades" : [
+      {
+         "required" : "*village_currency_trade*",
+         "amount" : [1, 2],
+         "offered" : "minecraft:coal",
+         "amountOffered" : [5, 10],
+         "chance" : 0.2
+      },
+      {
+         "required" : "*village_currency_trade*",
+         "amount" : [1, 2],
+         "offered" : "minecraft:brick",
+         "amountOffered" : [5, 10],
+         "chance" : 0.2
+      },
+      {
+        "required" : "*village_currency_trade*",
+        "amount" : [1, 2],
+        "offered" : "minecraft:bricks",
+        "amountOffered" : [2, 4],
+        "chance" : 0.1,
+        "conditions" : {
+          "tier" : { "min" : 1, "max" : 2 }
+         },
+         "tier" : { "value" : 2 }
+      },
+      {
+         "required" : "*village_currency_trade*",
+         "amount" : [1, 2],
+         "offered" : "minecraft:iron_ingot",
+         "amountOffered" : [4, 6],
+         "chance" : 0.1,
+         "conditions" : {
+           "tier" : { "min" : 1, "max" : 2 }
+         }
+      },
+      {
+         "required" : "*village_currency_trade*",
+         "amount" : [1, 2],
+         "offered" : "minecraft:gold_ingot",
+         "amountOffered" : [4, 6],
+         "chance" : 0.1
+      },
+      {
+        "required" : "*village_currency_trade*",
+        "amount" : [1, 2],
+        "offered" : "*glazed_terracota*",
+        "amountOffered" : [4, 6],
+        "chance" : 0.1,
+        "conditions" : {
+           "tier" : { "value" : 2 }
+        }
+      },
+      {
+        "required" : "*village_currency_trade*",
+        "amount" : [1, 2],
+        "offered" : "*stained_glass_pane*",
+        "amountOffered" : [4, 6],
+        "chance" : 0.1,
+        "conditions" : {
+           "tier" : { "value" : 2 }
+        }
+      },
+      {
+        "required" : "*village_currency_trade*",
+        "amount" : [1, 2],
+        "offered" : "*concrete*",
+        "amountOffered" : [2, 3],
+        "chance" : 0.1,
+        "conditions" : {
+           "tier" : { "value" : 2 }
+        }
+      },
+      {
+        "required" : "*concrete_powder*",
+        "amount" : [5, 10],
+        "offered" : "*village_currency_trade*",
+        "amountOffered" : [1, 2],
+        "chance" : 0.1,
+        "conditions" : {
+           "tier" : { "value" : 2 }
+        }
+      }
+    ]
+  },
+  "Stone Worker" : {
+    "numberOfRequired" : 2,
+    "trades" : [
+      {
+        "required" : "*village_currency_trade*",
+        "amount" : 1,
+        "offered" : "minecraft:cobblestone",
+        "amountOffered" : [20, 30],
+        "chance" : 0.3
+      },
+      {
+        "required" : "*village_currency_trade*",
+        "amount" : [1, 2],
+        "offered" : "minecraft:cobblestone_stairs",
+        "amountOffered" : [15, 20],
+        "chance" : 0.3
+      },
+      {
+        "required" : "*village_currency_trade*",
+        "amount" : [1, 2],
+        "offered" : "minecraft:stone_brick_stairs",
+        "amountOffered" : [10, 15],
+        "chance" : 0.3,
+        "conditions" : {
+           "tier" : { "min" : 1, "max" : 2 }
+        }
+      },
+      {
+        "required" : "*village_currency_trade*",
+        "amount" : [1, 2],
+        "offered" : "minecraft:brick_stairs",
+        "amountOffered" : [7, 12],
+        "chance" : 0.2,
+        "conditions" : {
+           "tier" : { "value" : 2 }
+        }
+      },
+      {
+        "required" : "*village_currency_trade*",
+        "amount" : [1, 2],
+        "offered" : "minecraft:cobblestone_slab",
+        "amountOffered" : [15, 20],
+        "chance" : 0.3
+      },
+      {
+        "required" : "*village_currency_trade*",
+        "amount" : [1, 2],
+        "offered" : "minecraft:stone_brick_slab",
+        "amountOffered" : [10, 15],
+        "chance" : 0.3,
+        "conditions" : {
+           "tier" : { "min" : 1, "max" : 2 }
+        }
+      },
+      {
+        "required" : "*village_currency_trade*",
+        "amount" : [1, 2],
+        "offered" : "minecraft:brick_slab",
+        "amountOffered" : [7, 12],
+        "chance" : 0.2,
+        "conditions" : {
+           "tier" : { "value" : 2 }
+        }
+      },
+      {
+        "required" : "*village_currency_trade*",
+        "amount" : [1, 2],
+        "offered" : "minecraft:cobblestone_wall",
+        "amountOffered" : [15, 20],
+        "chance" : 0.3
+      },
+      {
+        "required" : "*village_currency_trade*",
+        "amount" : [1, 2],
+        "offered" : "minecraft:stone_brick_wall",
+        "amountOffered" : [10, 15],
+        "chance" : 0.3,
+        "conditions" : {
+           "tier" : { "min" : 1, "max" : 2 }
+        }
+      },
+      {
+        "required" : "*village_currency_trade*",
+        "amount" : [1, 2],
+        "offered" : "minecraft:brick_wall",
+        "amountOffered" : [7, 12],
+        "chance" : 0.2,
+        "conditions" : {
+           "tier" : { "value" : 2 }
+        }
+      },
+      {
+        "required" : "minecraft:*toolMaterial*_pickaxe",
+        "amount" : 1,
+        "offered" : "*village_currency_trade*",
+        "amountOffered" : [2, 3],
+        "chance" : 0.3
+      }
+    ]
+  },
+  "Weaver" : {
+    "numberOfRequired" : 2,
+    "trades" : [
+      {
+        "required" : "*village_currency_trade*",
+        "amount" : 1,
+        "offered" : "*wool*",
+        "amountOffered" : [5, 10],
+        "chance" : 0.3
+      },
+      {
+        "required" : "*village_currency_trade*",
+        "amount" : 1,
+        "offered" : "*carpet*",
+        "amountOffered" : [10, 15],
+        "chance" : 0.3
+      },
+      {
+        "required" : "*village_currency_trade*",
+        "amount" : 1,
+        "offered" : "*banner*",
+        "amountOffered" : [10, 15],
+        "chance" : 0.3
+      },
+      {
+        "required" : "*village_currency_trade*",
+        "amount" : 1,
+        "offered" : "*bed*",
+        "amountOffered" : 1,
+        "chance" : 0.3
+      },
+      {
+        "required" : "minecraft:string",
+        "amount" : [20, 30],
+        "offered" : "*village_currency_trade*",
+        "amountOffered" : [1, 2],
+        "chance" : 0.5
+      }
+    ]
+  },
+  "Crusher" : {
+    "numberOfRequired" : 2,
+    "trades" : [
+      {
+        "required" : "*village_currency_trade*",
+        "amount" : [1, 2],
+        "offered" : "minecraft:bone_meal",
+        "amountOffered" : [5, 10],
+        "chance" : 0.4
+      },
+      {
+        "required" : "*village_currency_trade*",
+        "amount" : [1, 2],
+        "offered" : "minecraft:gunpowder",
+        "amountOffered" : [5, 10],
+        "chance" : 0.4
+      },
+      {
+        "required" : "*village_currency_trade*",
+        "amount" : [1, 2],
+        "offered" : "minecraft:charcoal",
+        "amountOffered" : [3, 8],
+        "chance" : 0.4
+      },
+      {
+        "required" : "*village_currency_trade*",
+        "amount" : [1, 2],
+        "offered" : "minecraft:sugar",
+        "amountOffered" : [3, 8],
+        "chance" : 0.4
+      },
+      {
+        "required" : "minecraft:bone",
+        "amount" : [3, 8],
+        "offered" : "*village_currency_trade*",
+        "amountOffered" : [1, 2],
+        "chance" : 0.4
+      },
+      {
+        "required" : "minecraft:bone",
+        "amount" : [3, 8],
+        "offered" : "*village_currency_trade*",
+        "amountOffered" : [1, 2],
+        "chance" : 0.4
+      },
+      {
+        "required" : "minecraft:wheat_seeds",
+        "amount" : [12, 18],
+        "offered" : "*village_currency_trade*",
+        "amountOffered" : [1, 2],
+        "chance" : 0.4
+      }
+    ]
+  },
+  "Craftman" : {
+    "numberOfRequired" : 2,
+    "trades" : [
+      {
+        "required" : "*village_currency_trade*",
+        "amount" : [1, 2],
+        "offered" : "minecraft:crafting_table",
+        "amountOffered" : [3, 4],
+        "chance" : 0.3
+      },
+      {
+        "required" : "*village_currency_trade*",
+        "amount" : [1, 2],
+        "offered" : "minecraft:*woodType*_door",
+        "amountOffered" : [2, 3],
+        "chance" : 0.3
+      },
+      {
+        "required" : "*village_currency_trade*",
+        "amount" : [1, 2],
+        "offered" : "minecraft:*woodType*_trapdoor",
+        "amountOffered" : [5, 7],
+        "chance" : 0.3
+      },
+      {
+        "required" : "*village_currency_trade*",
+        "amount" : [1, 2],
+        "offered" : "minecraft:*woodType*_button",
+        "amountOffered" : [10, 20],
+        "chance" : 0.3
+      },
+      {
+        "required" : "*village_currency_trade*",
+        "amount" : [1, 2],
+        "offered" : "minecraft:*woodType*_pressure_plate",
+        "amountOffered" : [7, 14],
+        "chance" : 0.3
+      },
+      {
+        "required" : "*village_currency_trade*",
+        "amount" : [1, 2],
+        "offered" : "minecraft:lever",
+        "amountOffered" : [7, 15],
+        "chance" : 0.3
+      },
+      {
+        "required" : "*village_currency_trade*",
+        "amount" : [1, 2],
+        "offered" : "minecraft:chain",
+        "amountOffered" : [4, 7],
+        "chance" : 0.3,
+        "conditions" : {
+           "tier" : { "min" : 1, "max" : 2 }
+        }
+      },
+      {
+        "required" : "minecraft:*woodType*_planks",
+        "amount" : [10, 20],
+        "offered" : "*village_currency_trade*",
+        "amountOffered" : [1, 2],
+        "chance" : 0.15
+      },
+      {
+        "required" : "minecraft:cobblestone",
+        "amount" : [20, 30],
+        "offered" : "*village_currency_trade*",
+        "amountOffered" : [1, 2],
+        "chance" : 0.15
+      },
+      {
+        "required" : "minecraft:stick",
+        "amount" : [30, 50],
+        "offered" : "*village_currency_trade*",
+        "amountOffered" : [1, 2],
+        "chance" : 0.25
+      },
+      {
+        "required" : "minecraft:string",
+        "amount" : [30, 50],
+        "offered" : "*village_currency_trade*",
+        "amountOffered" : [1, 2],
+        "chance" : 0.25
+      }
+    ]
+  },
+  "Guard" : {
+    "numberOfRequired" : 2,
+    "trades" : [
+      {
+        "required" : "*village_currency_trade*",
+        "amount" : [1, 2],
+        "offered" : "minecraft:bone",
+        "amountOffered" : [8, 10],
+        "chance" : 0.3
+      },
+      {
+        "required" : "*village_currency_trade*",
+        "amount" : [1, 2],
+        "offered" : "minecraft:rotten_flesh",
+        "amountOffered" : [13, 20],
+        "chance" : 0.3
+      },
+      {
+        "required" : "*village_currency_trade*",
+        "amount" : [1, 2],
+        "offered" : "minecraft:spider_eye",
+        "amountOffered" : [5, 10],
+        "chance" : 0.3
+      },
+      {
+        "required" : "*village_currency_trade*",
+        "amount" : [1, 2],
+        "offered" : "minecraft:ender_pearl",
+        "amountOffered" : [2, 3],
+        "chance" : 0.1,
+        "conditions" : {
+          "tier" : {"min" : 1, "max" : 2 }
+        }
+      },
+      {
+        "required" : "*village_currency_trade*",
+        "amount" : [1, 2],
+        "offered" : "minecraft:experience_bottle",
+        "amountOffered" : [4, 5],
+        "chance" : 0.07,
+        "conditions" : {
+          "tier" : { "value" : 2 }
+        }
+      },
+      {
+        "required" : "minecraft:*toolMaterial*_sword",
+        "amount" : 1,
+        "offered" : "*village_currency_trade*",
+        "amountOffered" : [4, 5],
+        "chance" : 0.3
+      }
+    ]
+  },
+  "Tavern keeper" : {
+  "numberOfRequired" : 3,
+    "trades" : [
+      {
+        "required" : "*village_currency_trade*",
+        "amount" : [1, 2],
+        "offered" : "minecraft:carrot",
+        "amountOffered" : [10, 20],
+        "chance" : 0.5
+      },
+      {
+        "required": "*village_currency_trade*",
+        "amount": [1, 2],
+        "offered": "minecraft:baked_potato",
+        "amountOffered": [5, 10],
+        "chance": 0.5
+      },
+      {
+        "required": "*village_currency_trade*",
+        "amount": 1,
+        "offered": "minecraft:rabbit_stew",
+        "amountOffered": 1,
+        "chance": 0.3
+      },
+      {
+        "required": "*village_currency_trade*",
+        "amount": 1,
+        "offered": "minecraft:beetroot_soup",
+        "amountOffered": 1,
+        "chance": 0.3
+      },
+      {
+        "required": "*village_currency_trade*",
+        "amount": 1,
+        "offered": "minecraft:mushroom_stew",
+        "amountOffered": 1,
+        "chance": 0.3
+      },
+      {
+        "required": "minecraft:milk_bucket",
+        "amount": 1,
+        "offered": "*village_currency_trade*",
+        "amountOffered": 1,
+        "chance": 0.3
+      },
+      {
+        "required": "*village_currency_trade*",
+        "amount": 1,
+        "offered": "minecraft:cake",
+        "amountOffered": 1,
+        "chance": 0.2
+      },
+      {
+        "required": "*village_currency_trade*",
+        "amount": 1,
+        "offered": "minecraft:cookie",
+        "amountOffered": [2, 5],
+        "chance": 0.2
+      },
+      {
+        "required": "minecraft:sweet_berries",
+        "amount": [5, 8],
+        "offered": "*village_currency_trade*",
+        "amountOffered": [1, 2],
+        "chance": 0.2
+      }
+    ]
+  },
+  "Mayor" : {
+    "numberOfRequired": 3,
+    "trades": [
+      {
+        "required": "minecraft:book",
+        "amount": 1,
+        "offered": "*villageBookTrade*",
+        "amountOffered": 1,
+        "chance": 1
+      },
+      {
+        "required": "minecraft:book",
+        "amount": 1,
+        "offered": "*villagerRegistryTrade*",
+        "amountOffered": 1,
+        "chance": 1
+      },
+      {
+        "required": "minecraft:book",
+        "amount": 1,
+        "offered": "*deadVillagerRegistryTrade*",
+        "amountOffered": 1,
+        "chance": 1
+      }
+    ]
+  }
+}

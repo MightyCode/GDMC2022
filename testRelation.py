@@ -1,4 +1,4 @@
-from representation.village import VillageInteraction
+from generation.data.village import VillageInteraction
 from utils.nameGenerator import NameGenerator
 import generation.loreMaker as loremaker
 import matplotlib.pyplot as plt

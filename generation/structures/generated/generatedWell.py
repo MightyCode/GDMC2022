@@ -50,7 +50,7 @@ class GeneratedWell(BaseStructure):
             building_conditions.referencePoint[2] = self.size[2] - 1 - building_conditions.referencePoint[2]
 
         woodType = "*woodType*"
-        result = util.changeNameWithBalise(woodType, building_conditions.replacements)
+        result = util.changeNameWithReplacements(woodType, building_conditions.replacements)
         if result[0] >= 0:
             woodType = result[1]
         else:

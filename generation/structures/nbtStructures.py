@@ -245,7 +245,7 @@ class NbtStructures(BaseStructure):
             for key in self.info["lectern"].keys():
                 position = self.info["lectern"][key]
                 if block["pos"][0].value == position[0] and block["pos"][1].value == position[1] and block["pos"][2].value == position[2]:
-                    result = util.changeNameWithBalise(key, building_conditions.replacements)
+                    result = util.changeNameWithReplacements(key, building_conditions.replacements)
                     if result[0] >= 0:
                         util.addBookToLectern(blockPosition[0], blockPosition[1], blockPosition[2], result[1])
                     else:

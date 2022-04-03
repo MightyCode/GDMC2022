@@ -19,7 +19,7 @@
     "villageInfo" : {
       "villager" : 3,
       "gameProfession" : "armorer",
-      "profession" : "Guard soldier"
+      "profession" : "Guard"
     },
     "ground" : {
       "info" : "all"

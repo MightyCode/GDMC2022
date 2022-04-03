@@ -1,7 +1,7 @@
 from generation.data.settlementData import SettlementData
-from representation.village import Village
-from representation.villager import Villager
-from representation.loreStructure import LoreStructure
+from generation.data.village import Village
+from generation.data.villager import Villager
+from generation.data.loreStructure import LoreStructure
 from generation.resources import Resources
 from utils.nameGenerator import NameGenerator
 import json
@@ -151,7 +151,7 @@ class StructureManager:
 
         # For each node of our structures tree
         for group in self.dependencies.keys():
-            # Check if the group can be add
+            # Check if the group can be added
             conditions = True
             for condition in self.dependencies[group]["conditions"]:
 
