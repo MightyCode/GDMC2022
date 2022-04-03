@@ -175,6 +175,9 @@ class BaseStructure:
             if key == "sign":
                 i = 0
                 for sign in self.info["special"][key]:
+                    if len(buildingCondition.special["sign"]) <= i * 4:
+                        break
+
                     signPosition = self.returnWorldPosition(
                         sign["position"],
                         buildingCondition.flip, buildingCondition.rotation,
@@ -190,8 +193,7 @@ class BaseStructure:
                         False,
                         True)
 
-                    if buildingCondition.special["sign"][i * 4] == "" and buildingCondition.special["sign"][
-                        i * 4 + 1] == "":
+                    if buildingCondition.special["sign"][i * 4] == "" and buildingCondition.special["sign"][i * 4 + 1] == "":
                         if buildingCondition.special["sign"][i * 4 + 2] == "" and \
                                 buildingCondition.special["sign"][i * 4 + 3] == "":
                             continue
@@ -476,5 +478,12 @@ class BaseStructure:
         if block_property == "snowy":
             if block_name != "minecraft:grass_block":
                 return False
+
+        if block_name == "minecraft:air" \
+                or block_name == "minecraft:cave_air" \
+                or block_name == "minecraft:void_air" \
+                or "coal" in block_name \
+                or "cobweb" in block_name:
+            return False
 
         return True

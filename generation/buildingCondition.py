@@ -1,4 +1,4 @@
-from representation.loreStructure import LoreStructure
+from generation.data.loreStructure import LoreStructure
 
 
 class BuildingCondition:

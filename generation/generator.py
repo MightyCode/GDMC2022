@@ -3,9 +3,8 @@ from generation.resources import Resources
 from generation.structures.baseStructure import BaseStructure
 from generation.data.settlementData import SettlementData
 from generation.buildingCondition import BuildingCondition
-from representation.village import Village
-from representation.loreStructure import LoreStructure
-from representation.villager import Villager
+from generation.data.village import Village
+from generation.data.loreStructure import LoreStructure
 from utils.constants import Constants
 from utils.nameGenerator import NameGenerator
 from utils.worldModification import WorldModification
@@ -22,23 +21,17 @@ import copy
 
 def createSettlementData(area: list, village_model: Village, resources: Resources) -> SettlementData:
     settlement_data: SettlementData = SettlementData(village_model)
+    settlement_data.init()
     settlement_data.setArea(area)
 
     # Biome 
-    settlement_data.setVillageBiome(util.getBiome(settlement_data.center[0], settlement_data.center[2], 1, 1),
-                                    resources)  # TODO get mean
-
-    # Load replacements for structure biome
-    for aProperty in resources.biomesBlocks[settlement_data.biome_block_id]:
-        if aProperty in resources.biomesBlocks["rules"]["village"]:
-            settlement_data.setMaterialReplacement(aProperty,
-                                                   resources.biomesBlocks[settlement_data.biome_block_id][aProperty])
+    settlement_data.setVillageBiome(util.getBiome(settlement_data.center[0], settlement_data.center[2], 1, 1), resources)  # TODO get mean
 
     # Per default, chosen color is white
     lore_maker.fillSettlementDataWithColor(settlement_data, "white")
 
-    #settlement_data.structure_number_goal = 8
-    settlement_data.structure_number_goal = random.randint(20, 50)
+    #settlement_data.structure_number_goal = 12
+    settlement_data.structure_number_goal = random.randint(25, 55)
 
     return settlement_data
 
@@ -47,26 +40,15 @@ def generateVillageBooks(settlementData: SettlementData, nameGenerator: NameGene
     village_model: Village = settlementData.village_model
 
     # Create books for the village
-    strVillagers: str = ""
 
-    for villager in village_model.villagers:
-        strVillagers += villager.name + " : " + villager.job + ";"
-
-    listOfVillagers: list = strVillagers.split(";")
-
-    textVillagersNames = book.createTextForVillagersNames(listOfVillagers)
-    textDeadVillagers = book.createTextForDeadVillagers(listOfVillagers, nameGenerator)
-
-    for name in textDeadVillagers[2]:
-        dead_villager = Villager(village_model)
-        dead_villager.name = name
-        village_model.deadVillager.append(dead_villager)
+    textVillagersNames = book.createTextForVillagersNames(village_model.villagers)
+    textDeadVillagers = book.createTextForDeadVillagers(village_model.villagers, village_model.dead_villagers)
 
     textVillagePresentationBook = book.createTextOfPresentationVillage(village_model.name,
                                                                        settlementData.structure_number_goal,
                                                                        village_model.lore_structures,
                                                                        textDeadVillagers[1],
-                                                                       listOfVillagers)
+                                                                       village_model.villagers)
 
     settlementData.textOfBooks = [textVillagersNames, textDeadVillagers]
 
@@ -109,14 +91,18 @@ def placeBooks(settlement_data: SettlementData, books: dict, world_modification:
         Constants.getHeight(settlement_data.center[0], settlement_data.center[2]),
         settlement_data.center[2] + 1, books["villageNameBook"], world_modification, 'east')
 
+    print(books["villageNameBook"])
+
 
 def generateStructure(lore_structure: LoreStructure, settlement_data: SettlementData, resources: Resources,
                       world_modification: WorldModification, chest_generation: ChestGeneration,
-                      block_transformation: list) -> None:
+                      block_transformations: list) -> None:
 
     # print(structureData["name"])
     # print(structureData["validPosition"])
-    block_transformation[0].age = lore_structure.age
+    for block_transformation in block_transformations:
+        block_transformation.setLoreStructure(lore_structure)
+
     structure = resources.structures[lore_structure.name]
     info: dict = structure.info
     current_Village: Village = settlement_data.village_model
@@ -139,6 +125,9 @@ def generateStructure(lore_structure: LoreStructure, settlement_data: Settlement
     buildingCondition.referencePoint = lore_structure.prebuildingInfo["entry"]["position"]
     buildingCondition.size = lore_structure.prebuildingInfo["size"]
     buildingCondition.prebuildingInfo = lore_structure.prebuildingInfo
+    buildingCondition.replacements = settlement_data.getMatRepDeepCopy()
+
+    ### Get the biome to change environmental blocks, like the ground by those on the biome
     structureBiomeId = util.getBiome(buildingCondition.position[0], buildingCondition.position[2], 1, 1)
     structureBiomeName = resources.biomeMinecraftId[int(structureBiomeId)]
     structureBiomeBlockId = str(resources.biomesBlockId[structureBiomeName])
@@ -146,7 +135,6 @@ def generateStructure(lore_structure: LoreStructure, settlement_data: Settlement
     if structureBiomeBlockId == "-1":
         structureBiomeBlockId = settlement_data.biome_block_id
 
-    buildingCondition.replacements = settlement_data.getMatRepDeepCopy()
     # Load block for structure biome
     for aProperty in resources.biomesBlocks[structureBiomeBlockId]:
         if aProperty in resources.biomesBlocks["rules"]["structure"]:
@@ -154,16 +142,11 @@ def generateStructure(lore_structure: LoreStructure, settlement_data: Settlement
 
     modifyBuildingConditionDependingOnStructure(buildingCondition, settlement_data, lore_structure)
 
-    structure.build(world_modification, buildingCondition, chest_generation, block_transformation)
-
-    """util.spawnVillagerForStructure(settlementData, structureData,
-        [structureData["position"][0], 
-         structureData["position"][1] + 1, 
-         structureData["position"][2]])"""
+    structure.build(world_modification, buildingCondition, chest_generation, block_transformations)
 
     if build_murderer_cache:
         buildMurdererCache(lore_structure, settlement_data, resources, world_modification, chest_generation,
-                           buildingCondition, block_transformation)
+                           buildingCondition, block_transformations)
 
     if lore_structure.gift != "Undefined":
         position = lore_structure.position
@@ -225,7 +208,7 @@ def modifyBuildingConditionDependingOnStructure(building_conditions: BuildingCon
 
         building_conditions.special = {"sign": []}
 
-        listOfDead = settlementData.village_model.deadVillager.copy()
+        listOfDead = settlementData.village_model.dead_villagers.copy()
         i = 0
         while i < number:
             building_conditions.special["sign"].append("")
@@ -251,6 +234,19 @@ def modifyBuildingConditionDependingOnStructure(building_conditions: BuildingCon
 
     elif structure.name == "adventurerhouse":
         building_conditions.special["adventurerhouse"] = [book.createBookForAdventurerHouse(building_conditions.flip)]
+    elif structure.name == "mediumstatue":
+        building_conditions.special = {"sign": ["", "", "", "", "", "", "", ""]}
+        index: int = 0
+        if len(settlementData.village_model.dead_villagers) > 1:
+            index = random.randint(0, len(settlementData.village_model.dead_villagers) - 1)
+
+        name = settlementData.village_model.dead_villagers[index].name
+        util.parseVillagerNameInLines([
+            "In tribute to " + name + ", hero who died in the war"
+        ], building_conditions.special["sign"])
+
+        if building_conditions.special["sign"][4] == "":
+            building_conditions.special["sign"] = building_conditions.special["sign"][0:4]
 
     if structure.type == "houses":
         for villager in settlementData.village_model.villagers:

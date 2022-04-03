@@ -4,4 +4,4 @@ class MurdererData:
         self.villagerTarget: Villager = None
 
 
-from representation.villager import Villager
+from generation.data.villager import Villager

@@ -186,7 +186,6 @@ class NbtStructures(BaseStructure):
             self.checkBeforePlacing(block_name)
             new_block_id = self.convertNbtBlockToStr(
                 self.file["palette"][block["state"].value],
-                block_transformations,
                 should_take_original_block
             )
 
@@ -198,7 +197,7 @@ class NbtStructures(BaseStructure):
             self.checkAfterPlacing(block, block_name, block_position, chest_generation, building_conditions)
 
         # Place sign
-        if "sign" in self.info.keys():
+        if "sign" in self.info.keys() and not block_transformations[0].lore_structure.destroyed:
             sign_position = self.returnWorldPosition(
                 self.info["sign"]["position"],
                 building_conditions.flip, building_conditions.rotation,
@@ -246,14 +245,14 @@ class NbtStructures(BaseStructure):
             for key in self.info["lectern"].keys():
                 position = self.info["lectern"][key]
                 if block["pos"][0].value == position[0] and block["pos"][1].value == position[1] and block["pos"][2].value == position[2]:
-                    result = util.changeNameWithBalise(key, building_conditions.replacements)
+                    result = util.changeNameWithReplacements(key, building_conditions.replacements)
                     if result[0] >= 0:
                         util.addBookToLectern(blockPosition[0], blockPosition[1], blockPosition[2], result[1])
                     else:
                         print("Can't add a book to a lectern at pos : " + str(blockPosition))
                     break
 
-    def convertNbtBlockToStr(self, block_palette, block_transformations: list, take_original_block_name=False):
+    def convertNbtBlockToStr(self, block_palette, take_original_block_name=False):
         if take_original_block_name:
             block = block_palette[NbtStructures.CHANGE_ORIGINAL_BLOCK].value
         else:

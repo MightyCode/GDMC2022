@@ -1,7 +1,7 @@
 from generation.data.settlementData import SettlementData
-from representation.village import Village
-from representation.villager import Villager
-from representation.loreStructure import LoreStructure
+from generation.data.village import Village
+from generation.data.villager import Villager
+from generation.data.loreStructure import LoreStructure
 from generation.resources import Resources
 from utils.nameGenerator import NameGenerator
 import json
@@ -10,9 +10,6 @@ import random
 
 class StructureManager:
     PATH = "data/structures/dependencies.json"
-    HOUSES = "houses"
-    FUNCTIONALS = "functionals"
-    REPRESENTATIVES = "representatives"
 
     def __init__(self, settlementData: SettlementData, resources: Resources, nameGenerator: NameGenerator):
         self.houses: list = []
@@ -78,7 +75,7 @@ class StructureManager:
         struct = self.resources.structures[structure["name"]]
 
         # Houses structure
-        if structure["type"] == StructureManager.HOUSES:
+        if structure["type"] == LoreStructure.TYPE_HOUSES:
             numberToAdd = struct.info["villageInfo"]["villager"]
 
             for i in range(numberToAdd):
@@ -93,8 +90,8 @@ class StructureManager:
 
             self.village_model.free_villager += numberToAdd
 
-        # Functionnals or representatives structure
-        elif structure["type"] == StructureManager.FUNCTIONALS or structure["type"] == StructureManager.REPRESENTATIVES:
+        # Functionals or representatives structure
+        elif structure["type"] == LoreStructure.TYPE_FUNCTIONALS or structure["type"] == LoreStructure.TYPE_REPRESENTATIVES:
             numberToAttribute = struct.info["villageInfo"]["villager"]
 
             idFound = 0
@@ -124,13 +121,13 @@ class StructureManager:
 
         structure_type = structure.type
 
-        if structure_type == StructureManager.HOUSES:
+        if structure_type == LoreStructure.TYPE_HOUSES:
             number = len(structure.villagers)
             for villager in structure.villagers:
                 self.removeOneVillager(villager)
 
             self.village_model.free_villager -= number
-        elif structure_type == StructureManager.REPRESENTATIVES or type == StructureManager.FUNCTIONALS:
+        elif structure_type == LoreStructure.TYPE_REPRESENTATIVES or structure_type == LoreStructure.TYPE_FUNCTIONALS:
             for villager in structure.villagers:
                 villager.job = "Unemployed"
                 villager.minecraftJob = "nitwit"
@@ -154,7 +151,7 @@ class StructureManager:
 
         # For each node of our structures tree
         for group in self.dependencies.keys():
-            # Check if the group can be add
+            # Check if the group can be added
             conditions = True
             for condition in self.dependencies[group]["conditions"]:
 
@@ -170,9 +167,9 @@ class StructureManager:
 
             for structure in self.dependencies[group]["tier"][str(self.village_model.tier)]:
                 weight = 1
-                if self.dependencies[group]["type"] == StructureManager.FUNCTIONALS:
+                if self.dependencies[group]["type"] == LoreStructure.TYPE_FUNCTIONALS:
                     weight = 10
-                elif self.dependencies[group]["type"] == StructureManager.REPRESENTATIVES:
+                elif self.dependencies[group]["type"] == LoreStructure.TYPE_REPRESENTATIVES:
                     weight = 15
 
                 # Reduce weight of structure
@@ -187,21 +184,23 @@ class StructureManager:
 
                 data = {"name": structure, "group": group, "type": self.dependencies[group]["type"], "weight": weight}
 
-                if data["type"] == StructureManager.HOUSES:
+                if data["type"] == LoreStructure.TYPE_HOUSES:
                     self.houses.append(data)
-                elif data["type"] == StructureManager.FUNCTIONALS:
+                elif data["type"] == LoreStructure.TYPE_FUNCTIONALS:
                     self.functionals.append(data)
-                elif data["type"] == StructureManager.REPRESENTATIVES:
+                elif data["type"] == LoreStructure.TYPE_REPRESENTATIVES:
                     self.representatives.append(data)
                 self.allStructures.append(data)
 
     def checkOneCondition(self, name: str, conditionValues: dict):
         valueToCheck = 0
 
+        # TODO taking into account relation
+
         if name == "villagerNeeded":
             valueToCheck = self.village_model.free_villager
 
-        # Ex : dirtResources, woordResources
+        # Ex : dirtResources, woodResources
         elif "Resources" in name:
             valueToCheck = self.settlementData.resources[name]
         elif name == "previous":
@@ -220,6 +219,24 @@ class StructureManager:
         if "max" in conditionValues:
             if valueToCheck >= conditionValues["max"]:
                 return False
+
+        if name == "status":
+            for oneStatus in conditionValues["values"]:
+                if oneStatus == self.settlementData.village_model.status:
+                    return True
+            return False
+
+        elif name == "tier":
+            for oneStatus in conditionValues["values"]:
+                if oneStatus == self.settlementData.village_model.tier:
+                    return True
+            return False
+
+        elif name == "age":
+            for oneStatus in conditionValues["values"]:
+                if oneStatus == self.settlementData.village_model.age:
+                    return True
+            return False
 
         return True
 

@@ -1,11 +1,13 @@
+from generation.data.villager import Villager
+
 import lib.interfaceUtils as interfaceUtils
 import lib.worldLoader as worldLoader
 import lib.lookup as lookup
+
 import math
 import requests
 from io import BytesIO
 import nbt
-import random as rd
 
 NUMBER = 5
 
@@ -21,14 +23,14 @@ def getBiome(x, z, dx, dz):
         return -1
         # return "minecraft:plains"
     biomeId = response.text.split(":")
-    biomeinfo = biomeId[6].split(";")
-    biome = biomeinfo[1].split(",")
+    biome_info = biomeId[6].split(";")
+    biome = biome_info[1].split(",")
     return biome[0]
 
 
 def getAllBiome():
-    bytes = worldLoader.getChunks(-4, -4, 9, 9, 'bytes')
-    file_like = BytesIO(bytes)
+    bytes_information = worldLoader.getChunks(-4, -4, 9, 9, 'bytes')
+    file_like = BytesIO(bytes_information)
     nbt_file = nbt.nbt.NBTFile(buffer=file_like)
     discovered_chunks = {}
     for y in range(81):
@@ -109,13 +111,13 @@ def addResourcesFromChunk(resources, settlementData, biome):
 
 """
 Return result and word
-result 0 -> No balise founded
-result 1 -> Balise founded and replacement succeful
+result 0 -> No replacement pattern founded
+result 1 -> Replacement pattern founded and replacement successful
 result -1 -> Error
 """
 
 
-def changeNameWithBalise(name, changementsWord):
+def changeNameWithReplacements(name: str, replacements: dict):
     index = name.find("*")
     if index != -1:
         secondIndex = name.find("*", index + 1)
@@ -123,18 +125,16 @@ def changeNameWithBalise(name, changementsWord):
             return [-1, name]
 
         word = name[index + 1: secondIndex]
-        added = False
-        for key in changementsWord.keys():
+        replaced: bool = True
+        for key in replacements.keys():
             if key == word:
-                added = True
-                return [1, name.replace("*" + word + "*", changementsWord[key])]
+                return [1, name.replace("*" + word + "*", replacements[key])]
 
-        # If the balise can't be replace
-        if not added:
+        # If the replacement pattern can't be replaced
+        if not replaced:
             return [-1, name]
 
-    else:
-        return [0, name]
+    return [0, name]
 
 
 def addBookToLectern(x, y, z, bookData):
@@ -155,32 +155,50 @@ Spawn a villager at his house if unemployed or at his building of work
 """
 
 
-def spawnVillagerForStructure(settlementData, structure, position):
+def spawnVillagerForStructure(settlementData, structure, position: list):
     for villager in structure.villagers:
+        print(structure.type + " " + villager.job)
         if (structure.type == "houses" and villager.job == "Unemployed") or (
                 structure.type != "houses" and villager.job != "Unemployed"):
-            # get a random level for the profession of the villager (2: Apprentice, 3: Journeyman, 4: Expert, 5: Master)
-            randomProfessionLevel = rd.randint(2, 5)
-
-            spawnVillager(position[0], position[1] + 1, position[2], "minecraft:villager",
-                          villager.name, villager.minecraftJob,
-                          randomProfessionLevel, settlementData.biome_name)
+            spawnVillager(position[0], position[1] + 1, position[2], villager, settlementData.biome_name)
 
 
-def spawnVillager(x, y, z, entity, name, profession, level, villagerType):
-    command = "summon " + entity + " " + str(x) + " " + str(y) + " " + str(z) + " "
-    command += "{VillagerData:{profession:" + profession + ",level:" + str(
-        level) + ",type:" + villagerType + "},CustomName:""\"\\" + '"' + str(name) + "\\" + '""' + "}"
+def spawnVillager(x: int, y: int, z: int, villager: Villager, villagerType: str):
+    command = "summon minecraft:villager " + str(x) + " " + str(y) + " " + str(z) + " "
+    command += "{VillagerData:{profession:" + villager.minecraftJob + ",level:" + str(villager.jobLevel) + ",type:" \
+               + villagerType + "},CustomName:""\"\\" + '"' + str(villager.name) + "\\" + '""' \
+               + createOffer(villager) + "}"
+
+    print(command)
 
     interfaceUtils.runCommand(command)
+
+
+def createOffer(villager: Villager, isFirstArgument: bool = False) -> str:
+    if villager.hasNoTrade():
+        return ""
+
+    result: str = "Offers:{Recipes:["
+
+    first: bool = True
+    for trade in villager.trades:
+        result += trade.toStr(first)
+
+        first = False
+
+    result += "]}"
+
+    if not isFirstArgument:
+        result = "," + result
+    return result
 
 
 # Add items to a chest
 # Items is a list of [item string, item quantity]
 def addItemChest(x, y, z, items):
-    for id, v in enumerate(items):
+    for identifier, v in enumerate(items):
         command = "replaceitem block {} {} {} {} {} {}".format(x, y, z,
-                                                               "container." + str(id),
+                                                               "container." + str(identifier),
                                                                v[0],
                                                                v[1])
         interfaceUtils.runCommand(command)
@@ -281,3 +299,40 @@ def applyBlockTransformationThenFill(world_modification, from_x: int, from_y: in
         for y in range(from_y, to_y):
             for z in range(from_z, to_z):
                 applyBlockTransformationThenPlace(world_modification, x, y, z, block, block_transformations)
+
+
+def selectNWithChanceForOther(elements: list, chances: list, number: int, required_change_uniform=False):
+    import random
+
+    if number >= len(elements):
+        return elements
+
+    results: list = []
+    cpy: list = elements.copy()
+    cpy_chances: list = chances.copy()
+
+    for i in range(number):
+        index: int
+        if required_change_uniform:
+            chance_sum: float = 0
+            for chance in cpy_chances:
+                chance_sum += chance
+
+            result: float = random.uniform(0, chance_sum)
+            index = -1
+            while result > 0:
+                result -= cpy_chances[index]
+                index += 1
+        else:
+            index: int = 0 if len(cpy) == 1 else random.randint(1, len(cpy) - 1)
+
+        results.append(cpy[index])
+
+        del cpy[index]
+        del cpy_chances[index]
+
+    for i in range(len(cpy)):
+        if random.uniform(0, 1) < chances[i]:
+            results.append(cpy[i])
+
+    return results

@@ -61,6 +61,18 @@ def loadAllResources(resources: Resources) -> None:
     resources.loadStructures("functionals/weaverhouse/basicweaverhouse.nbt",
                              "functionals/weaverhouse/basicweaverhouse.json", "basicweaverhouse")
 
+    resources.loadStructures("functionals/shop/basicshop.nbt",
+                             "functionals/shop/basicshop.json", "basicshop")
+
+    resources.loadStructures("functionals/shop/mediumshop.nbt",
+                             "functionals/shop/mediumshop.json", "mediumshop")
+
+    resources.loadStructures("functionals/exchanger/basicexchanger.nbt",
+                             "functionals/exchanger/basicexchanger.json", "basicexchanger")
+
+    resources.loadStructures("functionals/exchanger/mediumexchanger.nbt",
+                             "functionals/exchanger/mediumexchanger.json", "mediumexchanger")
+
     ## Load representatives structures for a village
 
     resources.loadStructures("representatives/townhall/basictownhall.nbt",
@@ -73,23 +85,45 @@ def loadAllResources(resources: Resources) -> None:
     resources.loadStructures("representatives/tavern/basictavern.nbt", "representatives/tavern/basictavern.json",
                              "basictavern")
 
-
     resources.loadStructures("representatives/barrack/basicbarrack.nbt", "representatives/barrack/basicbarrack.json",
                              "basicbarrack")
 
     resources.loadStructures("representatives/barrack/mediumbarrack.nbt", "representatives/barrack/mediumbarrack.json",
                              "mediumbarrack")
 
-
     resources.loadStructures("representatives/adventurerhouse/adventurerhouse.nbt",
                              "representatives/adventurerhouse/adventurerhouse.json", "adventurerhouse")
+
+    # HorseBox
+
+    resources.loadStructures("representatives/horsebox/basichorseboxl.nbt",
+                             "representatives/horsebox/horsebox.json", "basichorseboxl")
+
+    resources.loadStructures("representatives/horsebox/basichorseboxh.nbt",
+                             "representatives/horsebox/horsebox.json", "basichorseboxh")
+
+    resources.loadStructures("representatives/horsebox/mediumhorseboxl.nbt",
+                             "representatives/horsebox/horsebox.json", "mediumhorseboxl")
+
+    resources.loadStructures("representatives/horsebox/mediumhorseboxh.nbt",
+                             "representatives/horsebox/horsebox.json", "mediumhorseboxh")
+
+    resources.loadStructures("representatives/horsebox/advancedhorseboxl.nbt",
+                             "representatives/horsebox/horsebox.json", "advancedhorseboxl")
+
+    resources.loadStructures("representatives/horsebox/advancedhorseboxh.nbt",
+                             "representatives/horsebox/horsebox.json", "advancedhorseboxh")
 
     resources.addGeneratedStructures(GeneratedWell(), "representatives/well/basicgeneratedwell.json",
                                      "basicgeneratedwell")
 
-    ## Load additionnal structures that won't be generated : decorations
+    ## Load additional structures that won't be generated without special conditions : decorations
 
-    resources.loadStructures("decorations/murderercache.nbt", "decorations/murderercache.json", "murderercache")
+    resources.loadStructures("decorations/murderercache/murderercache.nbt",
+                             "decorations/murderercache/murderercache.json", "murderercache")
+
+    resources.loadStructures("decorations/statue/mediumstatue.nbt",
+                             "decorations/statue/mediumstatue.json", "mediumstatue")
 
     # Load lootTable
     resources.loadLootTable("houses/kitchenhouse.json", "kitchenhouse")
@@ -101,6 +135,8 @@ def loadAllResources(resources: Resources) -> None:
     resources.loadLootTable("functionals/basicstonecutter.json", "basicstonecutter")
     resources.loadLootTable("functionals/smeltery.json", "smeltery")
     resources.loadLootTable("functionals/workshop.json", "workshop")
+
+    resources.loadLootTable("functionals/shop.json", "shop")
 
     resources.loadLootTable("representatives/townhall.json", "townhall")
     resources.loadLootTable("representatives/jail.json", "jail")

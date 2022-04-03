@@ -1,92 +1,108 @@
-from importlib.resources import Resource
-from generation.resources import *
-from generation.chestGeneration import *
-from generation.structures.nbtStructures import *
-from generation.structureManager import *
-from generation.floodFill import *
+from generation.data.village import Village
+from generation.data.villager import Villager
+from generation.data.trade import Trade
+
+from generation.data.loreStructure import LoreStructure
+from generation.chestGeneration import ChestGeneration
+from generation.structures.blockTransformation.oldStructureTransformation import OldStructureTransformation
+from generation.structures.blockTransformation.damagedStructureTransformation import DamagedStructureTransformation
+from generation.structures.blockTransformation.burnedStructureTransformation import BurnedStructureTransformation
+from generation.structures.blockTransformation.abandonedStructureTransformation import AbandonedStructureTransformation
+from generation.resources import Resources
+from utils.worldModification import WorldModification
+from generation.structures.baseStructure import BaseStructure
+from generation.data.settlementData import SettlementData
+
 import generation.resourcesLoader as resLoader
 import utils.util as util
-from utils.worldModification import *
 import utils.argumentParser as argParser
-import lib.interfaceUtils as iu
-import generation.loreMaker as loremaker
-import utils.book as book
-import lib.toolbox as toolbox
-import copy
+import generation.loreMaker as loreMaker
+import lib.interfaceUtils as interfaceUtil
+import generation.generator as generator
 
-file:str = "temp.txt"
-interface:interfaceUtils.Interface = interfaceUtils.Interface(buffering=True, caching = True)
+
+"""
+Important information
+"""
+
+structure_name: str = "mediumhouse1"
+structure_type: str = "functionals"
+
+
+file: str = "temp.txt"
+interface: interfaceUtil.Interface = interfaceUtil.Interface(buffering=True, caching=True)
 interface.setCaching(True)
 interface.setBuffering(True)
-iu.setCaching(True)
-iu.setBuffering(True)
-worldModif:WorldModification = WorldModification(interface)
+interfaceUtil.setCaching(True)
+interfaceUtil.setBuffering(True)
+world_modifications: WorldModification = WorldModification(interface)
 args, parser = argParser.giveArgsAndParser()
-area: tuple = argParser.getBuildArea(args)
+build_area = argParser.getBuildArea(args)
 
-if area == -1:
+if build_area == -1:
     exit()
 
+build_area: tuple = (
+    build_area[0], build_area[1], build_area[2], build_area[3] - 1, build_area[4] - 1, build_area[5] - 1)
+size_area: list = [build_area[3] - build_area[0] + 1, build_area[5] - build_area[2] + 1]
+
 if not args.remove:
-    resources:Resources = Resources()
+    block_transformation: list = [OldStructureTransformation(), DamagedStructureTransformation(), BurnedStructureTransformation(), AbandonedStructureTransformation()]
+
+    # Create Village
+    village: Village = Village()
+    village.name = "TestLand"
+    village.tier = 2
+
+    villagers: list = [Villager(village), Villager(village), Villager(village), Villager(village), Villager(village)]
+    villagers[0].name = "Rodriguez 1"
+    villagers[1].name = "Rodriguez 2"
+    villagers[2].name = "Rodriguez 3"
+    villagers[2].minecraftJob = "leatherworker"
+    villagers[2].job = "Mayor"
+    villagers[3].name = "Rodriguez 4"
+
+    deadVillagers: list = [Villager(village)]
+    deadVillagers[0].name = "Rodriguez 5"
+
+    village.villagers = villagers
+    village.dead_villagers = deadVillagers
+
+    resources: Resources = Resources()
     resLoader.loadAllResources(resources)
-    chestGeneration:ChestGeneration = ChestGeneration(resources, interface)
-    structure:dict = resources.structures["basichouse1"]
+    chestGeneration: ChestGeneration = ChestGeneration(resources, interface)
+    structure: BaseStructure = resources.structures[structure_name]
+    structure.setupInfoAndGetCorners()
 
-    info = structure.info
-    buildingCondition = BaseStructure.createBuildingCondition()
-    buildingInfo = structure.setupInfoAndGetCorners()
-    buildingCondition["flip"] = 1
-    buildingCondition["rotation"] = 0
-    buildingInfo = structure.getNextBuildingInformation( buildingCondition["flip"], buildingCondition["rotation"])
-    buildingCondition["position"] = [4787, 69, 6095]
-    buildingCondition["referencePoint"] = buildingInfo["entry"]["position"]
-    buildingCondition["size"] = buildingInfo["size"]
+    lore_structure: LoreStructure = LoreStructure()
+    lore_structure.age = 1
+    lore_structure.flip = 1
+    lore_structure.rotation = 1
+    """lore_structure.destroyed = True
+    lore_structure.causeDestroy = {"burned": "burned", "abandoned": "abandoned", "damaged": "damaged"}"""
 
-    buildingCondition["replaceAllAir"] = 3
+    lore_structure.name = structure_name
+    lore_structure.villagers = [villagers[0], villagers[2]]
+    lore_structure.type = structure_type
+    lore_structure.position = [build_area[0] + size_area[0] / 2, 63, build_area[2] + size_area[1] / 2]
+    lore_structure.prebuildingInfo = structure.getNextBuildingInformation(lore_structure.flip, lore_structure.rotation)
 
-    structureBiomeId = util.getBiome(buildingCondition["position"][0], buildingCondition["position"][2], 1, 1)
-    structureBiomeName = resources.biomeMinecraftId[int(structureBiomeId)]
-    
-    structureBiomeBlockId = str(resources.biomesBlockId[structureBiomeName])
+    settlementData: SettlementData = generator.createSettlementData(build_area, village, resources)
+    loreMaker.voteForColor(settlementData)
 
-    if structureBiomeBlockId == "-1" :
-        structureBiomeBlockId = "0" 
-        
-    settlementData = {}
-    settlementData["materialsReplacement"] = {}
-    settlementData["materialsReplacement"]["villageName"] = "TestLand"
-    loremaker.voteForColor(settlementData)
-    buildingCondition["replacements"] = copy.deepcopy(settlementData["materialsReplacement"])
+    generator.generateStructure(lore_structure, settlementData, resources, world_modifications, chestGeneration, block_transformation)
+    for villager in lore_structure.villagers:
+        if villager.job == Villager.DEFAULT_JOB:
+            continue
 
-    # Load block for structure biome
-    for aProperty in resources.biomesBlocks[structureBiomeBlockId]:
-        if aProperty in resources.biomesBlocks["rules"]["village"]:
-            buildingCondition["replacements"][aProperty] = resources.biomesBlocks[structureBiomeBlockId][aProperty]
+        Trade.generateFromTradeTable(village, villager, resources.trades[villager.job], settlementData.getMatRepDeepCopy())
 
-    # Load block for structure biome
-    for aProperty in resources.biomesBlocks[structureBiomeBlockId]:
-        if aProperty in resources.biomesBlocks["rules"]["structure"]:
-            buildingCondition["replacements"][aProperty] = resources.biomesBlocks[structureBiomeBlockId][aProperty]
+    util.spawnVillagerForStructure(settlementData, lore_structure, lore_structure.position)
 
-    settlementData = {
-        "villagerNames" : ["rodriguez sdfsd", "sdfsdfsdf"],
-        "structures" : [
-            {"name" : "basichouse1", "villagersId" : [0]},
-            {"name" : "basichouse1", "villagersId" : [1]}
-        ]
-    }
-
-    buildingCondition["special"]["bedroomhouse"] = ["minecraft:written_book" + toolbox.writeBook(
-                book.createBookForVillager(settlementData, 0)[0],
-                     title="jean ", author="SDQS", description="QSSDD" )]
-
-    structure.build(worldModif, buildingCondition, chestGeneration)
-    worldModif.saveToFile(file)
-
-else : 
-    if args.remove == "r" :   
-        worldModif.loadFromFile(file)
-    else :
-        worldModif.loadFromFile(args.remove)
-    worldModif.undoAllModification()
+    world_modifications.saveToFile(file)
+else:
+    if args.remove == "r":
+        world_modifications.loadFromFile(file)
+    else:
+        world_modifications.loadFromFile(args.remove)
+    world_modifications.undoAllModification()

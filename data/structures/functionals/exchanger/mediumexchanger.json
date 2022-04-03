@@ -1,0 +1,33 @@
+{
+  "mainEntry": {
+    "facing" : "north",
+    "position" : [7, 0, 0]
+  },
+  "replacements" : {
+    "oak" : { "type" : "woodType", "state" : 2 },
+    "spruce" : { "type" : "woodType2", "state" : 2 },
+    "acacia" : { "type" : "woodType3", "state" : 2 }
+  },
+  "air" : {
+    "preferedAirMode" : 1,
+    "replacements" : [
+      [0, 0, 0, 10, 8, 6]
+    ]
+  },
+  "lootTables" : [
+  ],
+  "villageInfo" : {
+    "villager" : 1,
+    "gameProfession" : "toolsmith",
+    "profession" : "Exchanger"
+  },
+  "ground" : {
+    "info" : "all"
+  },
+  "sign" : {
+    "position" : [5, 2, 0],
+    "facing" : "north",
+    "tier" : 2,
+    "name" : "Exchanger"
+  }
+}

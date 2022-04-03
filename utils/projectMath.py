@@ -2,16 +2,16 @@ import math
 
 
 def isPointInCube(point, cube):
-    if (cube[0] <= point[0] and cube[3] >= point[0]):
-        if (cube[1] <= point[1] and cube[4] >= point[1]):
-            if (cube[2] <= point[2] and cube[5] >= point[2]):
+    if cube[0] <= point[0] and cube[3] >= point[0]:
+        if cube[1] <= point[1] and cube[4] >= point[1]:
+            if cube[2] <= point[2] and cube[5] >= point[2]:
                 return True
     return False
 
 
 def isPointInSquare(point, square):
-    if (square[0] <= point[0] and square[2] >= point[0]):
-        if (square[1] <= point[1] and square[3] >= point[1]):
+    if square[0] <= point[0] and square[2] >= point[0]:
+        if square[1] <= point[1] and square[3] >= point[1]:
             return True
 
     return False
@@ -41,7 +41,7 @@ def isTwoRectOverlapse(position1, size1, position2, size2):
     return True
 
 
-def isTwoRectOverlapse(position1, size1, position2, size2, moreSize):
+def isTwoRectOverlaps(position1, size1, position2, size2, moreSize):
     if position1[0] + size1[2] + moreSize < position2[0] + size2[0]:
         return False
 
@@ -75,3 +75,25 @@ def isInHouse(list_house: list, coord: list):
             return True
 
     return False
+
+
+def euclideanDistance2D(position1, position2):
+    return math.sqrt(math.pow(position1[0] - position2[0], 2) + math.pow(position1[1] - position2[1], 2))
+
+
+def computeSquaredZoneWitNumber(zone_number: list, build_area: list) -> list:
+    areas: list = []
+
+    for x in range(zone_number[0]):
+        for z in range(zone_number[1]):
+            areas.append([
+                build_area[0] + x * zone_number[0],
+                build_area[1],
+                build_area[2] + z * zone_number[1],
+                build_area[3] if x == zone_number[0] - 1 else build_area[0] + (
+                        x + 1) * zone_number[0],
+                build_area[4],
+                build_area[5] if z == zone_number[1] - 1 else build_area[2] + (
+                        z + 1) * zone_number[1]])
+
+    return areas

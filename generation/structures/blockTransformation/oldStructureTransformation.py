@@ -4,10 +4,15 @@ import random
 class OldStructureTransformation:
     def __init__(self):
         super().__init__()
-        self.age: int = 0
+        self.lore_structure = None
+        self.pre_requisites = False
+
+    def setLoreStructure(self, lore_structure):
+        self.lore_structure = lore_structure
+        self.pre_requisites = self.lore_structure.age == 1
 
     def replaceBlock(self, block: str) -> str:
-        if self.age == 0:
+        if not self.pre_requisites:
             return block
 
         if "minecraft:cobblestone" == block \

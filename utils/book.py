@@ -1,17 +1,15 @@
-from utils.nameGenerator import NameGenerator
-from representation.villager import Villager
-from representation.village import Village
+from generation.data.villager import Villager
+from generation.data.village import Village
 
 import generation.generator as generator
-import generation.data.settlementData as settlementDataClass
 
 import random as rd
 
 REASON_OF_DEATHS = ["murdered", "died because of old age", "died of creeper attack", "died of skeleton attack",
                     "died of spider attack (he did not became Spider-Man)",
                     "died of zombie attack", "died of witch attack", "died suffocating from sand falling",
-                    "died eating too much cake", "died crushing by a rock"
-    , "died suffocating from gravel falling"]
+                    "died eating too much cake", "died crushing by a rock",
+                    "died suffocating from gravel falling"]
 DIARY_TEXTS_WITHOUT_TARGETS = [" I really like the color of the village. ", " I really like the name of the village. ",
                                " I hate the color of the village.",
                                " I am afraid of spiders. ", " I am afraid of creppers. ", " I am afraid of zombies. ",
@@ -37,7 +35,7 @@ Return the text of the book of the village presentation
 
 
 def createTextOfPresentationVillage(villageName: str, structuresNumber: int, structures: list, deadVillagersNumber: int,
-                                    listOfVillagers):
+                                    villages: list):
     textVillagePresentationBook = (
         '\\\\s--------------\\\\n'
         '                      \\\\n'
@@ -52,14 +50,14 @@ def createTextOfPresentationVillage(villageName: str, structuresNumber: int, str
         '                      \\\\n'
         '                      \\\\n'
         '--------------')
-    textVillagePresentationBook += ('\f\\\\s---------------\\\\n')
+    textVillagePresentationBook += '\f\\\\s---------------\\\\n'
 
     numberOfHouse = 0
     for structure in structures:
         if "house" in structure.name:
             numberOfHouse += 1
 
-    textVillagePresentationBook += (f'{len(listOfVillagers)} villagers arrived in '
+    textVillagePresentationBook += (f'{len(villages)} villagers arrived in '
                                     f'{numberOfHouse} houses \\\\n')
     textVillagePresentationBook += f'{deadVillagersNumber} villagers have died since their arrival. \\\\n'
     textVillagePresentationBook += (''
@@ -84,17 +82,25 @@ Return the text of the book of the villagers names and professions
 """
 
 
-def createTextForVillagersNames(listOfVillagers):
+def createTextForVillagersNames(villagers: list):
     textVillagerNames = 'Registry of living villagers \\\\n'
-    for i in range(len(listOfVillagers)):
+
+    villageStr: str
+    i = 0
+    for villager in villagers:
+        villageStr = villager.name + " : " + villager.job
+
         if i <= 3:
             textVillagerNames += ('-'
-                                  f'{listOfVillagers[i]}       \\\\n')
+                                  f'{villageStr}       \\\\n')
         if i % 4 == 0 and i != 0:
             textVillagerNames += '\f'
         if i >= 4:
             textVillagerNames += ('-'
-                                  f'{listOfVillagers[i]}       \\\\n')
+                                  f'{villageStr}       \\\\n')
+
+        i += 1
+
     textVillagerNames += '\f'
 
     return textVillagerNames
@@ -105,40 +111,42 @@ Return the text of the book of the dead villagers names and professions
 """
 
 
-def createTextForDeadVillagers(listOfVillagers: list, nameGenerator: NameGenerator):
-    randomOfDeadVillagers = rd.randint(1, len(listOfVillagers) - 1)
+def createTextForDeadVillagers(villagers: list, deadVillagers: list):
+    numberOfDead = len(deadVillagers)
 
-    data = {"listOfDeadVillagers": []}
-    for i in range(randomOfDeadVillagers):
-        data["listOfDeadVillagers"].append(nameGenerator.generateVillagerName(True))
-    listOfVillagersWithoutJob = [i.split(':', 1)[0] for i in listOfVillagers]
+    names = []
+    for villager in villagers:
+        names.append(villager.name)
+
     textDeadVillagers = 'Registry of dead villagers \\\\n'
 
-    for i in range(len(data["listOfDeadVillagers"])):
-        deadVillager = data["listOfDeadVillagers"][i]
+    i = 0
+    for deadVillager in deadVillagers:
         randomDeath = rd.randint(0, len(REASON_OF_DEATHS) - 1)
-        if deadVillager in listOfVillagersWithoutJob:
+        if deadVillager.name in names:
             textDeadVillagers += ('-'
-                                  f'{deadVillager} Senior : '
+                                  f'{deadVillager.name} Senior : '
                                   f'{REASON_OF_DEATHS[randomDeath]} \\\\n')
         if i <= 2:
             if i == 2:
                 textDeadVillagers += ('-'
-                                      f'{deadVillager} : '
+                                      f'{deadVillager.name} : '
                                       f'{REASON_OF_DEATHS[0]} \\\\n')
             else:
                 textDeadVillagers += ('-'
-                                      f'{deadVillager} : '
+                                      f'{deadVillager.name} : '
                                       f'{REASON_OF_DEATHS[randomDeath]} \\\\n')
         if i % 3 == 0 and i != 0:
             textDeadVillagers += '\f'
         if i >= 3:
             textDeadVillagers += ('-'
-                                  f'{deadVillager} : '
+                                  f'{deadVillager.name} : '
                                   f'{REASON_OF_DEATHS[randomDeath]} \\\\n')
+
+        i += 1
     textDeadVillagers += '\f'
 
-    return [textDeadVillagers, randomOfDeadVillagers, data["listOfDeadVillagers"]]
+    return [textDeadVillagers, numberOfDead]
 
 
 def createBookForVillager(village_model: Village, villager: Villager) -> list:
@@ -221,18 +229,27 @@ def createBookForVillager(village_model: Village, villager: Villager) -> list:
         # Other phrase    
         random = rd.randint(1, 5)
         if random == 1:
-            randomProfession = rd.randint(0, len(settlementDataClass.SettlementData.VILLAGE_PROFESSION_LIST) - 1)
-            textDiaryVillager += f'I hate all {settlementDataClass.SettlementData.VILLAGE_PROFESSION_LIST[randomProfession]} \\\\n'
+            randomProfession = rd.randint(0, len(Villager.VILLAGE_PROFESSION_LIST) - 1)
+            textDiaryVillager += f'I hate all {Villager.VILLAGE_PROFESSION_LIST[randomProfession]} \\\\n'
             if rd.randint(1, 5) == 1:
                 secondRandomProfession = rd.randint(0,
-                                                    len(settlementDataClass.SettlementData.VILLAGE_PROFESSION_LIST) - 1)
+                                                    len(Villager.VILLAGE_PROFESSION_LIST) - 1)
                 if secondRandomProfession != randomProfession:
-                    textDiaryVillager += f'I would like to work as a {settlementDataClass.SettlementData.VILLAGE_PROFESSION_LIST[secondRandomProfession]}.\\\\n'
+                    textDiaryVillager += f'I would like to work as a {Villager.VILLAGE_PROFESSION_LIST[secondRandomProfession]}.\\\\n'
         elif random == 2 and not targetTextDone:
             randomDiaryTextWithTarget = rd.randint(0, len(newDiaryTextWithTarget) - 1)
-            targeted = village_model.deadVillager[rd.randint(0, len(village_model.deadVillager) - 1)].name
-            textDiaryVillager += (f'{newDiaryTextWithTarget[randomDiaryTextWithTarget]}'
-                                  f'{targeted}.  \\\\n')
+
+            targeted = -1
+
+            if len(village_model.dead_villagers) == 1:
+                targeted = 0
+            elif len(village_model.dead_villagers) > 1:
+                targeted = village_model.dead_villagers[rd.randint(0, len(village_model.dead_villagers) - 1)].name
+
+            if targeted != -1:
+                textDiaryVillager += (f'{newDiaryTextWithTarget[randomDiaryTextWithTarget]}'
+                                      f'{targeted}.  \\\\n')
+
             newDiaryTextWithTarget.remove(newDiaryTextWithTarget[randomDiaryTextWithTarget])
             targetTextDone = True
         else:
