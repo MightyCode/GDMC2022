@@ -1,6 +1,7 @@
 from generation.resources import Resources
 from generation.data.village import Village
 import copy
+import utils.util as util
 
 
 class SettlementData:
@@ -31,12 +32,11 @@ class SettlementData:
     def init(self) -> None:
         self.__materials_replacement["villageName"] = self.village_model.name
 
-        nameOfItem: str = self.village_model.name + " gem"
-        self.__materials_replacement["village_currency_item"] = \
-            "minecraft:emerald{display:{Name:'{\"text\":\"" + nameOfItem + "\"}',Lore:['{\"text\":\"Currency used on that village to trade\",\"color\":\"dark_aqua\"}']}}"
+        self.__materials_replacement["village_currency_item"] = util.returnCurrencyItem(
+            self.village_model.name + " gem")
 
-        self.__materials_replacement["village_currency_trade"] = \
-            "\"minecraft:emerald\", tag:{display:{Name:'{\"text\":\"" + nameOfItem + "\"}',Lore:['{\"text\":\"Currency used on that village to trade\",\"color\":\"dark_aqua\"}']}}"
+        self.__materials_replacement["village_currency_trade"] = util.returnCurrencyTrade(
+            self.village_model.name + " gem")
 
         self.__materials_replacement["toolMaterial"] = "wooden"
         self.__materials_replacement["equipmentMaterial"] = "leather"

@@ -336,3 +336,11 @@ def selectNWithChanceForOther(elements: list, chances: list, number: int, requir
             results.append(cpy[i])
 
     return results
+
+
+def returnCurrencyItem(villageNameItem: str) -> str:
+    return "minecraft:emerald{display:{Name:'{\"text\":\"" + villageNameItem + '"}\',Lore:[\'{"text":"Currency used on that village to trade","color":"dark_aqua"}\']}}'
+
+
+def returnCurrencyTrade(villageNameItem: str) -> str:
+    return "\"minecraft:emerald\", tag:{display:{Name:'{\"text\":\"" + villageNameItem + "\"}',Lore:['{\"text\":\"Currency used on that village to trade\",\"color\":\"dark_aqua\"}']}}"

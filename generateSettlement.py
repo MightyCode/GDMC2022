@@ -109,16 +109,25 @@ if not args.remove:
             current_zone_z += 1
             current_zone_x = 0
 
+        current_village = villages[settlement_index]
+        print("\n-----------------------\nMake village named " + current_village.name)
         interfaceUtil.setBuildArea(area[0], area[1], area[2], area[3] + 1, area[4] + 1, area[5] + 1)
         print("Make global slice")
         interfaceUtil.makeGlobalSlice()
         print("Global slice done")
-
-        current_village = villages[settlement_index]
-        print("Make village named " + current_village.name)
         print("Tier : " + str(current_village.tier) + ", Age : " + str(
             current_village.age) + ", Status : " + current_village.status)
+
         print("Village destroyed : " + str(current_village.isDestroyed))
+
+        from generation.data.villageInteraction import VillageInteraction
+        best_relation: int = VillageInteraction.STATE_WAR
+        for interactionKey in current_village.village_interactions.keys():
+            interaction = current_village.village_interactions[interactionKey]
+            if VillageInteraction.isBestRelationThen(interaction.state, best_relation):
+                best_relation = interaction.state
+
+        print("Best relation : " + VillageInteraction.relationStateToStr(best_relation))
 
         current_village.generated = True
         block_transformation[0].age = current_village.age
