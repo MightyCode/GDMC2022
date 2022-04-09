@@ -44,18 +44,8 @@ class BaseStructure:
         self.computed_orientation = {}
 
     """
-    Return a premake dictionary required to build a structure
+    Return a premake object required to build a structure
     Flip is applied before rotation
-
-    size : size of the structure
-    position : the of the referencePoint in the real world
-    referencePoint : point x, z where the building will rotate around, the block at the reference point will be on position point
-    flip : No flip = 0, Flip x = 1, flip z = 2, Flip xz = 3
-    rotation : No rotation = 0, rotation 90° = 1, rotation 180° = 2, rotation 270° = 3
-    replaceAllAir : 0 no air placed, 1 place all air block, 2 place all choosen air block, 3 take the preferred replacement air from info file
-    replacements : change one type of block to another
-    prebuildingInfo
-    special : dict to put very specific information
     """
 
     @staticmethod
@@ -356,10 +346,10 @@ class BaseStructure:
     """
 
     def placeAirZones(self, world_modification, building_conditions: BuildingCondition):
-        if building_conditions.replaceAirMethod == 3:
-            building_conditions.replaceAirMethod = self.info["air"]["preferedAirMode"]
+        if building_conditions.replaceAirMethod == BuildingCondition.FILE_PREFERENCE_AIR_PLACEMENT:
+            building_conditions.replaceAirMethod = self.info["air"]["preferredAirMode"]
 
-        if building_conditions.replaceAirMethod == 2:
+        if building_conditions.replaceAirMethod == BuildingCondition.CHOSEN_AIR_PLACEMENT:
             for zones in self.info["air"]["replacements"]:
                 block_from = self.returnWorldPosition([zones[0], zones[1] + 1, zones[2]],
                                                       building_conditions.flip, building_conditions.rotation,

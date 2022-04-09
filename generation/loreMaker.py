@@ -100,7 +100,7 @@ def generateLoreAfterRelation(villages: list):
             village.isDestroyed = random.randint(1, 10) == 1
 
             if village.isDestroyed:
-                village.destroyCause = "pillager" if random.randint(1, 2) == 1 else "abandonned"
+                village.destroyCause = "pillager" if random.randint(1, 2) == 1 else "abandoned"
         else:
             village.destroyCause = "war"
             chance: int = computeChanceOfDestructionComparingTier(village)
@@ -247,4 +247,3 @@ def handleVillageDestroy(current_village: Village):
             lore_structure.causeDestroy[one_cause] = current_village.destroyCause
 
         lore_structure.destroyed = True
-

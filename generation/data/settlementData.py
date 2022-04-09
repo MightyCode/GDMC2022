@@ -40,6 +40,7 @@ class SettlementData:
 
         self.__materials_replacement["toolMaterial"] = "wooden"
         self.__materials_replacement["equipmentMaterial"] = "leather"
+
         if self.village_model.tier == 1:
             self.__materials_replacement["toolMaterial"] = "stone"
             self.__materials_replacement["equipmentMaterial"] = "chainmail"

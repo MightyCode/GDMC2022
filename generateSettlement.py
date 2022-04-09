@@ -118,6 +118,7 @@ if not args.remove:
         print("Tier : " + str(current_village.tier) + ", Age : " + str(
             current_village.age) + ", Status : " + current_village.status)
 
+        print("Village color : " + current_village.color)
         print("Village destroyed : " + str(current_village.isDestroyed))
 
         from generation.data.villageInteraction import VillageInteraction
@@ -134,6 +135,7 @@ if not args.remove:
 
         """ First main step : init settlementData """
         settlementData = generator.createSettlementData(area, current_village, resources)
+        loreMaker.applyLoreToSettlementData(settlementData)
 
         floodFill = FloodFill(world_modification, settlementData)
 
@@ -174,7 +176,7 @@ if not args.remove:
             current_village.lore_structures[i].flip = result["flip"]
             current_village.lore_structures[i].rotation = result["rotation"]
 
-            current_village.lore_structures[i].prebuildingInfo = baseStructure.getNextBuildingInformation(
+            current_village.lore_structures[i].preBuildingInfo = baseStructure.getNextBuildingInformation(
                 result["flip"],
                 result["rotation"])
 
@@ -222,7 +224,7 @@ if not args.remove:
             structure: LoreStructure = current_village.lore_structures[0]
 
             for tested_structure in current_village.lore_structures:
-                if villager in tested_structure.villagers:
+                if villager in tested_structure.villagers and tested_structure.group == LoreStructure.TYPE_HOUSES:
                     available = "haybale" not in tested_structure.name
                     structure = tested_structure
                     break
@@ -277,8 +279,6 @@ if not args.remove:
             current_time = int(round(time.time() * 1000)) - milliseconds
             i += 1
 
-        world_modification.saveToFile(file)
-
         if i < len(current_village.lore_structures):
             print("\nAbort building due time expired")
 
@@ -309,5 +309,7 @@ else:
 
 milliseconds2: int = int(round(time.time() * 1000))
 result: int = milliseconds2 - milliseconds
+
+world_modification.saveToFile(file)
 
 print("Time took : ", result / 1000)

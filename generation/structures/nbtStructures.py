@@ -174,7 +174,7 @@ class NbtStructures(BaseStructure):
                             break
 
             # Check for block air replacement
-            if block_name in NbtStructures.AIR_BLOCKS and building_conditions.replaceAirMethod != 1:
+            if block_name in NbtStructures.AIR_BLOCKS and building_conditions.replaceAirMethod != BuildingCondition.NO_AIR_PLACEMENT:
                 continue
 
             # Compute position of block from local space to world space

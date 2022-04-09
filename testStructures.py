@@ -85,7 +85,7 @@ if not args.remove:
     lore_structure.villagers = [villagers[0], villagers[2]]
     lore_structure.type = structure_type
     lore_structure.position = [build_area[0] + size_area[0] / 2, 63, build_area[2] + size_area[1] / 2]
-    lore_structure.prebuildingInfo = structure.getNextBuildingInformation(lore_structure.flip, lore_structure.rotation)
+    lore_structure.preBuildingInfo = structure.getNextBuildingInformation(lore_structure.flip, lore_structure.rotation)
 
     settlementData: SettlementData = generator.createSettlementData(build_area, village, resources)
     loreMaker.voteForColor(settlementData)

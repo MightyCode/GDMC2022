@@ -34,9 +34,20 @@ class BurnedStructureTransformation:
             if random.randint(1, 5) == 1:
                 return "minecraft:coal_block"
 
-        if "log" in block and "stripped" not in block:
+        if ("log" in block or "wood" in block) and "stripped" not in block:
             if random.randint(1, 5) == 1:
                 return "minecraft:stripped_" + block.replace("minecraft:", "")
+
+        if "minecraft:acacia_fence" == block \
+                or "minecraft:spruce_fence" == block \
+                or "minecraft:oak_fence" == block \
+                or "minecraft:birch_fence" == block \
+                or "minecraft:jungle_fence" == block \
+                or "minecraft:dark_oak_fence" == block \
+                or "minecraft:crimson_fence" == block \
+                or "minecraft:warped_fence" == block:
+            if random.randint(1, 15) == 1:
+                return "minecraft:nether_brick_fence"
 
         if "minecraft:acacia_slab" == block \
                 or "minecraft:spruce_slab" == block \

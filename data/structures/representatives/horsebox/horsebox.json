@@ -11,7 +11,7 @@
       "villager" : 0
   },
   "air" : {
-    "preferedAirMode" : 2,
+    "preferredAirMode" : 2,
     "replacements" : [
       [0, 1, 0, 4, 6, 5]
     ]
