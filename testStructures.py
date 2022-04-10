@@ -25,7 +25,7 @@ import generation.generator as generator
 Important information
 """
 
-structure_name: str = "mediumhouse1"
+structure_name: str = "basicgeneratedquarry"
 structure_type: str = "functionals"
 
 
@@ -78,8 +78,8 @@ if not args.remove:
     lore_structure.age = 1
     lore_structure.flip = 1
     lore_structure.rotation = 1
-    """lore_structure.destroyed = True
-    lore_structure.causeDestroy = {"burned": "burned", "abandoned": "abandoned", "damaged": "damaged"}"""
+    lore_structure.destroyed = True
+    lore_structure.causeDestroy = {"burned": "burned", "abandoned": "abandoned", "damaged": "damaged"}
 
     lore_structure.name = structure_name
     lore_structure.villagers = [villagers[0], villagers[2]]

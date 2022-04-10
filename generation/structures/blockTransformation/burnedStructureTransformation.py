@@ -15,6 +15,13 @@ class BurnedStructureTransformation:
         if not self.pre_requisites:
             return block
 
+        parts: list = block.split("[")
+        block = parts[0]
+        if len(parts) <= 1:
+            parts.append("")
+        else:
+            parts[1] = "[" + parts[1]
+
         if "_door" in block \
                 or "chest" in block \
                 or "shulker" in block \
@@ -36,7 +43,7 @@ class BurnedStructureTransformation:
 
         if ("log" in block or "wood" in block) and "stripped" not in block:
             if random.randint(1, 5) == 1:
-                return "minecraft:stripped_" + block.replace("minecraft:", "")
+                return "minecraft:stripped_" + block.replace("minecraft:", "") + parts[1]
 
         if "minecraft:acacia_fence" == block \
                 or "minecraft:spruce_fence" == block \
@@ -47,7 +54,7 @@ class BurnedStructureTransformation:
                 or "minecraft:crimson_fence" == block \
                 or "minecraft:warped_fence" == block:
             if random.randint(1, 15) == 1:
-                return "minecraft:nether_brick_fence"
+                return "minecraft:nether_brick_fence" + parts[1]
 
         if "minecraft:acacia_slab" == block \
                 or "minecraft:spruce_slab" == block \
@@ -58,7 +65,7 @@ class BurnedStructureTransformation:
                 or "minecraft:crimson_slab" == block \
                 or "minecraft:warped_slab" == block:
             if random.randint(1, 15) == 1:
-                return "minecraft:nether_brick_slab"
+                return "minecraft:nether_brick_slab" + parts[1]
 
         if "minecraft:acacia_stairs" == block \
                 or "minecraft:spruce_stairs" == block \
@@ -69,7 +76,7 @@ class BurnedStructureTransformation:
                 or "minecraft:crimson_stairs" == block \
                 or "minecraft:warped_stairs" == block:
             if random.randint(1, 15) == 1:
-                return "minecraft:nether_brick_stairs"
+                return "minecraft:nether_brick_stairs" + parts[1]
 
         if random.randint(1, 15) == 1:
             return "minecraft:air"
