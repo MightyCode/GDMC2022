@@ -25,7 +25,7 @@ import generation.generator as generator
 Important information
 """
 
-structure_name: str = "basicgeneratedquarry"
+structure_name: str = "basichouse1"
 structure_type: str = "functionals"
 
 
@@ -47,7 +47,7 @@ build_area: tuple = (
 size_area: list = [build_area[3] - build_area[0] + 1, build_area[5] - build_area[2] + 1]
 
 if not args.remove:
-    block_transformation: list = [OldStructureTransformation(), DamagedStructureTransformation(), BurnedStructureTransformation(), AbandonedStructureTransformation()]
+    block_transformations: list = [OldStructureTransformation(), DamagedStructureTransformation(), BurnedStructureTransformation(), AbandonedStructureTransformation()]
 
     # Create Village
     village: Village = Village()
@@ -76,7 +76,7 @@ if not args.remove:
 
     lore_structure: LoreStructure = LoreStructure()
     lore_structure.age = 1
-    lore_structure.flip = 1
+    lore_structure.flip = 3
     lore_structure.rotation = 1
     lore_structure.destroyed = True
     lore_structure.causeDestroy = {"burned": "burned", "abandoned": "abandoned", "damaged": "damaged"}
@@ -90,7 +90,53 @@ if not args.remove:
     settlementData: SettlementData = generator.createSettlementData(build_area, village, resources)
     loreMaker.voteForColor(settlementData)
 
-    generator.generateStructure(lore_structure, settlementData, resources, world_modifications, chestGeneration, block_transformation)
+    structure.block_transformation = block_transformations
+
+    """
+    palette: list = []
+    for block_palette in file["palette"]:
+        name = block_palette["Name"].value
+
+        properties = "["
+        if "Properties" in block_palette.keys():
+            for key in block_palette["Properties"].keys():
+                if structure.propertyCompatible(name, key):
+                    properties += structure.convertProperty(key, block_palette["Properties"][key].value) + ","
+
+            properties = properties[:-1]
+        name = name + properties + "]"
+
+        palette.append({})
+
+    blocks: list = []
+
+    for x in range(size[0]):
+        blocks.append([])
+        for y in range(size[1]):
+            blocks[x].append([])
+            for z in range(size[2]):
+                blocks[x][y].append(0)
+
+    position: list
+    for block in file["blocks"]:
+        position = [block["pos"][0].value, block["pos"][1].value, block["pos"][2].value]
+        blocks[position[0]][position[1]][position[2]] = block["state"].value
+
+    for x in range(size[0]):
+        for y in range(size[1]):
+            for z in range(size[2]):
+                block_position = structure.returnWorldPosition(
+                    [x, y, z],
+                    lore_structure.flip, lore_structure.rotation,
+                    [0, 0, 0], [build_area[0] + size_area[0] / 2, 63, build_area[2] + size_area[1] / 2])
+
+                world_modifications.setBlock(
+                    block_position[0], block_position[1], block_position[2],
+                    palette[blocks[x][y][z]]
+                )
+    """
+
+    generator.generateStructure(lore_structure, settlementData, resources, world_modifications, chestGeneration, block_transformations)
     for villager in lore_structure.villagers:
         if villager.job == Villager.DEFAULT_JOB:
             continue
