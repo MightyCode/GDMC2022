@@ -1,5 +1,4 @@
 import os
-import json
 import lib.interfaceUtils as interfaceUtils
 
 
@@ -8,20 +7,18 @@ class WorldModification:
     DEBUG_MODE = False
 
     DEFAULT_PATH = "logs/"
-    CONFIG_PATH = "config/config.json"
     BLOCK_SEPARATOR = "$"
     PARTS_SEPARATOR = "°"
 
-    def __init__(self, interface):
+    def __init__(self, interface, config: dict):
         self.interface = interface
 
-        self.before_modification = []
-        self.after_modificaton = []
+        self.before_modification: list = []
+        self.after_modification: list = []
 
-        with open(WorldModification.CONFIG_PATH) as f:
-            config = json.load(f)
-            if "debugMode" in config.keys():
-                WorldModification.DEBUG_MODE = config["debugMode"]
+        self.config: dict = config
+        if "debugMode" in self.config.keys():
+            WorldModification.DEBUG_MODE = config["debugMode"]
 
     def setBlock(self, x, y, z, block, compareBlockState=False, placeImmediately=False):
         if WorldModification.DEBUG_MODE:
@@ -37,7 +34,7 @@ class WorldModification:
                     return
 
             self.before_modification.append([x, y, z, previousBlock])
-            self.after_modificaton.append([x, y, z, block])
+            self.after_modification.append([x, y, z, block])
 
         if placeImmediately:
             self.interface.setBuffering(False)
@@ -69,7 +66,7 @@ class WorldModification:
                                 continue
 
                         self.before_modification.append([x, y, z, previousBlock])
-                        self.after_modificaton.append([x, y, z, block])
+                        self.after_modification.append([x, y, z, block])
 
         # interfaceUtils.fill(from_x, from_y, from_z, to_x, to_y, to_z, block)
 
@@ -96,7 +93,7 @@ class WorldModification:
         )
 
         self.before_modification.pop()
-        self.after_modificaton.pop()
+        self.after_modification.pop()
 
     def undoAllModification(self):
         if not WorldModification.DEBUG_MODE:
@@ -115,7 +112,7 @@ class WorldModification:
             print("CAN'T SAVE IF DEBUG MODE NOT ACTIVATED")
             return
 
-        assert (len(self.before_modification) == len(self.after_modificaton))
+        assert (len(self.before_modification) == len(self.after_modification))
 
         # Check if log path exists
         if not os.path.isdir(WorldModification.DEFAULT_PATH):
@@ -139,10 +136,10 @@ class WorldModification:
                 str(self.before_modification[i][1]) + WorldModification.BLOCK_SEPARATOR +
                 str(self.before_modification[i][2]) + WorldModification.BLOCK_SEPARATOR +
                 str(self.before_modification[i][3]) + WorldModification.PARTS_SEPARATOR +
-                str(self.after_modificaton[i][0]) + WorldModification.BLOCK_SEPARATOR +
-                str(self.after_modificaton[i][1]) + WorldModification.BLOCK_SEPARATOR +
-                str(self.after_modificaton[i][2]) + WorldModification.BLOCK_SEPARATOR +
-                str(self.after_modificaton[i][3])
+                str(self.after_modification[i][0]) + WorldModification.BLOCK_SEPARATOR +
+                str(self.after_modification[i][1]) + WorldModification.BLOCK_SEPARATOR +
+                str(self.after_modification[i][2]) + WorldModification.BLOCK_SEPARATOR +
+                str(self.after_modification[i][3])
             )
 
             if i < len(self.before_modification) - 1:
@@ -174,7 +171,7 @@ class WorldModification:
                     before_parts[3]
                 ])
 
-                self.after_modificaton.append([
+                self.after_modification.append([
                     int(after_parts[0]),
                     int(after_parts[1]),
                     int(after_parts[2]),

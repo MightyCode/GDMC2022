@@ -19,7 +19,7 @@ import utils.argumentParser as argParser
 import generation.loreMaker as loreMaker
 import lib.interfaceUtils as interfaceUtil
 import generation.generator as generator
-
+import utils.checkOrCreateConfig as chock
 
 """
 Important information
@@ -28,6 +28,7 @@ Important information
 structure_name: str = "basichouse1"
 structure_type: str = "functionals"
 
+config: dict = chock.getOrCreateConfig()
 
 file: str = "temp.txt"
 interface: interfaceUtil.Interface = interfaceUtil.Interface(buffering=True, caching=True)
@@ -35,7 +36,7 @@ interface.setCaching(True)
 interface.setBuffering(True)
 interfaceUtil.setCaching(True)
 interfaceUtil.setBuffering(True)
-world_modifications: WorldModification = WorldModification(interface)
+world_modifications: WorldModification = WorldModification(interface, config)
 args, parser = argParser.giveArgsAndParser()
 build_area = argParser.getBuildArea(args)
 

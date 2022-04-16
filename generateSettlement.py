@@ -26,10 +26,13 @@ import generation.loreMaker as loreMaker
 import generation.road as road
 import lib.interfaceUtils as interfaceUtil
 import lib.toolbox as toolbox
+import utils.checkOrCreateConfig as chock
 
 import random
 
-milliseconds = int(round(time.time() * 1000))
+config: dict = chock.getOrCreateConfig()
+
+milliseconds: int = int(round(time.time() * 1000))
 
 TIME_LIMIT: int = 600
 TIME_TO_BUILD_A_VILLAGE: int = 30
@@ -41,7 +44,7 @@ interface.setBuffering(True)
 interfaceUtil.setCaching(True)
 interfaceUtil.setBuffering(True)
 
-world_modification: WorldModification = WorldModification(interface)
+world_modification: WorldModification = WorldModification(interface, config)
 args, parser = argParser.giveArgsAndParser()
 build_area = argParser.getBuildArea(args)
 
