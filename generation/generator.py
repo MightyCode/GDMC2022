@@ -188,14 +188,14 @@ def buildMurdererCache(lore_structure: LoreStructure, settlement_data: Settlemen
                                     "woodType"] + "_trapdoor[half=bottom,facing=" + facing + "]")
 
 
-def modifyBuildingConditionDependingOnStructure(building_conditions: BuildingCondition, settlementData: SettlementData,
+def modifyBuildingConditionDependingOnStructure(building_conditions: BuildingCondition, settlement_data: SettlementData,
                                                 structure: LoreStructure):
     if structure.name == "basicgraveyard":
         number = 8
 
         building_conditions.special = {"sign": []}
 
-        list_of_dead = settlementData.village_model.dead_villagers.copy()
+        list_of_dead = settlement_data.village_model.dead_villagers.copy()
         i = 0
         while i < number:
             building_conditions.special["sign"].append("")
@@ -213,7 +213,7 @@ def modifyBuildingConditionDependingOnStructure(building_conditions: BuildingCon
             i += 1
 
     elif structure.name == "murderercache":
-        murderer_data = settlementData.village_model.murderer_data
+        murderer_data = settlement_data.village_model.murderer_data
 
         building_conditions.special = {"sign": ["Next target :", "", "", ""]}
         name = murderer_data.villagerTarget.name
@@ -224,10 +224,10 @@ def modifyBuildingConditionDependingOnStructure(building_conditions: BuildingCon
     elif structure.name == "mediumstatue":
         building_conditions.special = {"sign": ["", "", "", "", "", "", "", ""]}
         index: int = 0
-        if len(settlementData.village_model.dead_villagers) > 1:
-            index = random.randint(0, len(settlementData.village_model.dead_villagers) - 1)
+        if len(settlement_data.village_model.dead_villagers) > 1:
+            index = random.randint(0, len(settlement_data.village_model.dead_villagers) - 1)
 
-        name = settlementData.village_model.dead_villagers[index].name
+        name = settlement_data.village_model.dead_villagers[index].name
         util.parseVillagerNameInLines([
             "In tribute to " + name + ", hero who died in the war"
         ], building_conditions.special["sign"])
@@ -236,7 +236,7 @@ def modifyBuildingConditionDependingOnStructure(building_conditions: BuildingCon
             building_conditions.special["sign"] = building_conditions.special["sign"][0:4]
 
     if structure.type == LoreStructure.TYPE_HOUSES:
-        for villager in settlementData.village_model.villagers:
+        for villager in structure.villagers:
             if len(villager.diary) > 0:
                 if "bedroomhouse" not in building_conditions.special:
                     building_conditions.special["bedroomhouse"] = []
