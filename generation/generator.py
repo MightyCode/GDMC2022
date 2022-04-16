@@ -9,14 +9,13 @@ from utils.constants import Constants
 from utils.nameGenerator import NameGenerator
 from utils.worldModification import WorldModification
 
-import generation.loreMaker as lore_maker
+import generation.loreMaker as loreMaker
 import utils.util as util
 import utils.book as book
 import lib.toolbox as toolbox
 
 import math
 import random
-import copy
 
 
 def createSettlementData(area: list, village_model: Village, resources: Resources) -> SettlementData:
@@ -25,12 +24,13 @@ def createSettlementData(area: list, village_model: Village, resources: Resource
     settlement_data.setArea(area)
 
     # Biome 
-    settlement_data.setVillageBiome(util.getBiome(settlement_data.center[0], settlement_data.center[2], 1, 1), resources)  # TODO get mean
+    settlement_data.setVillageBiome(util.getBiome(settlement_data.center[0], settlement_data.center[2], 1, 1),
+                                    resources)  # TODO get mean
 
     # Per default, chosen color is white
-    lore_maker.fillSettlementDataWithColor(settlement_data, "white")
+    loreMaker.fillSettlementDataWithColor(settlement_data, "white")
 
-    #settlement_data.structure_number_goal = 12
+    # settlement_data.structure_number_goal = 12
     settlement_data.structure_number_goal = random.randint(25, 55)
 
     return settlement_data
@@ -95,7 +95,6 @@ def placeBooks(settlement_data: SettlementData, books: dict, world_modification:
 def generateStructure(lore_structure: LoreStructure, settlement_data: SettlementData, resources: Resources,
                       world_modification: WorldModification, chest_generation: ChestGeneration,
                       block_transformations: list) -> None:
-
     # print(structureData["name"])
     # print(structureData["validPosition"])
     for block_transformation in block_transformations:
@@ -103,42 +102,42 @@ def generateStructure(lore_structure: LoreStructure, settlement_data: Settlement
 
     structure = resources.structures[lore_structure.name]
     info: dict = structure.info
-    current_Village: Village = settlement_data.village_model
+    current_village: Village = settlement_data.village_model
 
     build_murderer_cache: bool = False
 
-    buildingCondition: BuildingCondition = BaseStructure.createBuildingCondition()
-    buildingCondition.setLoreStructure(lore_structure)
-    murdererData = current_Village.murderer_data
+    building_conditions: BuildingCondition = BaseStructure.createBuildingCondition()
+    building_conditions.setLoreStructure(lore_structure)
+    murderer_data = current_village.murderer_data
 
     for villager in lore_structure.villagers:
-        if villager == murdererData.villagerMurderer:
+        if villager == murderer_data.villagerMurderer:
             if "murdererTrap" in info["villageInfo"].keys():
                 build_murderer_cache = True
 
-    buildingCondition.replaceAirMethod = BuildingCondition.FILE_PREFERENCE_AIR_PLACEMENT
-    buildingCondition.replacements = settlement_data.getMatRepDeepCopy()
+    building_conditions.replaceAirMethod = BuildingCondition.FILE_PREFERENCE_AIR_PLACEMENT
+    building_conditions.replacements = settlement_data.getMatRepDeepCopy()
 
     ### Get the biome to change environmental blocks, like the ground by those on the biome
-    structureBiomeId = util.getBiome(buildingCondition.position[0], buildingCondition.position[2], 1, 1)
-    structureBiomeName = resources.biomeMinecraftId[int(structureBiomeId)]
-    structureBiomeBlockId = str(resources.biomesBlockId[structureBiomeName])
+    structure_biome_id = util.getBiome(building_conditions.position[0], building_conditions.position[2], 1, 1)
+    structure_biome_name = resources.biomeMinecraftId[int(structure_biome_id)]
+    structure_biome_block_id = str(resources.biomesBlockId[structure_biome_name])
 
-    if structureBiomeBlockId == "-1":
-        structureBiomeBlockId = settlement_data.biome_block_id
+    if structure_biome_block_id == "-1":
+        structure_biome_block_id = settlement_data.biome_block_id
 
     # Load block for structure biome
-    for aProperty in resources.biomesBlocks[structureBiomeBlockId]:
+    for aProperty in resources.biomesBlocks[structure_biome_block_id]:
         if aProperty in resources.biomesBlocks["rules"]["structure"]:
-            buildingCondition.replacements[aProperty] = resources.biomesBlocks[structureBiomeBlockId][aProperty]
+            building_conditions.replacements[aProperty] = resources.biomesBlocks[structure_biome_block_id][aProperty]
 
-    modifyBuildingConditionDependingOnStructure(buildingCondition, settlement_data, lore_structure)
+    modifyBuildingConditionDependingOnStructure(building_conditions, settlement_data, lore_structure)
 
-    structure.build(world_modification, buildingCondition, chest_generation, block_transformations)
+    structure.build(world_modification, building_conditions, chest_generation, block_transformations)
 
     if build_murderer_cache:
         buildMurdererCache(lore_structure, settlement_data, resources, world_modification, chest_generation,
-                           buildingCondition, block_transformations)
+                           block_transformations, building_conditions)
 
     if lore_structure.gift != "Undefined":
         position = lore_structure.position
@@ -159,14 +158,14 @@ def buildMurdererCache(lore_structure: LoreStructure, settlement_data: Settlemen
         info["villageInfo"]["murdererTrap"], building_conditions.flip, building_conditions.rotation,
         building_conditions.referencePoint, building_conditions.position)
 
-    structureMurderer = resources.structures["murderercache"]
-    structureMurderer.setupInfoAndGetCorners()
+    structure_murderer = resources.structures["murderercache"]
+    structure_murderer.setupInfoAndGetCorners()
 
-    buildingInfo = structureMurderer.getNextBuildingInformation(building_conditions.flip,
+    building_info = structure_murderer.getNextBuildingInformation(building_conditions.flip,
                                                                 building_conditions.rotation)
-    building_conditions.referencePoint = buildingInfo["entry"]["position"]
-    building_conditions.size = buildingInfo["size"]
-    building_conditions.flip, building_conditions.rotation = structureMurderer.returnFlipRotationThatIsInZone(
+    building_conditions.referencePoint = building_info["entry"]["position"]
+    building_conditions.size = building_info["size"]
+    building_conditions.flip, building_conditions.rotation = structure_murderer.returnFlipRotationThatIsInZone(
         building_conditions.position,
         building_conditions.referencePoint, settlement_data.area)
 
@@ -177,8 +176,8 @@ def buildMurdererCache(lore_structure: LoreStructure, settlement_data: Settlemen
     modifyBuildingConditionDependingOnStructure(building_conditions, settlement_data,
                                                 lore_structure)
 
-    structureMurderer.build(world_modification, building_conditions, chest_generation, block_transformation)
-    facing = structureMurderer.getFacingMainEntry(building_conditions.flip, building_conditions.rotation)
+    structure_murderer.build(world_modification, building_conditions, chest_generation, block_transformation)
+    facing = structure_murderer.getFacingMainEntry(building_conditions.flip, building_conditions.rotation)
 
     # Generate murderer trap
     world_modification.setBlock(building_conditions.position[0], building_conditions.position[1] + 2,
@@ -196,7 +195,7 @@ def modifyBuildingConditionDependingOnStructure(building_conditions: BuildingCon
 
         building_conditions.special = {"sign": []}
 
-        listOfDead = settlementData.village_model.dead_villagers.copy()
+        list_of_dead = settlementData.village_model.dead_villagers.copy()
         i = 0
         while i < number:
             building_conditions.special["sign"].append("")
@@ -204,20 +203,20 @@ def modifyBuildingConditionDependingOnStructure(building_conditions: BuildingCon
             building_conditions.special["sign"].append("")
             building_conditions.special["sign"].append("")
 
-            if len(listOfDead) > 0:
-                index = random.randint(0, len(listOfDead) - 1)
-                name = listOfDead[index].name
+            if len(list_of_dead) > 0:
+                index = random.randint(0, len(list_of_dead) - 1)
+                name = list_of_dead[index].name
                 util.parseVillagerNameInLines([name], building_conditions.special["sign"], i * 4)
 
-                del listOfDead[index]
+                del list_of_dead[index]
 
             i += 1
 
     elif structure.name == "murderercache":
-        murdererData = settlementData.village_model.murderer_data
+        murderer_data = settlementData.village_model.murderer_data
 
         building_conditions.special = {"sign": ["Next target :", "", "", ""]}
-        name = murdererData.villagerTarget.name
+        name = murderer_data.villagerTarget.name
         util.parseVillagerNameInLines([name], building_conditions.special["sign"], 1)
 
     elif structure.name == "adventurerhouse":
@@ -244,7 +243,7 @@ def modifyBuildingConditionDependingOnStructure(building_conditions: BuildingCon
 
                 building_conditions.special["bedroomhouse"].append(villager.diary[0])
 
-                print(len(building_conditions.special["bedroomhouse"]))
+                #print(len(building_conditions.special["bedroomhouse"]))
 
 
 def returnVillagerAvailableForGift(village_model: Village, villagers_excepted: list) -> list:

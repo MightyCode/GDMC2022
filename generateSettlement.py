@@ -48,7 +48,7 @@ world_modification: WorldModification = WorldModification(interface, config)
 args, parser = argParser.giveArgsAndParser()
 build_area = argParser.getBuildArea(args)
 
-nameGenerator: NameGenerator = NameGenerator()
+name_generator: NameGenerator = NameGenerator()
 
 if build_area == -1:
     exit()
@@ -81,7 +81,7 @@ if not args.remove:
     number_of_existing_village_in_lore = 7
 
     villages: list = loreMaker.initializedVillages(
-        loreMaker.gen_position_of_village(settlement_zones, number_of_existing_village_in_lore), nameGenerator)
+        loreMaker.gen_position_of_village(settlement_zones, number_of_existing_village_in_lore), name_generator)
     villageInteractions: list = loreMaker.createVillageRelationAndAssign(villages)
     loreMaker.checkForImpossibleInteractions(villages, villageInteractions)
     loreMaker.generateLoreAfterRelation(villages)
@@ -142,7 +142,7 @@ if not args.remove:
 
         floodFill = FloodFill(world_modification, settlementData)
 
-        structureManager = StructureManager(settlementData, resources, nameGenerator)
+        structureManager = StructureManager(settlementData, resources, name_generator)
 
         """ Second main step : choose structures and their position """
         i = 0
@@ -188,13 +188,13 @@ if not args.remove:
                      int(current_village.lore_structures[i].position[2] / 16)]
 
             if chunk not in settlementData.discovered_chunks:
-                structureBiomeId = util.getBiome(current_village.lore_structures[i].position[0],
-                                                 current_village.lore_structures[i].position[2], 1, 1)
-                structureBiomeName = resources.biomeMinecraftId[int(structureBiomeId)]
-                structureBiomeBlockId = str(resources.biomesBlockId[structureBiomeName])
+                structure_biome_id = util.getBiome(current_village.lore_structures[i].position[0],
+                                                   current_village.lore_structures[i].position[2], 1, 1)
+                structure_biome_name = resources.biomeMinecraftId[int(structure_biome_id)]
+                structure_biome_block_id = str(resources.biomesBlockId[structure_biome_name])
 
                 settlementData.discovered_chunks.append(chunk)
-                util.addResourcesFromChunk(resources, settlementData, structureBiomeBlockId)
+                util.addResourcesFromChunk(resources, settlementData, structure_biome_block_id)
 
             loreMaker.alterSettlementDataWithNewStructures(settlementData, current_village.lore_structures[i])
 
@@ -212,13 +212,12 @@ if not args.remove:
         """ Third main step : creates lore of the village """
         print("\nGenerate lore of the village")
 
-        loreMaker.createListOfDeadVillager(current_village, nameGenerator)
-        loreMaker.handleVillageDestroy(current_village)
+        loreMaker.generateLoreAfterAllStructure(current_village, name_generator)
 
         # Murderer
         murdererData: MurdererData = current_village.murderer_data
 
-        books: dict = generator.generateVillageBooks(settlementData, nameGenerator)
+        books: dict = generator.generateVillageBooks(settlementData, name_generator)
         generator.placeBooks(settlementData, books, world_modification)
 
         # Villager interaction

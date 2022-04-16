@@ -24,13 +24,13 @@ def gen_position_of_village(existing_areas: list, goal_number: int) -> list:
     return positions
 
 
-def initializedVillages(positions_of_villages: list, nameGenerator) -> list:
+def initializedVillages(positions_of_villages: list, name_generator) -> list:
     villages: list = []
 
     for i in range(len(positions_of_villages)):
         villages.append(Village())
         villages[i].position = positions_of_villages[i]
-        villages[i].generateVillageInformation(nameGenerator)
+        villages[i].generateVillageInformation(name_generator)
         villages[i].generateVillageLore()
 
         voteForColor(villages[i])
@@ -38,17 +38,17 @@ def initializedVillages(positions_of_villages: list, nameGenerator) -> list:
     return villages
 
 
-def createVillageRelationAndAssign(villages: list) -> VillageInteraction:
+def createVillageRelationAndAssign(villages: list) -> list:
     interactions: list = []
-    otherVillages = villages.copy()
-    del otherVillages[0]
+    other_villages = villages.copy()
+    del other_villages[0]
 
     for i in range(len(villages) - 1):
-        villages[i].makeRelations(otherVillages)
+        villages[i].makeRelations(other_villages)
         for villageId in villages[i].village_interactions.keys():
             interactions.append(villages[i].village_interactions[villageId])
 
-        del otherVillages[0]
+        del other_villages[0]
 
     for village in villages:
         village.generateLoreAfterRelation()
@@ -59,10 +59,10 @@ def createVillageRelationAndAssign(villages: list) -> VillageInteraction:
 def checkForImpossibleInteractions(villages: list, interactions: list):
     """Check for two enemy villages if they are friend with same village"""
 
-    villageToCheck = villages.copy()
-    random.shuffle(villageToCheck)
+    village_to_check = villages.copy()
+    random.shuffle(village_to_check)
 
-    for village in villageToCheck:
+    for village in village_to_check:
         for interaction in interactions:
             if village == interaction.village1 or village == interaction.village2:
                 continue
@@ -73,10 +73,10 @@ def checkForImpossibleInteractions(villages: list, interactions: list):
             interaction1 = village.village_interactions[interaction.village1]
             interaction2 = village.village_interactions[interaction.village2]
 
-            if (
-                    interaction1.state != VillageInteraction.STATE_LOVE and interaction1.state != VillageInteraction.STATE_FRIENDSHIP) or \
-                    (
-                            interaction2.state != VillageInteraction.STATE_LOVE and interaction2.state != VillageInteraction.STATE_FRIENDSHIP):
+            if (interaction1.state != VillageInteraction.STATE_LOVE
+                and interaction1.state != VillageInteraction.STATE_FRIENDSHIP) or \
+                    (interaction2.state != VillageInteraction.STATE_LOVE
+                     and interaction2.state != VillageInteraction.STATE_FRIENDSHIP):
                 continue
 
             if random.randint(0, 1) == 1:
@@ -92,10 +92,10 @@ def checkForImpossibleInteractions(villages: list, interactions: list):
 
 
 def generateLoreAfterRelation(villages: list):
-    orderToCheck: list = villages.copy()
-    random.shuffle(orderToCheck)
+    order_to_check: list = villages.copy()
+    random.shuffle(order_to_check)
 
-    for village in orderToCheck:
+    for village in order_to_check:
         if village.status == "peaceful":
             village.isDestroyed = random.randint(1, 10) == 1
 
@@ -103,7 +103,7 @@ def generateLoreAfterRelation(villages: list):
                 village.destroyCause = "pillager" if random.randint(1, 2) == 1 else "abandoned"
         else:
             village.destroyCause = "war"
-            chance: int = computeChanceOfDestructionComparingTier(village)
+            chance: float = computeChanceOfDestructionComparingTier(village)
 
             if chance == 0.8:
                 village.isDestroyed = random.randint(1, 3) == 1
@@ -111,17 +111,17 @@ def generateLoreAfterRelation(villages: list):
                 village.isDestroyed = random.randint(1, 4) != 4
 
 
-def alterSettlementDataWithNewStructures(settlementData, lore_structure: LoreStructure):
-    result: dict = isDestroyStructure(settlementData.village_model, lore_structure)
+def alterSettlementDataWithNewStructures(settlement_data, lore_structure: LoreStructure):
+    result: dict = isDestroyStructure(settlement_data.village_model, lore_structure)
     if result != {}:
-        print("DESTRUCTED STRUCTURE")
+        #print("DESTRUCTED STRUCTURE")
         lore_structure.destroyed = True
         lore_structure.causeDestroy = result
-        applyStructureDestroy(settlementData.village_model, lore_structure)
+        applyStructureDestroy(settlement_data.village_model, lore_structure)
 
 
-def applyLoreToSettlementData(settlementData):
-    fillSettlementDataWithColor(settlementData, settlementData.village_model.color)
+def applyLoreToSettlementData(settlement_data):
+    fillSettlementDataWithColor(settlement_data, settlement_data.village_model.color)
 
 
 def voteForColor(village):
@@ -131,30 +131,36 @@ def voteForColor(village):
     village.color = colors[random.randint(0, len(colors) - 1)]
 
 
-def fillSettlementDataWithColor(settlementData, color):
-    settlementData.setMaterialReplacement("color", color)
-    settlementData.setMaterialReplacement("wool", "minecraft:" + color + "_wool")
-    settlementData.setMaterialReplacement("terracota", "minecraft:" + color + "_terracota")
-    settlementData.setMaterialReplacement("carpet", "minecraft:" + color + "_carpet")
-    settlementData.setMaterialReplacement("stained_glass", "minecraft:" + color + "_stained_glass")
-    settlementData.setMaterialReplacement("shulker_box", "minecraft:" + color + "_shulker_box")
-    settlementData.setMaterialReplacement("glazed_terracota", "minecraft:" + color + "_glazed_terracotta")
-    settlementData.setMaterialReplacement("stained_glass_pane", "minecraft:" + color + "_stained_glass_pane")
-    settlementData.setMaterialReplacement("concrete", "minecraft:" + color + "_concrete")
-    settlementData.setMaterialReplacement("concrete_powder", "minecraft:" + color + "_concrete_powder")
-    settlementData.setMaterialReplacement("dye", "minecraft:" + color + "_dye")
-    settlementData.setMaterialReplacement("bed", "minecraft:" + color + "_bed")
-    settlementData.setMaterialReplacement("banner", "minecraft:" + color + "_banner")
-    settlementData.setMaterialReplacement("wall_banner", "minecraft:" + color + "_wall_banner")
+def fillSettlementDataWithColor(settlement_data, color):
+    settlement_data.setMaterialReplacement("color", color)
+    settlement_data.setMaterialReplacement("wool", "minecraft:" + color + "_wool")
+    settlement_data.setMaterialReplacement("terracota", "minecraft:" + color + "_terracota")
+    settlement_data.setMaterialReplacement("carpet", "minecraft:" + color + "_carpet")
+    settlement_data.setMaterialReplacement("stained_glass", "minecraft:" + color + "_stained_glass")
+    settlement_data.setMaterialReplacement("shulker_box", "minecraft:" + color + "_shulker_box")
+    settlement_data.setMaterialReplacement("glazed_terracota", "minecraft:" + color + "_glazed_terracotta")
+    settlement_data.setMaterialReplacement("stained_glass_pane", "minecraft:" + color + "_stained_glass_pane")
+    settlement_data.setMaterialReplacement("concrete", "minecraft:" + color + "_concrete")
+    settlement_data.setMaterialReplacement("concrete_powder", "minecraft:" + color + "_concrete_powder")
+    settlement_data.setMaterialReplacement("dye", "minecraft:" + color + "_dye")
+    settlement_data.setMaterialReplacement("bed", "minecraft:" + color + "_bed")
+    settlement_data.setMaterialReplacement("banner", "minecraft:" + color + "_banner")
+    settlement_data.setMaterialReplacement("wall_banner", "minecraft:" + color + "_wall_banner")
+
+
+def generateLoreAfterAllStructure(village: Village, name_generator):
+    createListOfDeadVillager(village, name_generator)
+    handleVillageDestroy(village)
+    handleMurderer(village)
 
 
 # Minimum of 10 deaths
-def createListOfDeadVillager(village: Village, nameGenerator):
-    randomOfDeadVillagers = random.randint(10, max(len(village.villagers) - 1, 10))
+def createListOfDeadVillager(village: Village, name_generator):
+    random_dead_villagers = random.randint(10, max(len(village.villagers) - 1, 10))
 
-    for i in range(randomOfDeadVillagers):
+    for i in range(random_dead_villagers):
         dead_villager: Villager = Villager(village)
-        dead_villager.name = nameGenerator.generateVillagerName(True)
+        dead_villager.name = name_generator.generateVillagerName(True)
         village.dead_villagers.append(dead_villager)
 
 
@@ -197,7 +203,7 @@ def isDestroyStructure(current_village: Village, lore_structure: LoreStructure):
     # Check relation if in war with more advanced civilization
 
 
-def computeChanceOfDestructionComparingTier(current_village: Village):
+def computeChanceOfDestructionComparingTier(current_village: Village) -> float:
     chance: float = 1
 
     for key in current_village.village_interactions:
@@ -247,3 +253,25 @@ def handleVillageDestroy(current_village: Village):
             lore_structure.causeDestroy[one_cause] = current_village.destroyCause
 
         lore_structure.destroyed = True
+
+
+def handleMurderer(village: Village):
+    if village.status != village.STATE_WAR:
+        return
+
+    # Murderer
+    if len(village.villagers) <= 1:
+        return
+
+    village.murderer_data.villagerMurderer = village.villagers[
+        random.choice(
+            [i for i in range(0, len(village.villagers)) if village.villagers[i].job != "Mayor"])]
+
+    village.murderer_data.villagerTarget = village.villagers[
+        random.choice(
+            [i for i in range(0, len(village.villagers))
+             if village.villagers[i] != village.murderer_data.villagerMurderer])]
+
+    for structureData in village.lore_structures:
+        if village.murderer_data.villagerTarget in structureData.villagers:
+            structureData.gift = "minecraft:tnt"

@@ -27,14 +27,11 @@ class ChestGeneration:
         loot_table = self.resources.lootTables[loot_table_name]["pools"][0]
 
         if isinstance(loot_table["rolls"], dict):
-            numberItem = random.randint(loot_table["rolls"]["min"], loot_table["rolls"]["max"])
+            number_item = random.randint(loot_table["rolls"]["min"], loot_table["rolls"]["max"])
         else:
-            numberItem = loot_table["rolls"]
+            number_item = loot_table["rolls"]
 
-        if numberItem + len(additional_object) >= 28:
-            print(numberItem + len(additional_object))
-
-        item_places = self.generatePlaces(numberItem + len(additional_object) - 1)
+        item_places = self.generatePlaces(number_item + len(additional_object) - 1)
         item_places.sort()
         items = []
 
