@@ -1,5 +1,5 @@
 import argparse
-import lib.interfaceUtils as interfaceUtil
+import lib.interface as interfaceUtil
 
 
 def giveArgsAndParser():

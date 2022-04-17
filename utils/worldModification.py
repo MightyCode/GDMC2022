@@ -1,5 +1,5 @@
 import os
-import lib.interfaceUtils as interfaceUtils
+import lib.interface as interfaceUtils
 
 
 # Class which serve to save all modification, do undo actions
@@ -10,9 +10,7 @@ class WorldModification:
     BLOCK_SEPARATOR = "$"
     PARTS_SEPARATOR = "°"
 
-    def __init__(self, interface, config: dict):
-        self.interface = interface
-
+    def __init__(self, config: dict):
         self.before_modification: list = []
         self.after_modification: list = []
 
@@ -20,30 +18,30 @@ class WorldModification:
         if "debugMode" in self.config.keys():
             WorldModification.DEBUG_MODE = config["debugMode"]
 
-    def setBlock(self, x, y, z, block, compareBlockState=False, placeImmediately=False):
+    def setBlock(self, x, y, z, block, compare_block_state=False, place_immediately=False):
         if WorldModification.DEBUG_MODE:
-            previousBlock = self.interface.getBlock(x, y, z)
+            previous_block = interfaceUtils.getBlock(x, y, z)
 
             # We won't replace block by same one, 
             # option to compare or not the state of both blocks -> [...]
-            if block.split("[")[0] == previousBlock.split("[")[0]:
-                if compareBlockState:
+            if block.split("[")[0] == previous_block.split("[")[0]:
+                if compare_block_state:
                     pass
                     # TODO
                 else:
                     return
 
-            self.before_modification.append([x, y, z, previousBlock])
+            self.before_modification.append([x, y, z, previous_block])
             self.after_modification.append([x, y, z, block])
 
-        if placeImmediately:
-            self.interface.setBuffering(False)
-            self.interface.setBlock(x, y, z, block)
-            self.interface.setBuffering(True)
+        if place_immediately:
+            interfaceUtils.setBuffering(False, False)
+            interfaceUtils.placeBlock(x, y, z, block)
+            interfaceUtils.setBuffering(True, False)
         else:
-            self.interface.setBlock(x, y, z, block)
+            interfaceUtils.placeBlock(x, y, z, block)
 
-    def fillBlocks(self, from_x, from_y, from_z, to_x, to_y, to_z, block, compareBlockState=False):
+    def fillBlocks(self, from_x, from_y, from_z, to_x, to_y, to_z, block, compare_block_state=False):
         if WorldModification.DEBUG_MODE:
             if from_x > to_x:
                 to_x, from_x = from_x, to_x
@@ -57,15 +55,15 @@ class WorldModification:
                     for y in range(from_y, to_y + 1):
                         # We won't replace block by same one, 
                         # option to compare or not the state of both blocks -> [...]
-                        previousBlock = self.interface.getBlock(x, y, z)
-                        if block.split("[")[0] == previousBlock.split("[")[0]:
-                            if compareBlockState:
+                        previous_block = interfaceUtils.getBlock(x, y, z)
+                        if block.split("[")[0] == previous_block.split("[")[0]:
+                            if compare_block_state:
                                 pass
                                 # TODO
                             else:
                                 continue
 
-                        self.before_modification.append([x, y, z, previousBlock])
+                        self.before_modification.append([x, y, z, previous_block])
                         self.after_modification.append([x, y, z, block])
 
         # interfaceUtils.fill(from_x, from_y, from_z, to_x, to_y, to_z, block)
@@ -85,7 +83,7 @@ class WorldModification:
             return
 
         index = len(self.before_modification) - 1
-        self.interface.setBlock(
+        interfaceUtils.placeBlock(
             self.before_modification[index][0],
             self.before_modification[index][1],
             self.before_modification[index][2],

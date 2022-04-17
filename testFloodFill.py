@@ -1,10 +1,12 @@
-from generation.resources import *
-from generation.chestGeneration import *
-from generation.structures.nbtStructures import *
-from generation.structureManager import *
-from generation.floodFill import *
-from utils.worldModification import *
+from generation.resources import Resources
+from generation.chestGeneration import ChestGeneration
+from generation.structures.nbtStructures import NbtStructures
+from generation.structureManager import StructureManager
+from generation.floodFill import FloodFill
+from utils.worldModification import WorldModification
 from lib.worldLoader import WorldSlice
+
+
 #seed testing : -2997648135289524795
 
 interface = interfaceUtils.Interface()

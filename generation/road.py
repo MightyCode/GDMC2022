@@ -2,7 +2,7 @@ from generation.data.settlementData import SettlementData
 from utils.worldModification import WorldModification
 
 import utils.projectMath as projectMath
-import lib.interfaceUtils as iu
+import lib.interface as iu
 from utils.constants import Constants
 
 NODE_IN_ROAD: list = []

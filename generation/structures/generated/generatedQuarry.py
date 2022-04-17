@@ -141,7 +141,7 @@ class GeneratedQuarry(BaseStructure):
         # Set a chest
         world_modification.setBlock(position[0], position[1], position[2],
                                     "minecraft:chest[" + self.convertProperty("facing", "south") + "]",
-                                    placeImmediately=True)
+                                    place_immediately=True)
 
         counter = collections.Counter(list_of_blocks)
         items = counter.items()

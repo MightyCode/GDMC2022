@@ -6,7 +6,6 @@ from generation.buildingCondition import BuildingCondition
 from generation.data.village import Village
 from generation.data.loreStructure import LoreStructure
 from utils.constants import Constants
-from utils.nameGenerator import NameGenerator
 from utils.worldModification import WorldModification
 
 import generation.loreMaker as loreMaker
@@ -36,28 +35,28 @@ def createSettlementData(area: list, village_model: Village, resources: Resource
     return settlement_data
 
 
-def generateVillageBooks(settlementData: SettlementData, nameGenerator: NameGenerator) -> dict:
-    village_model: Village = settlementData.village_model
+def generateVillageBooks(settlement_data: SettlementData) -> dict:
+    village_model: Village = settlement_data.village_model
 
     # Create books for the village
 
-    textVillagersNames = book.createTextForVillagersNames(village_model.villagers)
-    textDeadVillagers = book.createTextForDeadVillagers(village_model.villagers, village_model.dead_villagers)
+    text_villagers_names = book.createTextForVillagersNames(village_model.villagers)
+    text_dead_villagers = book.createTextForDeadVillagers(village_model.villagers, village_model.dead_villagers)
 
-    textVillagePresentationBook = book.createTextOfPresentationVillage(village_model.name,
-                                                                       settlementData.structure_number_goal,
+    text_village_presentation_book = book.createTextOfPresentationVillage(village_model.name,
+                                                                       settlement_data.structure_number_goal,
                                                                        village_model.lore_structures,
-                                                                       textDeadVillagers[1],
+                                                                       text_dead_villagers[1],
                                                                        village_model.villagers)
 
-    settlementData.textOfBooks = [textVillagersNames, textDeadVillagers]
+    settlement_data.textOfBooks = [text_villagers_names, text_dead_villagers]
 
     books: dict = {
-        "villageNameBook": toolbox.writeBook(textVillagePresentationBook, title="Village Presentation", author="Mayor",
+        "villageNameBook": toolbox.writeBook(text_village_presentation_book, title="Village Presentation", author="Mayor",
                                              description="Presentation of the village"),
-        "villagerNamesBook": toolbox.writeBook(textVillagersNames, title="List of all villagers", author="Mayor",
+        "villagerNamesBook": toolbox.writeBook(text_villagers_names, title="List of all villagers", author="Mayor",
                                                description="List of all villagers"),
-        "deadVillagersBook": toolbox.writeBook(textDeadVillagers[0], title="List of all dead villagers", author="Mayor",
+        "deadVillagersBook": toolbox.writeBook(text_dead_villagers[0], title="List of all dead villagers", author="Mayor",
                                                description="List of all dead villagers")}
 
     return books
@@ -79,7 +78,7 @@ def placeBooks(settlement_data: SettlementData, books: dict, world_modification:
     # Set a chest for the books and place the books in the chest
     world_modification.setBlock(settlement_data.center[0],
                                 Constants.getHeight(settlement_data.center[0], settlement_data.center[2]),
-                                settlement_data.center[2], "minecraft:chest[facing=east]", placeImmediately=True)
+                                settlement_data.center[2], "minecraft:chest[facing=east]", place_immediately=True)
 
     util.addItemChest(settlement_data.center[0],
                       Constants.getHeight(settlement_data.center[0], settlement_data.center[2]),

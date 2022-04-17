@@ -1,6 +1,6 @@
 from generation.data.villager import Villager
 
-import lib.interfaceUtils as interfaceUtils
+import lib.interface as interfaceUtils
 import lib.worldLoader as worldLoader
 import lib.lookup as lookup
 

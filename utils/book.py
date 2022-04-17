@@ -10,6 +10,7 @@ REASON_OF_DEATHS = ["murdered", "died because of old age", "died of creeper atta
                     "died of zombie attack", "died of witch attack", "died suffocating from sand falling",
                     "died eating too much cake", "died crushing by a rock",
                     "died suffocating from gravel falling"]
+
 DIARY_TEXTS_WITHOUT_TARGETS = [" I really like the color of the village. ", " I really like the name of the village. ",
                                " I hate the color of the village.",
                                " I am afraid of spiders. ", " I am afraid of creppers. ", " I am afraid of zombies. ",
@@ -34,14 +35,14 @@ Return the text of the book of the village presentation
 """
 
 
-def createTextOfPresentationVillage(villageName: str, structuresNumber: int, structures: list, deadVillagersNumber: int,
-                                    villages: list):
-    textVillagePresentationBook = (
+def createTextOfPresentationVillage(village_name: str, structures_number: int, structures: list,
+                                    dead_villagers_number: int, villages: list):
+    text_village_presentation_book = (
         '\\\\s--------------\\\\n'
         '                      \\\\n'
         '                      \\\\n'
         '   Welcome to      \\\\n'
-        f' {villageName} \\\\n'
+        f'{village_name} \\\\n'
         '                      \\\\n'
         '                      \\\\n'
         '                      \\\\n'
@@ -50,31 +51,31 @@ def createTextOfPresentationVillage(villageName: str, structuresNumber: int, str
         '                      \\\\n'
         '                      \\\\n'
         '--------------')
-    textVillagePresentationBook += '\f\\\\s---------------\\\\n'
+    text_village_presentation_book += '\f\\\\s---------------\\\\n'
 
-    numberOfHouse = 0
+    number_of_house = 0
     for structure in structures:
         if "house" in structure.name:
-            numberOfHouse += 1
+            number_of_house += 1
 
-    textVillagePresentationBook += (f'{len(villages)} villagers arrived in '
-                                    f'{numberOfHouse} houses \\\\n')
-    textVillagePresentationBook += f'{deadVillagersNumber} villagers have died since their arrival. \\\\n'
-    textVillagePresentationBook += (''
-                                    'There are '
-                                    f'{structuresNumber} structures. \\\\n')
-    textVillagePresentationBook += '---------------\\\\n\f'
+    text_village_presentation_book += (f'{len(villages)} villagers arrived in '
+                                       f'{number_of_house} houses \\\\n')
+    text_village_presentation_book += f'{dead_villagers_number} villagers have died since their arrival. \\\\n'
+    text_village_presentation_book += (''
+                                       'There are '
+                                       f'{structures_number} structures. \\\\n')
+    text_village_presentation_book += '---------------\\\\n\f'
 
     i: int = 0
     for structure in structures:
         if i % 3 == 0 and i != 0:
-            textVillagePresentationBook += '\f'
+            text_village_presentation_book += '\f'
         else:
-            textVillagePresentationBook += ('Villagers built the '
-                                            f'{structure.name} \\\\n')
+            text_village_presentation_book += ('Villagers built the '
+                                               f'{structure.name} \\\\n')
 
         i += 1
-    return textVillagePresentationBook
+    return text_village_presentation_book
 
 
 """
@@ -83,27 +84,27 @@ Return the text of the book of the villagers names and professions
 
 
 def createTextForVillagersNames(villagers: list):
-    textVillagerNames = 'Registry of living villagers \\\\n'
+    text_villager_names = 'Registry of living villagers \\\\n'
 
-    villageStr: str
+    village_str: str
     i = 0
     for villager in villagers:
-        villageStr = villager.name + " : " + villager.job
+        village_str = villager.name + " : " + villager.job
 
         if i <= 3:
-            textVillagerNames += ('-'
-                                  f'{villageStr}       \\\\n')
+            text_villager_names += ('-'
+                                    f'{village_str}       \\\\n')
         if i % 4 == 0 and i != 0:
-            textVillagerNames += '\f'
+            text_villager_names += '\f'
         if i >= 4:
-            textVillagerNames += ('-'
-                                  f'{villageStr}       \\\\n')
+            text_villager_names += ('-'
+                                    f'{village_str}       \\\\n')
 
         i += 1
 
-    textVillagerNames += '\f'
+    text_villager_names += '\f'
 
-    return textVillagerNames
+    return text_villager_names
 
 
 """
@@ -111,62 +112,62 @@ Return the text of the book of the dead villagers names and professions
 """
 
 
-def createTextForDeadVillagers(villagers: list, deadVillagers: list):
-    numberOfDead = len(deadVillagers)
+def createTextForDeadVillagers(villagers: list, dead_villagers: list):
+    number_of_dead = len(dead_villagers)
 
     names = []
     for villager in villagers:
         names.append(villager.name)
 
-    textDeadVillagers = 'Registry of dead villagers \\\\n'
+    text_dead_villagers = 'Registry of dead villagers \\\\n'
 
     i = 0
-    for deadVillager in deadVillagers:
-        randomDeath = rd.randint(0, len(REASON_OF_DEATHS) - 1)
+    for deadVillager in dead_villagers:
+        random_death = rd.randint(0, len(REASON_OF_DEATHS) - 1)
         if deadVillager.name in names:
-            textDeadVillagers += ('-'
-                                  f'{deadVillager.name} Senior : '
-                                  f'{REASON_OF_DEATHS[randomDeath]} \\\\n')
+            text_dead_villagers += ('-'
+                                    f'{deadVillager.name} Senior : '
+                                    f'{REASON_OF_DEATHS[random_death]} \\\\n')
         if i <= 2:
             if i == 2:
-                textDeadVillagers += ('-'
-                                      f'{deadVillager.name} : '
-                                      f'{REASON_OF_DEATHS[0]} \\\\n')
+                text_dead_villagers += ('-'
+                                        f'{deadVillager.name} : '
+                                        f'{REASON_OF_DEATHS[0]} \\\\n')
             else:
-                textDeadVillagers += ('-'
-                                      f'{deadVillager.name} : '
-                                      f'{REASON_OF_DEATHS[randomDeath]} \\\\n')
+                text_dead_villagers += ('-'
+                                        f'{deadVillager.name} : '
+                                        f'{REASON_OF_DEATHS[random_death]} \\\\n')
         if i % 3 == 0 and i != 0:
-            textDeadVillagers += '\f'
+            text_dead_villagers += '\f'
         if i >= 3:
-            textDeadVillagers += ('-'
-                                  f'{deadVillager.name} : '
-                                  f'{REASON_OF_DEATHS[randomDeath]} \\\\n')
+            text_dead_villagers += ('-'
+                                    f'{deadVillager.name} : '
+                                    f'{REASON_OF_DEATHS[random_death]} \\\\n')
 
         i += 1
-    textDeadVillagers += '\f'
+    text_dead_villagers += '\f'
 
-    return [textDeadVillagers, numberOfDead]
+    return [text_dead_villagers, number_of_dead]
 
 
 def createBookForVillager(village_model: Village, villager: Villager) -> list:
-    villagerName: str = villager.name
+    villager_name: str = villager.name
     gift: str = ""
 
     # 1 / 2 chance to a gift
-    randomGift = rd.randint(1, 4)
-    if randomGift == 1:
+    random_gift = rd.randint(1, 4)
+    if random_gift == 1:
         gift = "minecraft:gold_block"
-    elif randomGift == 2:
+    elif random_gift == 2:
         gift = "minecraft:tnt"
 
-    giftPlace = rd.randint(1, 3)
+    gift_place = rd.randint(1, 3)
 
-    textDiaryVillager = (
+    text_diary_villager = (
         '\\\\s--------------\\\\n'
         '                      \\\\n'
         '                      \\\\n'
-        f'{villagerName} diary  \\\\n'
+        f'{villager_name} diary  \\\\n'
         '                      \\\\n'
         '                      \\\\n'
         '                      \\\\n'
@@ -175,69 +176,68 @@ def createBookForVillager(village_model: Village, villager: Villager) -> list:
         '                      \\\\n'
         '                      \\\\n'
         '--------------')
-    textDiaryVillager += '     \f'
+    text_diary_villager += '     \f'
 
-    newDiaryTextWithoutTarget = DIARY_TEXTS_WITHOUT_TARGETS.copy()
-    newDiaryTextWithTarget = DIARY_TEXTS_WITH_TARGETS.copy()
-    targetTextDone = False
-    murdererSuspicious = False
+    new_diary_text_without_target = DIARY_TEXTS_WITHOUT_TARGETS.copy()
+    new_diary_text_with_target = DIARY_TEXTS_WITH_TARGETS.copy()
+    target_text_done = False
+    murderer_suspicious = False
 
-    numberPhrase = rd.randint(3, 7)
-    for i in range(numberPhrase):
+    number_phrase = rd.randint(3, 7)
+    for i in range(number_phrase):
         # Spaces
         if rd.randint(1, 2) == 1:
-            textDiaryVillager += '                      \\\\n'
+            text_diary_villager += '                      \\\\n'
             if rd.randint(1, 2) == 1:
-                textDiaryVillager += '                      \\\\n'
+                text_diary_villager += '                      \\\\n'
 
-        availableIndices: list = generator.returnVillagerAvailableForGift(village_model, [villager])
+        available_indices: list = generator.returnVillagerAvailableForGift(village_model, [villager])
 
         # Gift phrase
-        if i == giftPlace and len(availableIndices) >= 1:
-            targetedVillager: Villager = availableIndices[rd.randint(0, len(availableIndices) - 1)]
+        if i == gift_place and len(available_indices) >= 1:
+            targeted_villager: Villager = available_indices[rd.randint(0, len(available_indices) - 1)]
 
-            if randomGift == 1:
+            if random_gift == 1:
                 if rd.randint(1, 2) == 1:
-                    textDiaryVillager += f'I love {targetedVillager.name}\\\\n'
+                    text_diary_villager += f'I love {targeted_villager.name}\\\\n'
                 else:
-                    textDiaryVillager += f'{targetedVillager.name} is my best friend\\\\n'
-
-                if rd.randint(1, 2) == 1:
-                    textDiaryVillager += ', I left a surprise under the door.\\\\n'
-                else:
-                    textDiaryVillager += ', I hope my lover will finds the gift I left him under the door.\\\\n'
-
-            elif randomGift == 2:
-                if rd.randint(1, 2) == 1:
-                    textDiaryVillager += f'I hate {targetedVillager.name}\\\\n'
-                else:
-                    textDiaryVillager += f'{targetedVillager.name} is a jerk\\\\n'
+                    text_diary_villager += f'{targeted_villager.name} is my best friend\\\\n'
 
                 if rd.randint(1, 2) == 1:
-                    textDiaryVillager += ', I placed a tnt under the door.\\\\n'
+                    text_diary_villager += ', I left a surprise under the door.\\\\n'
                 else:
-                    textDiaryVillager += ', I put a deadly trap under the door.\\\\n'
+                    text_diary_villager += ', I hope my lover will finds the gift I left him under the door.\\\\n'
+
+            elif random_gift == 2:
+                if rd.randint(1, 2) == 1:
+                    text_diary_villager += f'I hate {targeted_villager.name}\\\\n'
+                else:
+                    text_diary_villager += f'{targeted_villager.name} is a jerk\\\\n'
+
+                if rd.randint(1, 2) == 1:
+                    text_diary_villager += ', I placed a tnt under the door.\\\\n'
+                else:
+                    text_diary_villager += ', I put a deadly trap under the door.\\\\n'
             continue
 
         # Murderer suspicion
-        murdererData = village_model.murderer_data
-        if rd.randint(1, 5) == 1 and not murdererSuspicious and murdererData.villagerMurderer is not None:
-            textDiaryVillager += f'I think that {murdererData.villagerMurderer.name} is really strange. \\\\n'
-            murdererSuspicious = True
+        murderer_data = village_model.murderer_data
+        if rd.randint(1, 5) == 1 and not murderer_suspicious and murderer_data.villagerMurderer is not None:
+            text_diary_villager += f'I think that {murderer_data.villagerMurderer.name} is really strange. \\\\n'
+            murderer_suspicious = True
             continue
 
         # Other phrase    
         random = rd.randint(1, 5)
         if random == 1:
-            randomProfession = rd.randint(0, len(Villager.VILLAGE_PROFESSION_LIST) - 1)
-            textDiaryVillager += f'I hate all {Villager.VILLAGE_PROFESSION_LIST[randomProfession]} \\\\n'
+            random_profession = rd.randint(0, len(Villager.VILLAGE_PROFESSION_LIST) - 1)
+            text_diary_villager += f'I hate all {Villager.VILLAGE_PROFESSION_LIST[random_profession]} \\\\n'
             if rd.randint(1, 5) == 1:
-                secondRandomProfession = rd.randint(0,
-                                                    len(Villager.VILLAGE_PROFESSION_LIST) - 1)
-                if secondRandomProfession != randomProfession:
-                    textDiaryVillager += f'I would like to work as a {Villager.VILLAGE_PROFESSION_LIST[secondRandomProfession]}.\\\\n'
-        elif random == 2 and not targetTextDone:
-            randomDiaryTextWithTarget = rd.randint(0, len(newDiaryTextWithTarget) - 1)
+                second_random_profession = rd.randint(0, len(Villager.VILLAGE_PROFESSION_LIST) - 1)
+                if second_random_profession != random_profession:
+                    text_diary_villager += f'I would like to work as a {Villager.VILLAGE_PROFESSION_LIST[second_random_profession]}.\\\\n '
+        elif random == 2 and not target_text_done:
+            random_diary_text_with_target = rd.randint(0, len(new_diary_text_with_target) - 1)
 
             targeted = -1
 
@@ -247,20 +247,20 @@ def createBookForVillager(village_model: Village, villager: Villager) -> list:
                 targeted = village_model.dead_villagers[rd.randint(0, len(village_model.dead_villagers) - 1)].name
 
             if targeted != -1:
-                textDiaryVillager += (f'{newDiaryTextWithTarget[randomDiaryTextWithTarget]}'
-                                      f'{targeted}.  \\\\n')
+                text_diary_villager += (f'{new_diary_text_with_target[random_diary_text_with_target]}'
+                                        f'{targeted}.  \\\\n')
 
-            newDiaryTextWithTarget.remove(newDiaryTextWithTarget[randomDiaryTextWithTarget])
-            targetTextDone = True
+            new_diary_text_with_target.remove(new_diary_text_with_target[random_diary_text_with_target])
+            target_text_done = True
         else:
-            randomDiaryTextWithoutTarget = rd.randint(0, len(newDiaryTextWithoutTarget) - 1)
-            textDiaryVillager += f'{newDiaryTextWithoutTarget[randomDiaryTextWithoutTarget]}   \\\\n'
-            newDiaryTextWithoutTarget.remove(newDiaryTextWithoutTarget[randomDiaryTextWithoutTarget])
+            random_diary_text_without_target = rd.randint(0, len(new_diary_text_without_target) - 1)
+            text_diary_villager += f'{new_diary_text_without_target[random_diary_text_without_target]}   \\\\n'
+            new_diary_text_without_target.remove(new_diary_text_without_target[random_diary_text_without_target])
 
         if i % 4 == 0:
-            textDiaryVillager += ' \f'
+            text_diary_villager += ' \f'
 
-    return [textDiaryVillager, gift]
+    return [text_diary_villager, gift]
 
 
 def createBookForAdventurerHouse(flip):

@@ -15,10 +15,9 @@ from generation.structures.baseStructure import BaseStructure
 from generation.data.settlementData import SettlementData
 
 import generation.resourcesLoader as resLoader
-import utils.util as util
 import utils.argumentParser as argParser
 import generation.loreMaker as loreMaker
-import lib.interfaceUtils as interfaceUtil
+import lib.interface as interfaceUtil
 import generation.generator as generator
 import utils.checkOrCreateConfig as chock
 
@@ -27,7 +26,7 @@ Important information
 """
 
 structure_name: str = "basichouse1"
-structure_type: str = "functionals"
+structure_type: str = LoreStructure.TYPE_HOUSES
 
 config: dict = chock.getOrCreateConfig()
 
@@ -37,12 +36,39 @@ interface.setCaching(True)
 interface.setBuffering(True)
 interfaceUtil.setCaching(True)
 interfaceUtil.setBuffering(True)
-world_modifications: WorldModification = WorldModification(interface, config)
+world_modifications: WorldModification = WorldModification(config)
 args, parser = argParser.giveArgsAndParser()
 build_area = argParser.getBuildArea(args)
 
 if build_area == -1:
     exit()
+
+"""
+import lib.toolbox as toolbox
+
+text_adventurer_book = (
+    '\\\\s-------------------\\\\n'
+    '\\cMachine guide:\\\\n'
+    'Place §1 flint §0 and steal in the machine. Place water bucket in the machine. \\\\n'
+    '\\\\n'
+    '\\\\n'
+    '\\\\n'
+    '\\\\n'
+    '\\\\n'
+    '\\\\n'
+    '\\\\n'
+    '-------------------')
+
+command = "give TamalouMax minecraft:written_book" + \
+          toolbox.writeBook(text_adventurer_book, title="Village Presentation", author="Mayor",
+                            description="Presentation of the village")
+
+print(command)
+
+interfaceUtil.runCommand(command)
+
+exit()
+"""
 
 build_area: tuple = (
     build_area[0], build_area[1], build_area[2], build_area[3] - 1, build_area[4] - 1, build_area[5] - 1)
@@ -76,7 +102,7 @@ if not args.remove:
 
     resources: Resources = Resources()
     resLoader.loadAllResources(resources)
-    chestGeneration: ChestGeneration = ChestGeneration(resources, interface)
+    chestGeneration: ChestGeneration = ChestGeneration(resources)
 
     structure: BaseStructure = resources.structures[structure_name]
     """reference_structure: BaseStructure = resources.structures[structure_name]
@@ -90,7 +116,7 @@ if not args.remove:
     lore_structure.flip = 3
     lore_structure.rotation = 1
     lore_structure.destroyed = True
-    #lore_structure.causeDestroy = {"burned": "burned", "abandoned": "abandoned", "damaged": "damaged"}
+    # lore_structure.causeDestroy = {"burned": "burned", "abandoned": "abandoned", "damaged": "damaged"}
 
     lore_structure.name = structure_name
     lore_structure.villagers = [villagers[0], villagers[2]]
@@ -110,9 +136,10 @@ if not args.remove:
         if villager.job == Villager.DEFAULT_JOB:
             continue
 
-        Trade.generateFromTradeTable(village, villager, resources.trades[villager.job], settlementData.getMatRepDeepCopy())
+        Trade.generateFromTradeTable(village, villager, resources.trades[villager.job],
+                                     settlementData.getMatRepDeepCopy())
 
-    util.spawnVillagerForStructure(settlementData, lore_structure, lore_structure.position)
+    # util.spawnVillagerForStructure(settlementData, lore_structure, lore_structure.position)
 
     world_modifications.saveToFile(file)
 else:

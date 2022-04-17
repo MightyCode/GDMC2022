@@ -248,7 +248,7 @@ class NbtStructures(BaseStructure):
 
         world_modification.setBlock(
             world_position[0], world_position[1], world_position[2],
-            block_name, placeImmediately=self.placeImmediately
+            block_name, place_immediately=self.placeImmediately
         )
 
         self.checkAfterPlacing(x, y, z, block_name, world_position, chest_generation, building_conditions)

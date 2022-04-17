@@ -24,7 +24,7 @@ import utils.projectMath as projectMath
 import utils.argumentParser as argParser
 import generation.loreMaker as loreMaker
 import generation.road as road
-import lib.interfaceUtils as interfaceUtil
+import lib.interface as interfaceUtil
 import lib.toolbox as toolbox
 import utils.checkOrCreateConfig as chock
 
@@ -38,13 +38,10 @@ TIME_LIMIT: int = 600
 TIME_TO_BUILD_A_VILLAGE: int = 30
 
 file: str = "temp.txt"
-interface: interfaceUtil.Interface = interfaceUtil.Interface()
-interface.setCaching(True)
-interface.setBuffering(True)
 interfaceUtil.setCaching(True)
 interfaceUtil.setBuffering(True)
 
-world_modification: WorldModification = WorldModification(interface, config)
+world_modification: WorldModification = WorldModification(config)
 args, parser = argParser.giveArgsAndParser()
 build_area = argParser.getBuildArea(args)
 
@@ -63,7 +60,7 @@ if not args.remove:
     resources: Resources = Resources()
     resLoader.loadAllResources(resources)
 
-    chest_generation: ChestGeneration = ChestGeneration(resources, interface)
+    chest_generation: ChestGeneration = ChestGeneration(resources)
 
     # Each zone for takes 500 blocks, division begin after 1000
     defined_zone_size = [500, 500]
@@ -217,7 +214,7 @@ if not args.remove:
         # Murderer
         murdererData: MurdererData = current_village.murderer_data
 
-        books: dict = generator.generateVillageBooks(settlementData, name_generator)
+        books: dict = generator.generateVillageBooks(settlementData)
         generator.placeBooks(settlementData, books, world_modification)
 
         # Villager interaction
@@ -264,7 +261,7 @@ if not args.remove:
                                          settlementData.getMatRepDeepCopy())
 
         """ Fourth main step : creates the roads of the village """
-        road.initRoad(floodFill.listHouse, settlementData, world_modification)
+        road.initRoad(floodFill.list_houses, settlementData, world_modification)
 
         """ Five main step : places every structure and after that every decorations """
         i: int = 0
@@ -294,7 +291,7 @@ if not args.remove:
                    settlementData.center[2]),
                settlementData.center[1]])
         print("Position of first structure",
-              [floodFill.listHouse[0][0], floodFill.listHouse[0][1], floodFill.listHouse[0][2]])
+              [floodFill.list_houses[0][0], floodFill.list_houses[0][1], floodFill.list_houses[0][2]])
         # iu.runCommand("tp {} {} {}".format(floodFill.listHouse[0][0], floodFill.listHouse[0][1], floodFill.listHouse[0][2]))
         print("Time left :", TIME_LIMIT - (int(round(time.time() * 1000)) - milliseconds) / 1000, "s")
 
