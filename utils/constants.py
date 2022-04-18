@@ -1,4 +1,4 @@
-import lib.interface as iu
+import lib.interfaceUtils as iu
 
 
 class Constants:

@@ -1,10 +1,9 @@
 from utils.constants import Constants
 from generation.buildingCondition import BuildingCondition
 
-import utils.libUtil as libUtil
 import utils.util as util
 import utils.projectMath as projectMath
-import lib.interface as interfaceUtils
+import lib.interfaceUtils as interfaceUtils
 
 import random
 import math
@@ -62,34 +61,34 @@ class BaseStructure:
     worldStructurePosition : position of the structure in real world, position in relation with reference point
     """
 
-    def returnWorldPosition(self, local_point: list, flip: int, rotation: int,
-                            reference_point: list, world_structure_position: list) -> list:
+    def returnWorldPosition(self, localPoint: list, flip: int, rotation: int,
+                            referencePoint: list, world_structure_position: list) -> list:
 
         world_position: list = [0, 0, 0]
 
         # Position in building local space replacement
         if flip == 1 or flip == 3:
-            world_position[0] = self.size[0] - 1 - local_point[0]
+            world_position[0] = self.size[0] - 1 - localPoint[0]
         else:
-            world_position[0] = local_point[0]
+            world_position[0] = localPoint[0]
 
         if flip == 2 or flip == 3:
-            world_position[2] = self.size[2] - 1 - local_point[2]
+            world_position[2] = self.size[2] - 1 - localPoint[2]
         else:
-            world_position[2] = local_point[2]
+            world_position[2] = localPoint[2]
 
-        world_position[1] = local_point[1]
+        world_position[1] = localPoint[1]
 
         # Take rotation into account, apply to building local positions
         world_position[0], world_position[2] = projectMath.rotatePointAround(
-            [world_structure_position[0] + reference_point[0], world_structure_position[2] + reference_point[2]],
+            [world_structure_position[0] + referencePoint[0], world_structure_position[2] + referencePoint[2]],
             [world_structure_position[0] + world_position[0], world_structure_position[2] + world_position[2]],
             rotation * math.pi / 2)
 
         # Position in real world
-        world_position[0] = int(world_position[0]) - reference_point[0]
-        world_position[1] = world_structure_position[1] + world_position[1] - reference_point[1]
-        world_position[2] = int(world_position[2]) - reference_point[2]
+        world_position[0] = int(world_position[0]) - referencePoint[0]
+        world_position[1] = world_structure_position[1] + world_position[1] - referencePoint[1]
+        world_position[2] = int(world_position[2]) - referencePoint[2]
 
         return world_position
 
@@ -192,7 +191,7 @@ class BaseStructure:
                                 building_conditions.special["sign"][i * 4 + 3] == "":
                             continue
 
-                    libUtil.setSignText(
+                    interfaceUtils.setSignText(
                         sign_position[0], sign_position[1] + 1, sign_position[2],
                         building_conditions.special["sign"][i * 4], building_conditions.special["sign"][i * 4 + 1],
                         building_conditions.special["sign"][i * 4 + 2],
@@ -226,7 +225,7 @@ class BaseStructure:
                 int(max(temp[0], temp1[0])),
                 int(max(temp[1], temp1[1]))]
 
-    def returnFlipRotationThatIsInZone(self, position, mainEntryPosition, area) -> tuple:
+    def returnFlipRotationThatIsInZone(self, position, main_entry_position, area) -> tuple:
         flip: int = random.randint(0, 3)
         rotation: int = 0
         rotations: list = list(range(4))
@@ -238,7 +237,7 @@ class BaseStructure:
             rotation = rotations[index]
             del rotations[index]
 
-            corner = self.getCornersLocalPositions(mainEntryPosition, flip, rotation)
+            corner = self.getCornersLocalPositions(main_entry_position, flip, rotation)
 
             for i, j in [[0, 1], [2, 1], [0, 3], [2, 3]]:
                 if not projectMath.isPointInSquare(
@@ -253,11 +252,11 @@ class BaseStructure:
     Get corners of all possible flip and rotation
     """
 
-    def getCornersLocalPositionsAllFlipRotation(self, referencePosition) -> list:
+    def getCornersLocalPositionsAllFlipRotation(self, reference_position) -> list:
         corners: list = []
         for flip in [0, 1, 2, 3]:
             for rotation in [0, 1, 2, 3]:
-                corners.append(self.getCornersLocalPositions(referencePosition, flip, rotation))
+                corners.append(self.getCornersLocalPositions(reference_position, flip, rotation))
 
         return corners
 
@@ -289,7 +288,7 @@ class BaseStructure:
 
         util.parseVillagerNameInLines(names, lines, 2)
 
-        libUtil.setSignText(
+        interfaceUtils.setSignText(
             position[0], position[1], position[2],
             lines[0], lines[1], lines[2], lines[3])
 
@@ -301,7 +300,7 @@ class BaseStructure:
                                             self.info["sign"]["facing"]] + "]",
                                         place_immediately=True)
 
-            libUtil.setSignText(
+            interfaceUtils.setSignText(
                 position[0], position[1] - 1, position[2],
                 lines[4], lines[5], lines[6], lines[7])
 

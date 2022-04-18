@@ -1,4 +1,4 @@
-import utils.libUtil as libUtil
+import lib.interfaceUtils as interfaceUtils
 import utils.util as util
 import random
 
@@ -74,7 +74,7 @@ class ChestGeneration:
 
                     break
 
-        libUtil.addItemChest(x, y, z, items, item_places)
+        interfaceUtils.addItemChest(x, y, z, items, item_places)
 
     """
     Generate places of items

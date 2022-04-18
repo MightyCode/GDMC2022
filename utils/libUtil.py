@@ -1,4 +1,4 @@
-import lib.interface as interface
+import lib.interfaceUtils as interface
 
 
 # ------------ caranha functions

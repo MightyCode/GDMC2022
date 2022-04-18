@@ -6,6 +6,7 @@ from generation.buildingCondition import BuildingCondition
 from generation.data.village import Village
 from generation.data.loreStructure import LoreStructure
 from utils.constants import Constants
+from utils.nameGenerator import NameGenerator
 from utils.worldModification import WorldModification
 
 import generation.loreMaker as loreMaker
@@ -44,19 +45,21 @@ def generateVillageBooks(settlement_data: SettlementData) -> dict:
     text_dead_villagers = book.createTextForDeadVillagers(village_model.villagers, village_model.dead_villagers)
 
     text_village_presentation_book = book.createTextOfPresentationVillage(village_model.name,
-                                                                       settlement_data.structure_number_goal,
-                                                                       village_model.lore_structures,
-                                                                       text_dead_villagers[1],
-                                                                       village_model.villagers)
+                                                                          settlement_data.structure_number_goal,
+                                                                          village_model.lore_structures,
+                                                                          text_dead_villagers[1],
+                                                                          village_model.villagers)
 
     settlement_data.textOfBooks = [text_villagers_names, text_dead_villagers]
 
     books: dict = {
-        "villageNameBook": toolbox.writeBook(text_village_presentation_book, title="Village Presentation", author="Mayor",
+        "villageNameBook": toolbox.writeBook(text_village_presentation_book, title="Village Presentation",
+                                             author="Mayor",
                                              description="Presentation of the village"),
         "villagerNamesBook": toolbox.writeBook(text_villagers_names, title="List of all villagers", author="Mayor",
                                                description="List of all villagers"),
-        "deadVillagersBook": toolbox.writeBook(text_dead_villagers[0], title="List of all dead villagers", author="Mayor",
+        "deadVillagersBook": toolbox.writeBook(text_dead_villagers[0], title="List of all dead villagers",
+                                               author="Mayor",
                                                description="List of all dead villagers")}
 
     return books
@@ -161,7 +164,7 @@ def buildMurdererCache(lore_structure: LoreStructure, settlement_data: Settlemen
     structure_murderer.setupInfoAndGetCorners()
 
     building_info = structure_murderer.getNextBuildingInformation(building_conditions.flip,
-                                                                building_conditions.rotation)
+                                                                  building_conditions.rotation)
     building_conditions.referencePoint = building_info["entry"]["position"]
     building_conditions.size = building_info["size"]
     building_conditions.flip, building_conditions.rotation = structure_murderer.returnFlipRotationThatIsInZone(
@@ -242,7 +245,7 @@ def modifyBuildingConditionDependingOnStructure(building_conditions: BuildingCon
 
                 building_conditions.special["bedroomhouse"].append(villager.diary[0])
 
-                #print(len(building_conditions.special["bedroomhouse"]))
+                # print(len(building_conditions.special["bedroomhouse"]))
 
 
 def returnVillagerAvailableForGift(village_model: Village, villagers_excepted: list) -> list:

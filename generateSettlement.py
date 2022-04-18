@@ -24,7 +24,7 @@ import utils.projectMath as projectMath
 import utils.argumentParser as argParser
 import generation.loreMaker as loreMaker
 import generation.road as road
-import lib.interface as interfaceUtil
+import lib.interfaceUtils as interfaceUtil
 import lib.toolbox as toolbox
 import utils.checkOrCreateConfig as chock
 
@@ -38,10 +38,13 @@ TIME_LIMIT: int = 600
 TIME_TO_BUILD_A_VILLAGE: int = 30
 
 file: str = "temp.txt"
+interface: interfaceUtil.Interface = interfaceUtil.Interface()
+interface.setCaching(True)
+interface.setBuffering(True)
 interfaceUtil.setCaching(True)
 interfaceUtil.setBuffering(True)
 
-world_modification: WorldModification = WorldModification(config)
+world_modification: WorldModification = WorldModification(interface, config)
 args, parser = argParser.giveArgsAndParser()
 build_area = argParser.getBuildArea(args)
 
@@ -60,7 +63,7 @@ if not args.remove:
     resources: Resources = Resources()
     resLoader.loadAllResources(resources)
 
-    chest_generation: ChestGeneration = ChestGeneration(resources)
+    chest_generation: ChestGeneration = ChestGeneration(resources, interface)
 
     # Each zone for takes 500 blocks, division begin after 1000
     defined_zone_size = [500, 500]
@@ -134,27 +137,27 @@ if not args.remove:
         block_transformation[0].age = current_village.age
 
         """ First main step : init settlementData """
-        settlementData = generator.createSettlementData(area, current_village, resources)
-        loreMaker.applyLoreToSettlementData(settlementData)
+        settlement_data = generator.createSettlementData(area, current_village, resources)
+        loreMaker.applyLoreToSettlementData(settlement_data)
 
-        floodFill = FloodFill(world_modification, settlementData)
+        floodFill = FloodFill(world_modification, settlement_data)
 
-        structureManager = StructureManager(settlementData, resources, name_generator)
+        structureManager = StructureManager(settlement_data, resources, name_generator)
 
         """ Second main step : choose structures and their position """
         i = 0
-        while i < settlementData.structure_number_goal:
-            print("Generate position " + str(i + 1) + "/" + str(settlementData.structure_number_goal) + "  ", end="\r")
+        while i < settlement_data.structure_number_goal:
+            print("Generate position " + str(i + 1) + "/" + str(settlement_data.structure_number_goal) + "  ", end="\r")
             current_village.lore_structures.append(LoreStructure())
             # 0 -> normal, 1 -> replacement, 2 -> no more structure
             result: int = structureManager.chooseOneStructure()
 
             if result == 2:
-                settlementData.structure_number_goal = i
+                settlement_data.structure_number_goal = i
                 break
 
             if result == 1:
-                settlementData.structure_number_goal -= 1
+                settlement_data.structure_number_goal -= 1
                 continue
 
             current_village.lore_structures[i].generateAge(current_village)
@@ -165,9 +168,9 @@ if not args.remove:
             result: dict = floodFill.findPosHouse(corners)
 
             if not result["validPosition"]:
-                settlementData.structure_number_goal -= 1
+                settlement_data.structure_number_goal -= 1
                 structureManager.removeLastStructure()
-                floodFill.set_number_of_houses(settlementData.structure_number_goal)
+                floodFill.set_number_of_houses(settlement_data.structure_number_goal)
                 continue
 
             current_village.lore_structures[i].validePosition = result["validPosition"]
@@ -184,16 +187,16 @@ if not args.remove:
             chunk = [int(current_village.lore_structures[i].position[0] / 16),
                      int(current_village.lore_structures[i].position[2] / 16)]
 
-            if chunk not in settlementData.discovered_chunks:
+            if chunk not in settlement_data.discovered_chunks:
                 structure_biome_id = util.getBiome(current_village.lore_structures[i].position[0],
                                                    current_village.lore_structures[i].position[2], 1, 1)
                 structure_biome_name = resources.biomeMinecraftId[int(structure_biome_id)]
                 structure_biome_block_id = str(resources.biomesBlockId[structure_biome_name])
 
-                settlementData.discovered_chunks.append(chunk)
-                util.addResourcesFromChunk(resources, settlementData, structure_biome_block_id)
+                settlement_data.discovered_chunks.append(chunk)
+                util.addResourcesFromChunk(resources, settlement_data, structure_biome_block_id)
 
-            loreMaker.alterSettlementDataWithNewStructures(settlementData, current_village.lore_structures[i])
+            loreMaker.alterSettlementDataWithNewStructures(settlement_data, current_village.lore_structures[i])
 
             current_time = int(round(time.time() * 1000)) - milliseconds
 
@@ -201,8 +204,8 @@ if not args.remove:
                 structureManager.checkDependencies()
                 i += 1
             else:
-                settlementData.structure_number_goal = i + 1
-                floodFill.set_number_of_houses(settlementData.structure_number_goal)
+                settlement_data.structure_number_goal = i + 1
+                floodFill.set_number_of_houses(settlement_data.structure_number_goal)
                 print("Abort finding position and adding structures due to time expired")
                 break
 
@@ -214,8 +217,8 @@ if not args.remove:
         # Murderer
         murdererData: MurdererData = current_village.murderer_data
 
-        books: dict = generator.generateVillageBooks(settlementData)
-        generator.placeBooks(settlementData, books, world_modification)
+        books: dict = generator.generateVillageBooks(settlement_data)
+        generator.placeBooks(settlement_data, books, world_modification)
 
         # Villager interaction
         for villager in current_village.villagers:
@@ -230,7 +233,7 @@ if not args.remove:
 
             if random.randint(1, 3) == 1 and available:
                 # print("Generate diary of " + settlementData["villagerNames"][i])
-                villager.diary = book.createBookForVillager(settlementData.village_model, villager)
+                villager.diary = book.createBookForVillager(settlement_data.village_model, villager)
 
                 villager.diary[0] = "minecraft:written_book" + toolbox.writeBook(
                     villager.diary[0],
@@ -241,16 +244,16 @@ if not args.remove:
                     structure.gift = villager.diary[1]
 
         # Add books replacements
-        settlementData.setMaterialReplacement("villageLecternBook", books["villageNameBook"])
+        settlement_data.setMaterialReplacement("villageLecternBook", books["villageNameBook"])
 
-        settlementData.setMaterialReplacement("villageBookItem", "minecraft:written_book" + books["villageNameBook"])
-        settlementData.setMaterialReplacement("villagerRegistryItem", "minecraft:written_book" + books["villagerNamesBook"])
-        settlementData.setMaterialReplacement("deadVillagerRegistryItem",
+        settlement_data.setMaterialReplacement("villageBookItem", "minecraft:written_book" + books["villageNameBook"])
+        settlement_data.setMaterialReplacement("villagerRegistryItem", "minecraft:written_book" + books["villagerNamesBook"])
+        settlement_data.setMaterialReplacement("deadVillagerRegistryItem",
                                               "minecraft:written_book" + books["deadVillagersBook"])
 
-        settlementData.setMaterialReplacement("villageBookTrade", "\"minecraft:written_book\",tag:" + books["villageNameBook"])
-        settlementData.setMaterialReplacement("villagerRegistryTrade", "\"minecraft:written_book\",tag:" + books["villagerNamesBook"])
-        settlementData.setMaterialReplacement("deadVillagerRegistryTrade",
+        settlement_data.setMaterialReplacement("villageBookTrade", "\"minecraft:written_book\",tag:" + books["villageNameBook"])
+        settlement_data.setMaterialReplacement("villagerRegistryTrade", "\"minecraft:written_book\",tag:" + books["villagerNamesBook"])
+        settlement_data.setMaterialReplacement("deadVillagerRegistryTrade",
                                               "\"minecraft:written_book\",tag:" + books["deadVillagersBook"])
 
         for villager in current_village.villagers:
@@ -258,21 +261,21 @@ if not args.remove:
                 continue
 
             Trade.generateFromTradeTable(current_village, villager, resources.trades[villager.job],
-                                         settlementData.getMatRepDeepCopy())
+                                         settlement_data.getMatRepDeepCopy())
 
         """ Fourth main step : creates the roads of the village """
-        road.initRoad(floodFill.list_houses, settlementData, world_modification)
+        road.initRoad(floodFill.listHouse, settlement_data, world_modification)
 
         """ Five main step : places every structure and after that every decorations """
         i: int = 0
         current_time: int = int(round(time.time() * 1000)) - milliseconds
         while i < len(current_village.lore_structures) and current_time / 1000 < TIME_LIMIT:
-            print("Build structure " + str(i + 1) + "/" + str(settlementData.structure_number_goal) + "  ", end="\r")
-            generator.generateStructure(current_village.lore_structures[i], settlementData, resources,
+            print("Build structure " + str(i + 1) + "/" + str(settlement_data.structure_number_goal) + "  ", end="\r")
+            generator.generateStructure(current_village.lore_structures[i], settlement_data, resources,
                                         world_modification, chest_generation, block_transformation)
 
             if not current_village.lore_structures[i].destroyed:
-                util.spawnVillagerForStructure(settlementData, current_village.lore_structures[i],
+                util.spawnVillagerForStructure(settlement_data, current_village.lore_structures[i],
                                                current_village.lore_structures[i].position)
 
             current_time = int(round(time.time() * 1000)) - milliseconds
@@ -283,15 +286,15 @@ if not args.remove:
 
         print("\nBuild decoration")
         if not current_village.isDestroyed:
-            floodFill.placeDecorations(settlementData)
+            floodFill.placeDecorations(settlement_data)
         print("Position of lectern for village", current_zone_z * settlement_zones_number[0], ":",
-              [settlementData.center[0],
+              [settlement_data.center[0],
                Constants.getHeight(
-                   settlementData.center[0],
-                   settlementData.center[2]),
-               settlementData.center[1]])
+                   settlement_data.center[0],
+                   settlement_data.center[2]),
+               settlement_data.center[1]])
         print("Position of first structure",
-              [floodFill.list_houses[0][0], floodFill.list_houses[0][1], floodFill.list_houses[0][2]])
+              [floodFill.listHouse[0][0], floodFill.listHouse[0][1], floodFill.listHouse[0][2]])
         # iu.runCommand("tp {} {} {}".format(floodFill.listHouse[0][0], floodFill.listHouse[0][1], floodFill.listHouse[0][2]))
         print("Time left :", TIME_LIMIT - (int(round(time.time() * 1000)) - milliseconds) / 1000, "s")
 

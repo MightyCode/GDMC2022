@@ -1,5 +1,5 @@
 import os
-import lib.interface as interfaceUtils
+import lib.interfaceUtils as interfaceUtils
 
 
 # Class which serve to save all modification, do undo actions
@@ -35,11 +35,11 @@ class WorldModification:
             self.after_modification.append([x, y, z, block])
 
         if place_immediately:
-            interfaceUtils.setBuffering(False, False)
-            interfaceUtils.placeBlock(x, y, z, block)
-            interfaceUtils.setBuffering(True, False)
+            interfaceUtils.setBuffering(False)
+            interfaceUtils.setBlock(x, y, z, block)
+            interfaceUtils.setBuffering(True)
         else:
-            interfaceUtils.placeBlock(x, y, z, block)
+            interfaceUtils.setBlock(x, y, z, block)
 
     def fillBlocks(self, from_x, from_y, from_z, to_x, to_y, to_z, block, compare_block_state=False):
         if WorldModification.DEBUG_MODE:
@@ -83,7 +83,7 @@ class WorldModification:
             return
 
         index = len(self.before_modification) - 1
-        interfaceUtils.placeBlock(
+        interfaceUtils.setBlock(
             self.before_modification[index][0],
             self.before_modification[index][1],
             self.before_modification[index][2],
