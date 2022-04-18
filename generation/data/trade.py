@@ -26,7 +26,7 @@ class Trade:
         for trade in trade_table["trades"]:
             chances.append(trade["chance"])
 
-        trades = util.selectNWithChanceForOther(trade_table["trades"], chances, number_required, True)
+        trades: list = util.selectNWithChanceForOther(trade_table["trades"], chances, number_required, True)
         for tradeModel in trades:
             trade: Trade = Trade()
 
@@ -92,7 +92,22 @@ class Trade:
     @staticmethod
     def handleGeneratedTrades(lore_village, villager, trade_table: dict, material_replacements: dict):
         if villager.job == "Exchanger":
-            pass
+            for interactionKey in lore_village.village_interactions:
+                interaction = lore_village.village_interactions[interactionKey]
+
+                if interaction.state == VillageInteraction.STATE_LOVE or \
+                        (interaction.state == VillageInteraction.STATE_FRIENDSHIP and random.randint(1, 2) == 1):
+
+                    anotherVillage = interaction.village1 if (interaction.village1 != lore_village) else interaction.village2
+
+                    trade: Trade = Trade()
+                    trade.needing = util.returnCurrencyTrade(lore_village.name + " gem")
+                    trade.offer = util.returnCurrencyTrade(anotherVillage.name + " gem")
+
+                    trade.needing_quantity = 1 if (anotherVillage.tier == lore_village.tier) else 2 if (anotherVillage.tier > lore_village.tier) else 3
+                    trade.offer_quantity = 1 if (anotherVillage.tier == lore_village.tier) else 2 if (anotherVillage.tier < lore_village.tier) else 3
+
+                    villager.trades.append(trade)
 
     def toStr(self, isFirstTrade=False) -> str:
         result: str
@@ -129,3 +144,5 @@ class Trade:
         result += "}"
 
         return result
+
+from generation.data.villageInteraction import VillageInteraction

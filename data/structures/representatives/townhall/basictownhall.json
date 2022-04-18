@@ -11,7 +11,7 @@
       "spruce" : { "type" : "woodType2", "state" : 2 }
     },
     "air" : {
-      "preferedAirMode" : 1,
+      "preferredAirMode" : 1,
       "replacements" : [
       ]
     },

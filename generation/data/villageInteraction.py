@@ -62,3 +62,24 @@ class VillageInteraction:
                 return category[1]
 
         return VillageInteraction.STATE_NEUTRAL
+
+    @staticmethod
+    def isBestRelationThen(relation1, relation2) -> bool:
+        return relation1 > relation2
+
+    @staticmethod
+    def isWorstRelationThen(relation1, relation2) -> bool:
+        return relation1 < relation2
+
+    @staticmethod
+    def relationStateToStr(relationState) -> str:
+        if relationState == VillageInteraction.STATE_WAR:
+            return "war"
+        elif relationState == VillageInteraction.STATE_TENSION:
+            return "tension"
+        elif relationState == VillageInteraction.STATE_NEUTRAL:
+            return "neutral"
+        elif relationState == VillageInteraction.STATE_FRIENDSHIP:
+            return "friendship"
+        elif relationState == VillageInteraction.STATE_LOVE:
+            return "love"

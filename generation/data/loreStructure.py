@@ -12,6 +12,7 @@ class LoreStructure:
     TYPE_HOUSES = "houses"
     TYPE_FUNCTIONALS = "functionals"
     TYPE_REPRESENTATIVES = "representatives"
+    TYPE_DECORATIONS = "decorations"
 
     def __init__(self):
         self.age: int = 0
@@ -27,7 +28,7 @@ class LoreStructure:
 
         self.position: list = []
         self.validPosition: list = []
-        self.prebuildingInfo: dict = {}
+        self.preBuildingInfo: dict = {}
 
         self.destroyed: bool = False
         self.causeDestroy: bool = {}

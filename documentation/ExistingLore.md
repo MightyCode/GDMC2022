@@ -10,7 +10,7 @@ If emerald is generated on the village its name would be *VillageName*'s currenc
 # Villager
 
 When a house is chosen for next structure, a certain number of villager are created.
-Each villager got a random unique name and they are **Unemployed**.
+Each villager got a random unique name, and they are **Unemployed**.
 
 When a work structure is chosen, a certain number of **Unemployed** become employed.
 Their work status changes.
@@ -22,5 +22,5 @@ If in the diary, the villager loves or hates another villager. A gift will be pl
 
 # Murderer
 
-A murderer is designed in the village, it can't be the mayor. A cache will be generated under its house. And a next target will be choosed.
+A murderer is designed in the village, it can't be the mayor. A cache will be generated under its house. And a next target will be chosen.
 A tnt will be placed near the door (in ground) of target house.

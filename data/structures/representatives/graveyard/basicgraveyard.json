@@ -8,7 +8,7 @@
       "spruce" : { "type" : "woodType2", "state" : 2 }
     },
     "air" : {
-      "preferedAirMode" : 2,
+      "preferredAirMode" : 2,
       "replacements" : [
         [10, 1, 1, 13, 3, 1],
         [8, 1, 2, 15, 3, 2],

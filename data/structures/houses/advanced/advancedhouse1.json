@@ -12,7 +12,7 @@
     "minecraft:dirt" : { "type" : "ground2", "state" : 1 }
   },
   "air" : {
-    "preferedAirMode" : 2,
+    "preferredAirMode" : 2,
     "replacements" : [
       [3, 0, 4, 9, 4, 8],
       [1, 5, 1, 11, 10, 9],

@@ -21,7 +21,6 @@ class NameGenerator:
 
         with open(NameGenerator.VILLAGER_NAME_PATH + "villageNames.txt", "r") as f:
             self.villageNames = f.read().replace("\n", "").split(";")[0:-1]
-            print(self.villageNames)
             f.close()
 
     def generateVillagerName(self, removeName: bool = True) -> str:

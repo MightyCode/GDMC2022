@@ -14,7 +14,7 @@
 
   },
   "air" : {
-    "preferedAirMode" : 2,
+    "preferredAirMode" : 2,
     "replacements" : [
       [1, 0, 1, 9, 9, 7],
       [0, 4, 4, 0, 5, 4]

@@ -9,7 +9,7 @@
       "spruce" : { "type" : "woodType2", "state" : 2 }
     },
     "air" : {
-      "preferedAirMode" : 1,
+      "preferredAirMode" : 1,
       "replacements" : [
       ]
     },
@@ -19,7 +19,7 @@
     "villageInfo" : {
       "villager" : 3,
       "gameProfession" : "armorer",
-      "profession" : "Guard soldier"
+      "profession" : "Guard"
     },
     "ground" : {
       "info" : "all"

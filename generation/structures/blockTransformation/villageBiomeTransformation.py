@@ -1,7 +1,7 @@
 import random
 
 
-class BurnedStructureTransformation:
+class VillageBiomeTransformation:
     def __init__(self):
         super().__init__()
         self.lore_structure = None

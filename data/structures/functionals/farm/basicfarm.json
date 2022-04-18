@@ -7,7 +7,7 @@
     "oak" : { "type" : "woodType", "state" : 2 }
   },
   "air" : {
-    "preferedAirMode" : 2,
+    "preferredAirMode" : 2,
     "replacements" : [
       [0, 2, 0, 8, 4, 8],
       [3, 2, 9, 5, 2, 10]

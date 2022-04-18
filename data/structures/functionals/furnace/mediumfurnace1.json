@@ -6,7 +6,7 @@
   "replacements" : {
   },
   "air" : {
-    "preferedAirMode" : 2,
+    "preferredAirMode" : 2,
     "replacements" : [
       [0, 1, 1, 4, 6, 4]
     ]

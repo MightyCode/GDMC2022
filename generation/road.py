@@ -205,8 +205,8 @@ def initRoad(listHouse: list, settlement_data: SettlementData, world_modificatio
             continue
 
         # House From
-        facingStructFrom = lore_structures[indexFrom].prebuildingInfo["entry"]["facing"]
-        cornerStructFrom = lore_structures[indexFrom].prebuildingInfo["corner"]
+        facingStructFrom = lore_structures[indexFrom].preBuildingInfo["entry"]["facing"]
+        cornerStructFrom = lore_structures[indexFrom].preBuildingInfo["corner"]
         entryStructFrom = [listHouse[indexFrom][0], listHouse[indexFrom][1], listHouse[indexFrom][2]]
 
         x = computeXEntry(entryStructFrom[0], cornerProjection, facingStructFrom, cornerStructFrom)
@@ -222,8 +222,8 @@ def initRoad(listHouse: list, settlement_data: SettlementData, world_modificatio
         start = [x, z]
 
         # House to
-        facingStructTo = lore_structures[indexTo].prebuildingInfo["entry"]["facing"]
-        cornerStructTo = lore_structures[indexTo].prebuildingInfo["corner"]
+        facingStructTo = lore_structures[indexTo].preBuildingInfo["entry"]["facing"]
+        cornerStructTo = lore_structures[indexTo].preBuildingInfo["corner"]
 
         entryStructTo = [listHouse[indexTo][0], listHouse[indexTo][1] - 1, listHouse[indexTo][2]]
 
