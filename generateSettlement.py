@@ -44,7 +44,7 @@ interface.setBuffering(True)
 interfaceUtil.setCaching(True)
 interfaceUtil.setBuffering(True)
 
-world_modification: WorldModification = WorldModification(interface, config)
+world_modification: WorldModification = WorldModification(config)
 args, parser = argParser.giveArgsAndParser()
 build_area = argParser.getBuildArea(args)
 
@@ -63,7 +63,7 @@ if not args.remove:
     resources: Resources = Resources()
     resLoader.loadAllResources(resources)
 
-    chest_generation: ChestGeneration = ChestGeneration(resources, interface)
+    chest_generation: ChestGeneration = ChestGeneration(resources)
 
     # Each zone for takes 500 blocks, division begin after 1000
     defined_zone_size = [500, 500]
