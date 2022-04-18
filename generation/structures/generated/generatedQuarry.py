@@ -1,6 +1,7 @@
 from generation.chestGeneration import ChestGeneration
 from generation.structures.baseStructure import BaseStructure
 from generation.buildingCondition import BuildingCondition
+import lib.interfaceUtils as interfaceUtils
 
 import utils.util as util
 import random
@@ -88,7 +89,7 @@ class GeneratedQuarry(BaseStructure):
                                                         building_conditions.referencePoint,
                                                         building_conditions.position)
 
-                    block = world_modification.interface.getBlock(position[0], position[1], position[2])
+                    block = interfaceUtils.getBlock(position[0], position[1], position[2])
                     if block not in self.useless_blocks:
                         self.list_of_blocks = numpy.append(self.list_of_blocks, block)
 
@@ -177,7 +178,7 @@ class GeneratedQuarry(BaseStructure):
                         building_conditions.rotation, building_conditions.referencePoint,
                         building_conditions.position)
 
-                    block = world_modification.interface.getBlock(position[0], position[1], position[2])
+                    block = interfaceUtils.getBlock(position[0], position[1], position[2])
                     if block in self.useless_blocks or y == fence_side_upper_position - 1:
                         self.applyBlockTransformationThenPlace(world_modification, position[0], position[1],
                                                                position[2],
