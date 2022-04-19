@@ -220,6 +220,7 @@ if not args.remove:
         books: dict = generator.generateVillageBooks(settlement_data)
         generator.placeBooks(settlement_data, books, world_modification)
 
+
         # Villager interaction
         for villager in current_village.villagers:
             available: bool = True
