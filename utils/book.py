@@ -52,13 +52,8 @@ def createTextOfPresentationVillage(villageName: str, structuresNumber: int, str
         '--------------')
     text_village_presentation_book += '\f\\\\s---------------\\\\n'
 
-    number_of_house = 0
-    for structure in structures:
-        if "house" in structure.name:
-            number_of_house += 1
-
     text_village_presentation_book += (f'{len(villages)} villagers arrived in '
-                                       f'{number_of_house} houses.\\\\n')
+                                       f'{len(structures)} houses.\\\\n')
     text_village_presentation_book += f'{deadVillagersNumber} villagers have died since their arrival.\\\\n'
     text_village_presentation_book += ('There are '
                                        f'{structuresNumber} structures.\\\\n')
@@ -83,7 +78,7 @@ def createTextForVillagersNames(villagers: list):
     for villager in villagers:
         villager_text = villager.name + " : " + villager.job
 
-        text_villager_names += f'-{villager_text}\\\\n'
+        text_villager_names += f'-{villager_text} \\\\n'
 
     text_villager_names += '\f'
 

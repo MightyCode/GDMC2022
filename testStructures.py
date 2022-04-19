@@ -117,21 +117,25 @@ if not args.remove:
     lore_structure.position = [build_area[0] + size_area[0] / 2, 63, build_area[2] + size_area[1] / 2]
     lore_structure.preBuildingInfo = structure.getNextBuildingInformation(lore_structure.flip, lore_structure.rotation)
 
-    settlementData: SettlementData = generator.createSettlementData(build_area, village, resources)
-    loreMaker.voteForColor(settlementData)
+    settlement_data: SettlementData = generator.createSettlementData(build_area, village, resources)
+    loreMaker.voteForColor(settlement_data)
 
     structure.block_transformation = block_transformations
 
-    generator.generateStructure(lore_structure, settlementData, resources, world_modifications,
+    generator.generateStructure(lore_structure, settlement_data, resources, world_modifications,
                                 chestGeneration, block_transformations)
 
     for villager in lore_structure.villagers:
         if villager.job == Villager.DEFAULT_JOB:
             continue
 
-        Trade.generateFromTradeTable(village, villager, resources.trades[villager.job], settlementData.getMatRepDeepCopy())
+        Trade.generateFromTradeTable(village, villager, resources.trades[villager.job], settlement_data.getMatRepDeepCopy())
 
-    util.spawnVillagerForStructure(settlementData, lore_structure, lore_structure.position)
+    util.spawnVillagerForStructure(settlement_data, lore_structure, lore_structure.position)
+
+    books: dict = generator.generateVillageBooks(settlement_data)
+    print(books)
+    generator.placeBooks(settlement_data, books, world_modifications)
 
     world_modifications.saveToFile(file)
 else:

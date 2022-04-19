@@ -79,13 +79,12 @@ def placeBooks(settlement_data: SettlementData, books: dict, world_modification:
         items += [["minecraft:written_book" + books[key], 1]]
 
     # Set a chest for the books and place the books in the chest
-    world_modification.setBlock(settlement_data.center[0],
-                                Constants.getHeight(settlement_data.center[0], settlement_data.center[2]),
+    height: int = Constants.getHeight(settlement_data.center[0], settlement_data.center[2])
+
+    world_modification.setBlock(settlement_data.center[0], height,
                                 settlement_data.center[2], "minecraft:chest[facing=east]", place_immediately=True)
 
-    util.addItemChest(settlement_data.center[0],
-                      Constants.getHeight(settlement_data.center[0], settlement_data.center[2]),
-                      settlement_data.center[2], items)
+    util.addItemChest(settlement_data.center[0], height, settlement_data.center[2], items)
 
     # Set a lectern for the book of village presentation
     toolbox.placeLectern(

@@ -12,11 +12,11 @@ from generation.structures.blockTransformation.burnedStructureTransformation imp
 from generation.structures.blockTransformation.abandonedStructureTransformation import AbandonedStructureTransformation
 from generation.resources import Resources
 from generation.floodFill import FloodFill
-import generation.generator as generator
 from utils.nameGenerator import NameGenerator
 from utils.worldModification import WorldModification
 from utils.constants import Constants
 
+import generation.generator as generator
 import generation.resourcesLoader as resLoader
 import utils.util as util
 import utils.book as book
@@ -219,7 +219,6 @@ if not args.remove:
 
         books: dict = generator.generateVillageBooks(settlement_data)
         generator.placeBooks(settlement_data, books, world_modification)
-
 
         # Villager interaction
         for villager in current_village.villagers:
