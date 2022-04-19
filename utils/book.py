@@ -57,7 +57,7 @@ def createTextOfPresentationVillage(villageName: str, structuresNumber: int, str
     text_village_presentation_book += f'{deadVillagersNumber} villagers have died since their arrival.\\\\n'
     text_village_presentation_book += ('There are '
                                        f'{structuresNumber} structures.\\\\n')
-    text_village_presentation_book += '---------------\\\\n\f'
+    text_village_presentation_book += '---------------\\\\n\f\\\\s'
 
     for structure in structures:
         text_village_presentation_book += f'Villagers built the {structure.name}.\\\\n'
