@@ -1,6 +1,7 @@
 from generation.chestGeneration import ChestGeneration
 from generation.structures.baseStructure import BaseStructure
 from generation.buildingCondition import BuildingCondition
+import lib.interfaceUtils as interfaceUtils
 
 import utils.util as util
 import random
@@ -55,6 +56,7 @@ class GeneratedQuarry(BaseStructure):
 
     def build(self, world_modification, building_conditions: BuildingCondition, chest_generation: ChestGeneration,
               block_transformations: list):
+
         self.setSize(building_conditions.size)
         self.entry = building_conditions.referencePoint.copy()
         self.computeOrientation(building_conditions.rotation, building_conditions.flip)
@@ -65,16 +67,16 @@ class GeneratedQuarry(BaseStructure):
         if building_conditions.flip == 2 or building_conditions.flip == 3:
             building_conditions.referencePoint[2] = self.size[2] - 1 - building_conditions.referencePoint[2]
 
-        woodType: str = "*woodType*"
-        result = util.changeNameWithReplacements(woodType, building_conditions.replacements)
+        wood_type: str = "*woodType*"
+        result = util.changeNameWithReplacements(wood_type, building_conditions.replacements)
         if result[0] >= 0:
-            woodType = result[1]
+            wood_type = result[1]
         else:
-            woodType = "oak"
+            wood_type = "oak"
 
-        self.fence_type = "minecraft:" + woodType + "_fence"
+        self.fence_type = "minecraft:" + wood_type + "_fence"
         self.fence_gate_type = self.fence_type + "_gate"
-        self.stripped_wood_type = "minecraft:stripped_" + woodType + "_wood"
+        self.stripped_wood_type = "minecraft:stripped_" + wood_type + "_wood"
 
         self.list_of_blocks = numpy.array([])
         ## Building the quarry.
@@ -87,7 +89,7 @@ class GeneratedQuarry(BaseStructure):
                                                         building_conditions.referencePoint,
                                                         building_conditions.position)
 
-                    block = world_modification.interface.getBlock(position[0], position[1], position[2])
+                    block = interfaceUtils.getBlock(position[0], position[1], position[2])
                     if block not in self.useless_blocks:
                         self.list_of_blocks = numpy.append(self.list_of_blocks, block)
 
@@ -131,7 +133,8 @@ class GeneratedQuarry(BaseStructure):
     Add chest at the bottom of quarry and fill it with blocks removed by the quarry
     """
 
-    def addChestToQuarry(self, world_modification, building_conditions: BuildingCondition, list_of_blocks: numpy.ndarray):
+    def addChestToQuarry(self, world_modification, building_conditions: BuildingCondition,
+                         list_of_blocks: numpy.ndarray):
         position = self.returnWorldPosition(
             [1, 0, 1], building_conditions.flip,
             building_conditions.rotation, building_conditions.referencePoint, building_conditions.position)
@@ -139,44 +142,44 @@ class GeneratedQuarry(BaseStructure):
         # Set a chest
         world_modification.setBlock(position[0], position[1], position[2],
                                     "minecraft:chest[" + self.convertProperty("facing", "south") + "]",
-                                    placeImmediately=True)
+                                    place_immediately=True)
 
         counter = collections.Counter(list_of_blocks)
         items = counter.items()
-        itemsList: list_of_blocks = []
+        items_list: list_of_blocks = []
         for i in items:
             # If there is more than one stack of block (64)
             if i[1] > 64:
                 x = i[1] / 64
                 y = math.floor(x)
                 for z in range(0, y):
-                    newList: list_of_blocks = [i[0], 64]
-                    itemsList.append(newList)
+                    new_list: list_of_blocks = [i[0], 64]
+                    items_list.append(new_list)
             else:
                 sublist: list_of_blocks = [i[0], i[1]]
-                itemsList.append(sublist)
+                items_list.append(sublist)
 
-        util.addItemChest(position[0], position[1], position[2], itemsList)
+        util.addItemChest(position[0], position[1], position[2], items_list)
 
     def addFencesToQuarry(self, world_modification, building_conditions: BuildingCondition):
         # Add the fences for the quarry
 
-        fenceSideUpperPosition = self.size_y() - 3
+        fence_side_upper_position = self.size_y() - 3
         lengths = [self.size_x(), self.size_z(), self.size_x(), self.size_z()]
         multiplier = [[1, 0], [0, 1], [1, 0], [0, 1]]
         positions = [[0, 0], [0, 0], [0, self.size_z() - 1], [self.size_x() - 1, 0]]
 
         for i in [0, 1, 2, 3]:
             for j in range(lengths[i]):
-                for y in range(fenceSideUpperPosition):
-                    localPosition = [positions[i][0] + j * multiplier[i][0], y, positions[i][1] + j * multiplier[i][1]]
+                for y in range(fence_side_upper_position):
+                    local_position = [positions[i][0] + j * multiplier[i][0], y, positions[i][1] + j * multiplier[i][1]]
                     position = self.returnWorldPosition(
-                        localPosition, building_conditions.flip,
+                        local_position, building_conditions.flip,
                         building_conditions.rotation, building_conditions.referencePoint,
                         building_conditions.position)
 
-                    block = world_modification.interface.getBlock(position[0], position[1], position[2])
-                    if block in self.useless_blocks or y == fenceSideUpperPosition - 1:
+                    block = interfaceUtils.getBlock(position[0], position[1], position[2])
+                    if block in self.useless_blocks or y == fence_side_upper_position - 1:
                         self.applyBlockTransformationThenPlace(world_modification, position[0], position[1],
                                                                position[2],
                                                                self.fence_type + "[waterlogged=false]")

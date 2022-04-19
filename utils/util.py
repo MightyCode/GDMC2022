@@ -157,7 +157,6 @@ Spawn a villager at his house if unemployed or at his building of work
 
 def spawnVillagerForStructure(settlementData, structure, position: list):
     for villager in structure.villagers:
-        print(structure.type + " " + villager.job)
         if (structure.type == "houses" and villager.job == "Unemployed") or (
                 structure.type != "houses" and villager.job != "Unemployed"):
             spawnVillager(position[0], position[1] + 1, position[2], villager, settlementData.biome_name)
@@ -169,7 +168,7 @@ def spawnVillager(x: int, y: int, z: int, villager: Villager, villagerType: str)
                + villagerType + "},CustomName:""\"\\" + '"' + str(villager.name) + "\\" + '""' \
                + createOffer(villager) + "}"
 
-    print(command)
+    #print(command)
 
     interfaceUtils.runCommand(command)
 

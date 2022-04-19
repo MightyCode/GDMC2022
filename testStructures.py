@@ -10,6 +10,7 @@ from generation.structures.blockTransformation.burnedStructureTransformation imp
 from generation.structures.blockTransformation.abandonedStructureTransformation import AbandonedStructureTransformation
 from generation.resources import Resources
 from utils.worldModification import WorldModification
+from generation.data.murdererData import MurdererData
 from generation.structures.baseStructure import BaseStructure
 from generation.data.settlementData import SettlementData
 
@@ -19,7 +20,7 @@ import utils.argumentParser as argParser
 import generation.loreMaker as loreMaker
 import lib.interfaceUtils as interfaceUtil
 import generation.generator as generator
-
+import utils.checkOrCreateConfig as chock
 
 """
 Important information
@@ -28,14 +29,12 @@ Important information
 structure_name: str = "basichouse1"
 structure_type: str = "functionals"
 
+config: dict = chock.getOrCreateConfig()
 
 file: str = "temp.txt"
-interface: interfaceUtil.Interface = interfaceUtil.Interface(buffering=True, caching=True)
-interface.setCaching(True)
-interface.setBuffering(True)
 interfaceUtil.setCaching(True)
 interfaceUtil.setBuffering(True)
-world_modifications: WorldModification = WorldModification(interface)
+world_modifications: WorldModification = WorldModification(config)
 args, parser = argParser.giveArgsAndParser()
 build_area = argParser.getBuildArea(args)
 
@@ -47,7 +46,30 @@ build_area: tuple = (
 size_area: list = [build_area[3] - build_area[0] + 1, build_area[5] - build_area[2] + 1]
 
 if not args.remove:
-    block_transformations: list = [OldStructureTransformation(), DamagedStructureTransformation(), BurnedStructureTransformation(), AbandonedStructureTransformation()]
+    block_transformations: list = [OldStructureTransformation(), DamagedStructureTransformation(),
+                                   BurnedStructureTransformation(), AbandonedStructureTransformation()]
+
+    """
+    import lib.toolbox as toolbox
+    text_adventurer_book = (
+        '\\\\s-------------------\\\\n'
+        '\\cMachine guide:\\\\n'
+        'Place §1 flint §0 and steal in the machine. Place water bucket in the machine. \\\\n'
+        '\\\\n'
+        '\\\\n'
+        '\\\\n'
+        '\\\\n'
+        '\\\\n'
+        '\\\\n'
+        '\\\\n'
+        '-------------------')
+    command = "give TamalouMax minecraft:written_book" + \
+              toolbox.writeBook(text_adventurer_book, title="Village Presentation", author="Mayor",
+                                description="Presentation of the village")
+    print(command)
+    interfaceUtil.runCommand(command)
+    exit()
+    """
 
     # Create Village
     village: Village = Village()
@@ -67,19 +89,27 @@ if not args.remove:
 
     village.villagers = villagers
     village.dead_villagers = deadVillagers
+    village.murderer_data = MurdererData()
+    village.murderer_data.villagerTarget = villagers[2]
+    village.murderer_data.villagerMurderer = villagers[0]
 
     resources: Resources = Resources()
     resLoader.loadAllResources(resources)
-    chestGeneration: ChestGeneration = ChestGeneration(resources, interface)
+    chestGeneration: ChestGeneration = ChestGeneration(resources)
+
     structure: BaseStructure = resources.structures[structure_name]
-    structure.setupInfoAndGetCorners()
+    """reference_structure: BaseStructure = resources.structures[structure_name]
+    
+    from generation.structures.generated.structureInConstruction import StructureInConstruction
+    structure: BaseStructure = StructureInConstruction(reference_structure)
+    print(structure.setupInfoAndGetCorners())"""
 
     lore_structure: LoreStructure = LoreStructure()
     lore_structure.age = 1
     lore_structure.flip = 3
     lore_structure.rotation = 1
     lore_structure.destroyed = True
-    lore_structure.causeDestroy = {"burned": "burned", "abandoned": "abandoned", "damaged": "damaged"}
+    #lore_structure.causeDestroy = {"burned": "burned", "abandoned": "abandoned", "damaged": "damaged"}
 
     lore_structure.name = structure_name
     lore_structure.villagers = [villagers[0], villagers[2]]
@@ -92,51 +122,9 @@ if not args.remove:
 
     structure.block_transformation = block_transformations
 
-    """
-    palette: list = []
-    for block_palette in file["palette"]:
-        name = block_palette["Name"].value
+    generator.generateStructure(lore_structure, settlementData, resources, world_modifications,
+                                chestGeneration, block_transformations)
 
-        properties = "["
-        if "Properties" in block_palette.keys():
-            for key in block_palette["Properties"].keys():
-                if structure.propertyCompatible(name, key):
-                    properties += structure.convertProperty(key, block_palette["Properties"][key].value) + ","
-
-            properties = properties[:-1]
-        name = name + properties + "]"
-
-        palette.append({})
-
-    blocks: list = []
-
-    for x in range(size[0]):
-        blocks.append([])
-        for y in range(size[1]):
-            blocks[x].append([])
-            for z in range(size[2]):
-                blocks[x][y].append(0)
-
-    position: list
-    for block in file["blocks"]:
-        position = [block["pos"][0].value, block["pos"][1].value, block["pos"][2].value]
-        blocks[position[0]][position[1]][position[2]] = block["state"].value
-
-    for x in range(size[0]):
-        for y in range(size[1]):
-            for z in range(size[2]):
-                block_position = structure.returnWorldPosition(
-                    [x, y, z],
-                    lore_structure.flip, lore_structure.rotation,
-                    [0, 0, 0], [build_area[0] + size_area[0] / 2, 63, build_area[2] + size_area[1] / 2])
-
-                world_modifications.setBlock(
-                    block_position[0], block_position[1], block_position[2],
-                    palette[blocks[x][y][z]]
-                )
-    """
-
-    generator.generateStructure(lore_structure, settlementData, resources, world_modifications, chestGeneration, block_transformations)
     for villager in lore_structure.villagers:
         if villager.job == Villager.DEFAULT_JOB:
             continue

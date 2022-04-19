@@ -65,8 +65,6 @@ class NbtStructures(BaseStructure):
 
         for block in nbt_file["blocks"]:
             position = [block["pos"][0].value, block["pos"][1].value, block["pos"][2].value]
-            if position[0] < 0 or position[1] < 0 or position[2] < 0:
-                print(position)
             self.blocks[position[0]][position[1]][position[2]] = block["state"].value
 
         # Looting table
@@ -250,7 +248,7 @@ class NbtStructures(BaseStructure):
 
         world_modification.setBlock(
             world_position[0], world_position[1], world_position[2],
-            block_name, placeImmediately=self.placeImmediately
+            block_name, place_immediately=self.placeImmediately
         )
 
         self.checkAfterPlacing(x, y, z, block_name, world_position, chest_generation, building_conditions)

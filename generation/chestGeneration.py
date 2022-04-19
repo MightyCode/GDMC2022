@@ -4,9 +4,8 @@ import random
 
 
 class ChestGeneration:
-    def __init__(self, resources, interface):
+    def __init__(self, resources):
         self.resources = resources
-        self.interface = interface
 
     """
     Generate a chest content at given position and loottable
@@ -27,18 +26,16 @@ class ChestGeneration:
         loot_table = self.resources.lootTables[loot_table_name]["pools"][0]
 
         if isinstance(loot_table["rolls"], dict):
-            numberItem = random.randint(loot_table["rolls"]["min"], loot_table["rolls"]["max"])
+            number_item = random.randint(loot_table["rolls"]["min"], loot_table["rolls"]["max"])
         else:
-            numberItem = loot_table["rolls"]
+            number_item = loot_table["rolls"]
 
-        if numberItem + len(additional_object) >= 28:
-            print(numberItem + len(additional_object))
-
-        item_places = self.generatePlaces(numberItem + len(additional_object) - 1)
+        item_places = self.generatePlaces(number_item + len(additional_object) - 1)
         item_places.sort()
         items = []
 
-        additional_places, additional_indices = self.generateAdditionalPlacesIndices(item_places.copy(), len(additional_object))
+        additional_places, additional_indices = self.generateAdditionalPlacesIndices(item_places.copy(),
+                                                                                     len(additional_object))
 
         sum_weight = 0
         for item in loot_table["entries"]:
@@ -59,19 +56,19 @@ class ChestGeneration:
 
                 # This item is choosen
                 if current_weight <= 0:
-                    numberOfItem = 1
+                    number_of_item = 1
 
                     # Compute number of items
                     if "functions" in item.keys():
                         if item["functions"][0]["function"] == "set_count":
-                            numberOfItem = random.randint(item["functions"][0]["count"]["min"],
-                                                          item["functions"][0]["count"]["max"])
+                            number_of_item = random.randint(item["functions"][0]["count"]["min"],
+                                                            item["functions"][0]["count"]["max"])
 
                     # Compute item's name if balise *, means that one word should change
                     result = util.changeNameWithReplacements(item["name"], change_item_name)
 
                     if result[0] >= 0:
-                        items.append([result[1], numberOfItem])
+                        items.append([result[1], number_of_item])
                     else:
                         items.append(["", 0])
 

@@ -72,7 +72,7 @@ class VillageInteraction:
         return relation1 < relation2
 
     @staticmethod
-    def relationStateToStr(relationState) -> bool:
+    def relationStateToStr(relationState) -> str:
         if relationState == VillageInteraction.STATE_WAR:
             return "war"
         elif relationState == VillageInteraction.STATE_TENSION:

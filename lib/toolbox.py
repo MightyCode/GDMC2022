@@ -215,7 +215,7 @@ def placeLectern(x, y, z, bookData, worldModif, facing="east"):
     """**Place a lectern with a book in the world**."""
     if facing is None:
         facing = choice(getOptimalDirection(x, y, z))
-    worldModif.setBlock(x, y, z, f"lectern[facing={facing}, has_book=true]", placeImmediately=True)
+    worldModif.setBlock(x, y, z, f"lectern[facing={facing}, has_book=true]", place_immediately=True)
     command = (f'data merge block {x} {y} {z} '
                f'{{Book: {{id: "minecraft:written_book", '
                f'Count: 1b, tag: {bookData}'
