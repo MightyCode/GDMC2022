@@ -6,7 +6,6 @@ from generation.buildingCondition import BuildingCondition
 from generation.data.village import Village
 from generation.data.loreStructure import LoreStructure
 from utils.constants import Constants
-from utils.nameGenerator import NameGenerator
 from utils.worldModification import WorldModification
 
 import generation.loreMaker as loreMaker
@@ -41,14 +40,12 @@ def generateVillageBooks(settlement_data: SettlementData) -> dict:
 
     # Create books for the village
 
-    text_villagers_names = book.createTextForVillagersNames(village_model.villagers)
-    text_dead_villagers = book.createTextForDeadVillagers(village_model.villagers, village_model.dead_villagers)
+    text_villagers_names = book.createTextForVillagersNames(
+            village_model.name, village_model.villagers)
+    text_dead_villagers = book.createTextForDeadVillagers(
+        village_model.name, village_model.villagers, village_model.dead_villagers)
 
-    text_village_presentation_book = book.createTextOfPresentationVillage(village_model.name,
-                                                                          settlement_data.structure_number_goal,
-                                                                          village_model.lore_structures,
-                                                                          text_dead_villagers[1],
-                                                                          village_model.villagers)
+    text_village_presentation_book = book.createTextOfPresentationVillage(village_model)
 
     settlement_data.textOfBooks = [text_villagers_names, text_dead_villagers]
 
@@ -221,7 +218,8 @@ def modifyBuildingConditionDependingOnStructure(building_conditions: BuildingCon
         util.parseVillagerNameInLines([name], building_conditions.special["sign"], 1)
 
     elif structure.name == "adventurerhouse":
-        building_conditions.special["adventurerhouse"] = [book.createBookForAdventurerHouse(building_conditions.flip)]
+        building_conditions.special["adventurerhouse"] = [
+            book.createBookForAdventurerHouse(settlement_data.village_model.name, building_conditions.flip)]
     elif structure.name == "mediumstatue":
         building_conditions.special = {"sign": ["", "", "", "", "", "", "", ""]}
         index: int = 0

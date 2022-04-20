@@ -1,5 +1,7 @@
 from generation.data.villager import Villager
 from generation.data.village import Village
+from generation.data.loreStructure import LoreStructure
+from generation.data.villageInteraction import VillageInteraction
 
 import generation.generator as generator
 
@@ -29,37 +31,98 @@ VILLAGER_NAME_PATH = "data/names/"
 MIN_SIZE = 4
 MAX_SIZE = 15
 
+
+def returnFirstPage(message: str, title: str) -> str:
+    return ('\\\\s------------------'
+            ' \\\\n'
+            ' \\\\n'
+            f'{message}\\\\n'
+            ' \\\\n'
+            f'{title} \\\\n'
+            ' \\\\n'
+            ' \\\\n'
+            ' \\\\n'
+            ' \\\\n'
+            ' \\\\n'
+            ' \\\\n'
+            '--------------\f\\\\s')
+
+
+def villageMessage(village_name: str) -> str:
+    return "-" + village_name + " settlement-"
+
+
 """
 Return the text of the book of the village presentation
 """
 
 
-def createTextOfPresentationVillage(villageName: str, structuresNumber: int, structures: list, deadVillagersNumber: int,
-                                    villages: list):
-    text_village_presentation_book = (
-        '\\\\s--------------\\\\n'
-        ' \\\\n'
-        ' \\\\n'
-        'Welcome to\\\\n'
-        f'{villageName}\\\\n'
-        ' \\\\n'
-        ' \\\\n'
-        ' \\\\n'
-        ' \\\\n'
-        ' \\\\n'
-        ' \\\\n'
-        ' \\\\n'
-        '--------------')
-    text_village_presentation_book += '\f\\\\s---------------\\\\n'
+def createTextOfPresentationVillage(village: Village):
+    text_village_presentation_book = returnFirstPage("Welcome to :", village.name)
 
-    text_village_presentation_book += (f'{len(villages)} villagers arrived in '
-                                       f'{len(structures)} houses.\\\\n')
-    text_village_presentation_book += f'{deadVillagersNumber} villagers have died since their arrival.\\\\n'
-    text_village_presentation_book += ('There are '
-                                       f'{structuresNumber} structures.\\\\n')
-    text_village_presentation_book += '---------------\\\\n\f\\\\s'
+    # Status of the village
+    number_structure_destroyed: int = 0
+    number_house: int = 0
 
-    for structure in structures:
+    for structure in village.lore_structures:
+        if structure.destroyed:
+            number_structure_destroyed += 1
+        elif structure.type == LoreStructure.TYPE_HOUSES:
+            number_house += 1
+
+    # Status of the village relationship
+
+    text_village_presentation_book += '-------------------\\\\n'
+    text_village_presentation_book += 'Village relationships: \\\\n'
+    text_village_presentation_book += f'Status of {village.name} : {village.status}\\\\n'
+
+    hadBrokeARelation: bool = False
+
+    for village_key in village.village_interactions:
+        interaction: VillageInteraction = village.village_interactions[village_key]
+
+        if interaction.brokeTheirRelation:
+            hadBrokeARelation = True
+
+        if interaction.state == interaction.STATE_WAR:
+            text_village_presentation_book += "In war with "
+        elif interaction.state == interaction.STATE_TENSION:
+            text_village_presentation_book += "Got tension with "
+        elif interaction.state == interaction.STATE_FRIENDSHIP:
+            text_village_presentation_book += "Friendship relation with "
+        elif interaction.state == interaction.STATE_LOVE:
+            text_village_presentation_book += "Very close relation with "
+
+        if interaction.state != interaction.STATE_NEUTRAL:
+            text_village_presentation_book += f'{village_key.name}. \\\\n'
+
+    if hadBrokeARelation:
+        text_village_presentation_book += f'Due to the war, {village.name} had broke their relation with '
+        for village_key in village.village_interactions:
+            interaction: VillageInteraction = village.village_interactions[village_key]
+
+            if interaction.brokeTheirRelation:
+                text_village_presentation_book += village_key.name + " "
+
+    text_village_presentation_book += " \\\\n"
+
+    text_village_presentation_book += '-------------------\\\\n'
+    text_village_presentation_book += "\f\\\\s"
+
+
+    # Stats on the village
+    text_village_presentation_book += '-------------------\\\\n'
+
+    text_village_presentation_book += f'There are {len(village.lore_structures)} structures.\\\\n'
+    text_village_presentation_book += ('The population of the village is composed of '
+                                       f'{len(village.villagers)} villagers.\\\\n'
+                                       f'They are living on {number_house} houses.\\\\n')
+    text_village_presentation_book += f'{len(village.dead_villagers)} villagers have died since their arrival.\\\\n'
+    text_village_presentation_book += f'{number_structure_destroyed} structures are destroyed.\\\\n'
+    text_village_presentation_book += '-------------------\\\\n\f\\\\s'
+
+    text_village_presentation_book += "List of structures : \\\\n"
+    for structure in village.lore_structures:
         text_village_presentation_book += f'Villagers built the {structure.name}.\\\\n'
 
     return text_village_presentation_book
@@ -70,8 +133,8 @@ Return the text of the book of the villagers names and professions
 """
 
 
-def createTextForVillagersNames(villagers: list):
-    text_villager_names = 'Registry of living villagers \\\\n'
+def createTextForVillagersNames(village_name: str, villagers: list):
+    text_villager_names = returnFirstPage(villageMessage(village_name), "Registry of living villagers.")
 
     villager_text: str
     i = 0
@@ -90,20 +153,19 @@ Return the text of the book of the dead villagers names and professions
 """
 
 
-def createTextForDeadVillagers(villagers: list, deadVillagers: list):
+def createTextForDeadVillagers(village_name: str, villagers: list, deadVillagers: list):
     number_of_dead = len(deadVillagers)
 
     names = []
     for villager in villagers:
         names.append(villager.name)
 
-    text_dead_villagers = 'Registry of dead villagers \\\\n'
+    text_dead_villagers = returnFirstPage(villageMessage(village_name), "Registry of dead villagers.")
 
     for deadVillager in deadVillagers:
         random_death = rd.randint(0, len(REASON_OF_DEATHS) - 1)
         if deadVillager.name in names:
-            text_dead_villagers += ('-'
-                                    f'{deadVillager.name} Senior : '
+            text_dead_villagers += (f'-{deadVillager.name} Senior : '
                                     f'{REASON_OF_DEATHS[random_death]} \\\\n')
 
         text_dead_villagers += (f'-{deadVillager.name} : '
@@ -127,19 +189,7 @@ def createBookForVillager(village_model: Village, villager: Villager) -> list:
 
     gift_place = rd.randint(1, 3)
 
-    text_diary_villager = (
-        '\\\\s--------------\\\\n'
-        '                      \\\\n'
-        '                      \\\\n'
-        f'{villager_name} diary\\\\n'
-        '                      \\\\n'
-        '                      \\\\n'
-        '                      \\\\n'
-        '                      \\\\n'
-        '                      \\\\n'
-        '                      \\\\n'
-        '--------------')
-    text_diary_villager += '     \f'
+    text_diary_villager = returnFirstPage(villager_name + " diary", "")
 
     new_diary_text_without_target = DIARY_TEXTS_WITHOUT_TARGETS.copy()
     new_diary_text_with_target = DIARY_TEXTS_WITH_TARGETS.copy()
@@ -197,7 +247,8 @@ def createBookForVillager(village_model: Village, villager: Villager) -> list:
                 secondRandomProfession = rd.randint(0,
                                                     len(Villager.VILLAGE_PROFESSION_LIST) - 1)
                 if secondRandomProfession != randomProfession:
-                    text_diary_villager += f'I would like to work as a {Villager.VILLAGE_PROFESSION_LIST[secondRandomProfession]}.\\\\n '
+                    text_diary_villager += \
+                        f'I would like to work as a {Villager.VILLAGE_PROFESSION_LIST[secondRandomProfession]}.\\\\n '
         elif random == 2 and not target_text_done:
             randomDiaryTextWithTarget = rd.randint(0, len(new_diary_text_with_target) - 1)
 
@@ -222,22 +273,24 @@ def createBookForVillager(village_model: Village, villager: Villager) -> list:
     return [text_diary_villager, gift]
 
 
-def createBookForAdventurerHouse(flip):
+def createBookForAdventurerHouse(village_name: str, flip: int):
     flint_place = "right" if flip > 0 else "left"
     bucket_place = "left " if flip > 0 else "right"
 
-    text_adventurer_book = (
+    text_adventurer_book = returnFirstPage(villageMessage(village_name), "Machine guide.")
+
+    text_adventurer_book += (
         '\\\\s-------------------\\\\n'
-        'Machine guide:  \\\\n'
-        f'Place flint and steal {flint_place} in the machine. Place water bucket in the {bucket_place} machine. \\\\n'
-        '                      \\\\n'
-        '                      \\\\n'
+        'Instructions:  \\\\n'
+        f'1. Place flint and steal {flint_place} in the machine. \\\\n'
+        f'2. Place water bucket in the {bucket_place} machine. \\\\n'
         '                      \\\\n'
         '                      \\\\n'
         '                      \\\\n'
         '                      \\\\n'
         '                      \\\\n'
         '-------------------')
+
     text_adventurer_book += '\f'
 
     return text_adventurer_book

@@ -31,7 +31,7 @@ class Village:
 
         self.village_interactions: dict = {}
         # Could be in war
-        self.status = "peaceful"
+        self.status = Village.STATE_PEACEFUL
 
         self.isDestroyed: bool = False
         self.destroyCause: str = ""
