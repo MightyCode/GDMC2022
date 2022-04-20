@@ -45,7 +45,7 @@ def returnFirstPage(message: str, title: str) -> str:
             ' \\\\n'
             ' \\\\n'
             ' \\\\n'
-            '--------------\f\\\\s')
+            '-------------------\f\\\\s')
 
 
 def villageMessage(village_name: str) -> str:
@@ -210,9 +210,9 @@ def createBookForVillager(village_model: Village, villager: Villager) -> list:
 
             if random_gift == 1:
                 if rd.randint(1, 2) == 1:
-                    text_diary_villager += f'I love {targeted_villager.name}\\\\n'
+                    text_diary_villager += f'I love {targeted_villager.name}'
                 else:
-                    text_diary_villager += f'{targeted_villager.name} is my best friend\\\\n'
+                    text_diary_villager += f'{targeted_villager.name} is my best friend'
 
                 if rd.randint(1, 2) == 1:
                     text_diary_villager += ', I left a surprise under the door.\\\\n'
@@ -274,23 +274,16 @@ def createBookForVillager(village_model: Village, villager: Villager) -> list:
 
 
 def createBookForAdventurerHouse(village_name: str, flip: int):
-    flint_place = "right" if flip > 0 else "left"
-    bucket_place = "left " if flip > 0 else "right"
+    flint_place = "right" if 0 < flip < 3 else "left"
+    bucket_place = "left " if 0 < flip < 3 else "right"
 
     text_adventurer_book = returnFirstPage(villageMessage(village_name), "Machine guide.")
 
     text_adventurer_book += (
-        '\\\\s-------------------\\\\n'
+        '-------------------\\\\n'
         'Instructions:  \\\\n'
-        f'1. Place flint and steal {flint_place} in the machine. \\\\n'
-        f'2. Place water bucket in the {bucket_place} machine. \\\\n'
-        '                      \\\\n'
-        '                      \\\\n'
-        '                      \\\\n'
-        '                      \\\\n'
-        '                      \\\\n'
+        f'1. Place flint and steal in the {flint_place} machine.\\\\n'
+        f'2. Place water bucket in the {bucket_place} machine.\\\\n'
         '-------------------')
-
-    text_adventurer_book += '\f'
 
     return text_adventurer_book

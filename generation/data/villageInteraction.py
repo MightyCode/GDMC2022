@@ -38,6 +38,9 @@ class VillageInteraction:
 
         self.brokeTheirRelation: bool = False
 
+        self.economicalRelation: bool = True if self.state == self.STATE_LOVE \
+            else True if random.randint(1, 2) == 1 else False
+
         self.reason: int = VillageInteraction.UNKNOWN_REASON
 
     def computeState(self) -> int:
@@ -62,6 +65,11 @@ class VillageInteraction:
                 return category[1]
 
         return VillageInteraction.STATE_NEUTRAL
+
+    def brokeRelation(self):
+        self.brokeTheirRelation = True
+        self.reason = self.REASON_TWO_FRIENDS_WENT_IN_WAR
+        self.economicalRelation = False
 
     @staticmethod
     def isBestRelationThen(relation1, relation2) -> bool:
