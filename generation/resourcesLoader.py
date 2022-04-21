@@ -31,6 +31,9 @@ def loadAllResources(resources: Resources) -> None:
     resources.loadStructures("functionals/lumberjackhut/basiclumberjackhut.nbt",
                              "functionals/lumberjackhut/basiclumberjackhut.json", "basiclumberjackhut")
 
+    resources.loadStructures("functionals/lumberjackhut/mediumlumberjackhut.nbt",
+                             "functionals/lumberjackhut/mediumlumberjackhut.json", "mediumlumberjackhut")
+
     resources.loadStructures("functionals/stonecutter/basicstonecutter.nbt",
                              "functionals/stonecutter/basicstonecutter.json", "basicstonecutter")
 

@@ -17,7 +17,6 @@ from generation.data.settlementData import SettlementData
 import generation.resourcesLoader as resLoader
 import utils.util as util
 import utils.argumentParser as argParser
-import generation.loreMaker as loreMaker
 import lib.interfaceUtils as interfaceUtil
 import generation.generator as generator
 import utils.checkOrCreateConfig as chock
@@ -26,8 +25,8 @@ import utils.checkOrCreateConfig as chock
 Important information
 """
 
-structure_name: str = "adventurerhouse"
-structure_type: str = "functionals"
+structure_name: str = "basiclumberjackhut"
+structure_type: str = LoreStructure.TYPE_FUNCTIONALS
 
 config: dict = chock.getOrCreateConfig()
 
@@ -109,7 +108,7 @@ if not args.remove:
     lore_structure.flip = 2
     lore_structure.rotation = 1
     lore_structure.destroyed = True
-    #lore_structure.causeDestroy = {"burned": "burned", "abandoned": "abandoned", "damaged": "damaged"}
+    # lore_structure.causeDestroy = {"burned": "burned", "abandoned": "abandoned", "damaged": "damaged"}
 
     lore_structure.name = structure_name
     lore_structure.villagers = [villagers[0], villagers[2]]
