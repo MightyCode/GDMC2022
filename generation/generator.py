@@ -6,7 +6,6 @@ from generation.buildingCondition import BuildingCondition
 from generation.data.village import Village
 from generation.data.loreStructure import LoreStructure
 from utils.constants import Constants
-from utils.nameGenerator import NameGenerator
 from utils.worldModification import WorldModification
 
 import generation.loreMaker as loreMaker
