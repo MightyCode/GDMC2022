@@ -15,6 +15,7 @@
     ]
   },
   "lootTables" : [
+    ["exchanger"]
   ],
   "villageInfo" : {
     "villager" : 1,

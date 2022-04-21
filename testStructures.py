@@ -1,5 +1,6 @@
 from generation.data.village import Village
 from generation.data.villager import Villager
+from generation.data.villageInteraction import VillageInteraction
 from generation.data.trade import Trade
 
 from generation.data.loreStructure import LoreStructure
@@ -26,7 +27,7 @@ import utils.checkOrCreateConfig as chock
 Important information
 """
 
-structure_name: str = "adventurerhouse"
+structure_name: str = "basicexchanger"
 structure_type: str = "functionals"
 
 config: dict = chock.getOrCreateConfig()
@@ -75,6 +76,14 @@ if not args.remove:
     village: Village = Village()
     village.name = "TestLand"
     village.tier = 2
+
+    otherVillage: Village = Village()
+    otherVillage.name = "TestLand 2"
+    village.village_interactions[otherVillage] = (
+        VillageInteraction(village, otherVillage)
+    )
+    # Force relation for tests
+    village.village_interactions[otherVillage].economicalRelation = True
 
     villagers: list = [Villager(village), Villager(village), Villager(village), Villager(village), Villager(village)]
     villagers[0].name = "Rodriguez 1"

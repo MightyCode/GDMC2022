@@ -265,7 +265,7 @@ class NbtStructures(BaseStructure):
                 return
 
             if self.lootTable:
-                chosen_loot_table = ""
+                chosen_loot_table: str = ""
                 for lootTable in self.info["lootTables"]:
                     if len(lootTable) == 1:
                         chosen_loot_table = lootTable[0]
