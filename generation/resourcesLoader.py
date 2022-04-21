@@ -146,6 +146,7 @@ def loadAllResources(resources: Resources) -> None:
     resources.loadLootTable("representatives/tavern.json", "tavern")
     resources.loadLootTable("representatives/barrack.json", "barrack")
     resources.loadLootTable("representatives/adventurerhouse.json", "adventurerhouse")
+    resources.loadLootTable("representatives/exchanger.json", "exchanger")
 
     resources.loadLootTable("decorations/murderercache.json", "murderercache")
 

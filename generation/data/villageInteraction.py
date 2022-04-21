@@ -39,7 +39,7 @@ class VillageInteraction:
         self.brokeTheirRelation: bool = False
 
         self.economicalRelation: bool = True if self.state == self.STATE_LOVE \
-            else True if random.randint(1, 2) == 1 else False
+            else True if self.state == self.STATE_FRIENDSHIP and random.randint(1, 2) == 1 else False
 
         self.reason: int = VillageInteraction.UNKNOWN_REASON
 

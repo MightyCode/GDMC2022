@@ -11,9 +11,9 @@
       },
       {
         "required" : "*village_currency_trade*",
-        "amount" : [15, 20],
+        "amount" : [1, 3],
         "offered" : "minecraft:gold_ingot",
-        "amountOffered" : [1, 3],
+        "amountOffered" : [15, 20],
         "chance" : 0.5
       }
     ],

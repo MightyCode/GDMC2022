@@ -23,32 +23,27 @@
           },
           {
             "type": "item",
-            "name": "minecraft:stone_sword",
-            "weight": 5
+            "name": "minecraft:*toolMaterial*_sword",
+            "weight": 7
           },
           {
             "type": "item",
-            "name": "minecraft:iron_sword",
+            "name": "minecraft:*equipmentMaterial*_helmet",
             "weight": 2
           },
           {
             "type": "item",
-            "name": "minecraft:leather_helmet",
+            "name": "minecraft:*equipmentMaterial*_chestplate",
             "weight": 2
           },
           {
             "type": "item",
-            "name": "minecraft:leather_chestplate",
+            "name": "minecraft:*equipmentMaterial*_leggings",
             "weight": 2
           },
           {
             "type": "item",
-            "name": "minecraft:leather_leggings",
-            "weight": 2
-          },
-          {
-            "type": "item",
-            "name": "minecraft:leather_boots",
+            "name": "minecraft:*equipmentMaterial*_boots",
             "weight": 2
           },
           {

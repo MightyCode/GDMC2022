@@ -181,6 +181,23 @@ def modifyBuildingConditionDependingOnStructure(building_conditions: BuildingCon
                 title="Portal Manual", author="Mayor",
                 description="Contains useful instruction")
             ]
+    elif "exchanger" in structure.name:
+        building_conditions.special["exchanger"] = []
+
+        for villageKey in settlement_data.village_model.village_interactions:
+            interaction = settlement_data.village_model.village_interactions[villageKey]
+
+            if interaction.economicalRelation:
+                building_conditions.special["exchanger"].append(
+                 'minecraft:paper{'
+                    'display:{Name:\'{\"text\":\"Commercial pact approval\"}\''
+                    ',Lore:[\'{\"text\":\"Pact certifying a commercial relation with ' + villageKey.name +
+                    '\"}\']'
+                    '}, Enchantements:[{}]'
+                 '}'
+                )
+
+        print(building_conditions.replacements["village_currency_item"])
     elif structure.name == "mediumstatue":
         building_conditions.special = {"sign": ["", "", "", "", "", "", "", ""]}
         index: int = 0

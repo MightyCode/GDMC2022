@@ -1,5 +1,6 @@
 from generation.data.village import Village
 from generation.data.villager import Villager
+from generation.data.villageInteraction import VillageInteraction
 from generation.data.trade import Trade
 
 from generation.data.loreStructure import LoreStructure
@@ -15,7 +16,6 @@ from generation.structures.baseStructure import BaseStructure
 from generation.data.settlementData import SettlementData
 
 import generation.resourcesLoader as resLoader
-import utils.util as util
 import utils.argumentParser as argParser
 import lib.interfaceUtils as interfaceUtil
 import generation.generator as generator
@@ -25,7 +25,7 @@ import utils.checkOrCreateConfig as chock
 Important information
 """
 
-structure_name: str = "basiclumberjackhut"
+structure_name: str = "mediumlumberjackhut"
 structure_type: str = LoreStructure.TYPE_FUNCTIONALS
 
 config: dict = chock.getOrCreateConfig()
@@ -74,6 +74,14 @@ if not args.remove:
     village: Village = Village()
     village.name = "TestLand"
     village.tier = 2
+
+    otherVillage: Village = Village()
+    otherVillage.name = "TestLand 2"
+    village.village_interactions[otherVillage] = (
+        VillageInteraction(village, otherVillage)
+    )
+    # Force relation for tests
+    village.village_interactions[otherVillage].economicalRelation = True
 
     villagers: list = [Villager(village), Villager(village), Villager(village), Villager(village), Villager(village)]
     villagers[0].name = "Rodriguez 1"
@@ -129,7 +137,7 @@ if not args.remove:
 
         Trade.generateFromTradeTable(village, villager, resources.trades[villager.job], settlement_data.getMatRepDeepCopy())
 
-    util.spawnVillagerForStructure(settlement_data, lore_structure, lore_structure.position)
+    # util.spawnVillagerForStructure(settlement_data, lore_structure, lore_structure.position)
 
     books: dict = generator.generateVillageBooks(settlement_data)
     generator.placeBooks(settlement_data, books, world_modifications)

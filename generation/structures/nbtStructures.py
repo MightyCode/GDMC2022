@@ -227,7 +227,7 @@ class NbtStructures(BaseStructure):
         if block_palette[NbtStructures.CHANGE]:
             if block_palette[NbtStructures.CHANGE_EXCLUDED_ZONES]:
                 for zone in self.info["replacements"][block_palette[NbtStructures.CHANGE_REPLACEMENT_WORD]]["excluded"]:
-                    if projectMath.isPointInSquare([x, y, z], zone):
+                    if projectMath.isPointInCube([x, y, z], zone):
                         should_take_original_block = True
                         break
 
@@ -265,7 +265,7 @@ class NbtStructures(BaseStructure):
                 return
 
             if self.lootTable:
-                chosen_loot_table = ""
+                chosen_loot_table: str = ""
                 for lootTable in self.info["lootTables"]:
                     if len(lootTable) == 1:
                         chosen_loot_table = lootTable[0]

@@ -22,13 +22,8 @@
           },
           {
             "type": "item",
-            "name": "minecraft:wooden_hoe",
-            "weight": 7
-          },
-          {
-            "type": "item",
-            "name": "minecraft:stone_hoe",
-            "weight": 2
+            "name": "minecraft:*toolMaterial*_hoe",
+            "weight": 10
           },
           {
             "type": "item",
