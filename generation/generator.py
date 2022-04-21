@@ -190,10 +190,9 @@ def modifyBuildingConditionDependingOnStructure(building_conditions: BuildingCon
             if interaction.economicalRelation:
                 building_conditions.special["exchanger"].append(
                  'minecraft:paper{'
-                    'display:{Name:\'{\"text\":\"Commercial pact approval\"}\''
-                    ',Lore:[\'{\"text\":\"Pact certifying a commercial relation with ' + villageKey.name +
-                    '\"}\']'
-                    '}, Enchantements:[{}]'
+                    'display:{Name:\'{\"text\":\"Commercial alliance pact\"}\''
+                    ',Lore:[\'{\"text\":\"' + villageKey.name + ' currency exchange permit.\"}\']'
+                    '}, Enchantments:[{}]'
                  '}'
                 )
 

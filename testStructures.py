@@ -25,7 +25,7 @@ import utils.checkOrCreateConfig as chock
 Important information
 """
 
-structure_name: str = "mediumlumberjackhut"
+structure_name: str = "mediumexchanger"
 structure_type: str = LoreStructure.TYPE_FUNCTIONALS
 
 config: dict = chock.getOrCreateConfig()
