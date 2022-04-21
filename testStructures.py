@@ -26,7 +26,7 @@ import utils.checkOrCreateConfig as chock
 Important information
 """
 
-structure_name: str = "basichouse1"
+structure_name: str = "adventurerhouse"
 structure_type: str = "functionals"
 
 config: dict = chock.getOrCreateConfig()
@@ -106,7 +106,7 @@ if not args.remove:
 
     lore_structure: LoreStructure = LoreStructure()
     lore_structure.age = 1
-    lore_structure.flip = 3
+    lore_structure.flip = 2
     lore_structure.rotation = 1
     lore_structure.destroyed = True
     #lore_structure.causeDestroy = {"burned": "burned", "abandoned": "abandoned", "damaged": "damaged"}
@@ -118,7 +118,6 @@ if not args.remove:
     lore_structure.preBuildingInfo = structure.getNextBuildingInformation(lore_structure.flip, lore_structure.rotation)
 
     settlement_data: SettlementData = generator.createSettlementData(build_area, village, resources)
-    loreMaker.voteForColor(settlement_data)
 
     structure.block_transformation = block_transformations
 

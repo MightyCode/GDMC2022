@@ -33,8 +33,6 @@ def initializedVillages(positions_of_villages: list, name_generator) -> list:
         villages[i].generateVillageInformation(name_generator)
         villages[i].generateVillageLore()
 
-        voteForColor(villages[i])
-
     return villages
 
 
@@ -80,14 +78,10 @@ def checkForImpossibleInteractions(villages: list, interactions: list):
                 continue
 
             if random.randint(0, 1) == 1:
-                interaction1.state = VillageInteraction.STATE_NEUTRAL
-                interaction1.brokeTheirRelation = True
-                interaction1.reason = VillageInteraction.REASON_TWO_FRIENDS_WENT_IN_WAR
+                interaction1.brokeRelation()
                 # print("Relation between " + interaction1.village1.name + " " + interaction1.village2.name + " broken")
             else:
-                interaction2.state = VillageInteraction.STATE_NEUTRAL
-                interaction2.brokeTheirRelation = True
-                interaction2.reason = VillageInteraction.REASON_TWO_FRIENDS_WENT_IN_WAR
+                interaction2.brokeRelation()
                 # print("Relation between " + interaction2.village1.name + " " + interaction2.village2.name + " broken")
 
 
@@ -122,13 +116,6 @@ def alterSettlementDataWithNewStructures(settlement_data, lore_structure: LoreSt
 
 def applyLoreToSettlementData(settlement_data):
     fillSettlementDataWithColor(settlement_data, settlement_data.village_model.color)
-
-
-def voteForColor(village):
-    colors = ["white", "orange", "magenta", "light_blue", "yellow", "lime", "pink", "gray", "light_gray", "cyan",
-              "purple", "blue", "brown", "green", "red", "black"]
-
-    village.color = colors[random.randint(0, len(colors) - 1)]
 
 
 def fillSettlementDataWithColor(settlement_data, color):

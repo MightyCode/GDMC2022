@@ -31,7 +31,7 @@ class Village:
 
         self.village_interactions: dict = {}
         # Could be in war
-        self.status = "peaceful"
+        self.status = Village.STATE_PEACEFUL
 
         self.isDestroyed: bool = False
         self.destroyCause: str = ""
@@ -47,7 +47,7 @@ class Village:
 
         self.murderer_data: MurdererData = MurdererData()
 
-        self.color: str = "Undefined"
+        self.color: str = "white"
 
     def generateVillageInformation(self, name_generator: NameGenerator):
         self.name = name_generator.generateVillageName(True)
@@ -67,21 +67,10 @@ class Village:
 
     def generateVillageLore(self):
         self.defineTierAndAge()
+        colors = ["white", "orange", "magenta", "light_blue", "yellow", "lime", "pink", "gray", "light_gray", "cyan",
+                  "purple", "blue", "brown", "green", "red", "black"]
 
-        if len(self.villagers) > 1:
-            index = random.choice([i for i in range(0, len(self.villagers)) if
-                                   self.villagers[i].job != "Mayor"])
-
-            self.murderer_data.villagerIndex = self.villagers[index]
-
-            index = random.choice(
-                [i for i in range(0, len(self.villagers)) if i != self.murderer_data.villagerIndex])
-
-            self.murderer_data.villagerTargetIndex = self.villagers[index]
-
-        for structure in self.lore_structures:
-            if self.murderer_data.villagerTarget in structure.villagers:
-                structure.gift = "minecraft:tnt"
+        self.color = colors[random.randint(0, len(colors) - 1)]
 
     def makeRelations(self, otherVillages: list):
         for village in otherVillages:
