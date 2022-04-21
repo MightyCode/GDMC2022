@@ -37,6 +37,9 @@ def loadAllResources(resources: Resources) -> None:
     resources.loadStructures("functionals/stonecutter/basicstonecutter.nbt",
                              "functionals/stonecutter/basicstonecutter.json", "basicstonecutter")
 
+    resources.loadStructures("functionals/stonecutter/mediumstonecutter.nbt",
+                             "functionals/stonecutter/mediumstonecutter.json", "mediumstonecutter")
+
     resources.loadStructures("functionals/farm/basicfarm.nbt", "functionals/farm/basicfarm.json", "basicfarm")
 
     resources.loadStructures("functionals/farm/mediumfarm1.nbt", "functionals/farm/mediumfarm1.json", "mediumfarm1")
@@ -61,8 +64,14 @@ def loadAllResources(resources: Resources) -> None:
     resources.loadStructures("functionals/workshop/basicworkshop.nbt", "functionals/workshop/basicworkshop.json",
                              "basicworkshop")
 
+    resources.loadStructures("functionals/workshop/mediumworkshop.nbt", "functionals/workshop/mediumworkshop.json",
+                             "mediumworkshop")
+
     resources.loadStructures("functionals/weaverhouse/basicweaverhouse.nbt",
                              "functionals/weaverhouse/basicweaverhouse.json", "basicweaverhouse")
+
+    resources.loadStructures("functionals/weaverhouse/mediumweaverhouse.nbt",
+                             "functionals/weaverhouse/mediumweaverhouse.json", "mediumweaverhouse")
 
     resources.loadStructures("functionals/shop/basicshop.nbt",
                              "functionals/shop/basicshop.json", "basicshop")

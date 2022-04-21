@@ -127,10 +127,10 @@
                 "basicstonecutter"
             ],
             "1": [
-                "basicstonecutter"
+                "mediumstonecutter"
             ],
             "2": [
-                "basicstonecutter"
+                "mediumstonecutter"
             ]
         },
         "type" : "functionals",
@@ -167,10 +167,10 @@
                 "basicworkshop"
             ],
             "1": [
-                "basicworkshop"
+                "mediumworkshop"
             ],
             "2": [
-                "basicworkshop"
+                "mediumworkshop"
             ]
         },
         "type" : "functionals",
@@ -309,10 +309,10 @@
                 "basicweaverhouse"
             ],
             "1": [
-                "basicweaverhouse"
+                "mediumweaverhouse"
             ],
             "2": [
-                "basicweaverhouse"
+                "mediumweaverhouse"
             ]
         },
         "type" : "functionals",

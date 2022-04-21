@@ -1,7 +1,7 @@
 {
   "mainEntry": {
     "facing" : "north",
-    "position" : [4, 1, 0]
+    "position" : [4, 0, 0]
   },
   "replacements" : {
     "oak" : { "type" : "woodType", "state" : 2},
@@ -25,7 +25,7 @@
   "sign" : {
     "position" : [2, 2, 0],
     "facing" : "north",
-    "tier" : 1,
+    "tier" : 2,
     "name" : "Weaver house"
   }
 }
