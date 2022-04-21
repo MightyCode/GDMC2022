@@ -142,7 +142,6 @@ if not args.remove:
     util.spawnVillagerForStructure(settlement_data, lore_structure, lore_structure.position)
 
     books: dict = generator.generateVillageBooks(settlement_data)
-    print(books)
     generator.placeBooks(settlement_data, books, world_modifications)
 
     world_modifications.saveToFile(file)
