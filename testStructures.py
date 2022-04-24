@@ -54,6 +54,10 @@ if not args.remove:
     book_writer.setInfo("Test", "Mayor")
     book_writer.writeFirstPage("TestLand settlement", "book test")
 
+    book_writer.setColor(BookWriter.COLOR_RED)
+    book_writer.setTextMode(BookWriter.TEXT_UNDERLINE, True)
+    book_writer.writeLine("HEY")
+
     command = "give TamalouMax minecraft:written_book" + book_writer.printBook()
 
     print(command)

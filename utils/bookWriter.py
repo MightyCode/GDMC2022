@@ -22,7 +22,7 @@ class BookWriter:
 
     TEXT_OBFUSCATED = "obfuscated"
     TEXT_STRIKETHROUGH = "strikethrough"
-    TEXT_UNDERLINE = "underline"
+    TEXT_UNDERLINE = "underlined"
     TEXT_ITALIC = "italic"
 
     def __init__(self):
@@ -62,7 +62,7 @@ class BookWriter:
         page = 0
         for text in self.texts:
             if text["newPage"] and page != 0:
-                result += ']\',\'['
+                result = result[:-1] + ']\',\'['
 
             result += '{\"text\":\"' + text["text"] + "\", \"color\":\"" + text["color"] + "\""
 
@@ -70,16 +70,17 @@ class BookWriter:
                 if text["form"][key]:
                     result += ', \"' + key + '\" : \"true\"'
 
-            result += '}'
+            result += '},'
 
             page += 1
 
-        result += ']\']}'
+        result = result[:-1] + ']\']}'
 
         return result
 
     def writeLine(self, message: str, breakLine: bool = True):
         self.texts[-1]["text"] += message + ("\\\\n" if breakLine else "")
+        self.text_created = False
 
     def writeEmptyLine(self, number: int):
         for i in range(number):
@@ -103,6 +104,7 @@ class BookWriter:
         self.writeLine(title)
         self.writeEmptyLine(4)
         self.fillLineWith("-")
+        self.breakPage()
 
     def breakPage(self):
         self.newText()
