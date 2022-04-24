@@ -85,13 +85,13 @@ def createTextOfPresentationVillage(village: Village):
             hadBrokeARelation = True
 
         if interaction.state == interaction.STATE_WAR:
-            text_village_presentation_book += "In war with "
+            text_village_presentation_book += "In §cwar§r with "
         elif interaction.state == interaction.STATE_TENSION:
-            text_village_presentation_book += "Got tension with "
+            text_village_presentation_book += "Got §6tension§r with "
         elif interaction.state == interaction.STATE_FRIENDSHIP:
-            text_village_presentation_book += "Friendship relation with "
+            text_village_presentation_book += "§9Friendship relation§r with "
         elif interaction.state == interaction.STATE_LOVE:
-            text_village_presentation_book += "Very close relation with "
+            text_village_presentation_book += "§aVery close relation§r with "
 
         if interaction.state != interaction.STATE_NEUTRAL:
             text_village_presentation_book += f'{village_key.name}. \\\\n'

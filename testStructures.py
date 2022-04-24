@@ -20,6 +20,7 @@ import utils.argumentParser as argParser
 import lib.interfaceUtils as interfaceUtil
 import generation.generator as generator
 import utils.checkOrCreateConfig as chock
+from utils.bookWriter import BookWriter
 
 """
 Important information
@@ -48,27 +49,17 @@ if not args.remove:
     block_transformations: list = [OldStructureTransformation(), DamagedStructureTransformation(),
                                    BurnedStructureTransformation(), AbandonedStructureTransformation()]
 
-    """
-    import lib.toolbox as toolbox
-    text_adventurer_book = (
-        '\\\\s-------------------\\\\n'
-        '\\cMachine guide:\\\\n'
-        'Place §1 flint §0 and steal in the machine. Place water bucket in the machine. \\\\n'
-        '\\\\n'
-        '\\\\n'
-        '\\\\n'
-        '\\\\n'
-        '\\\\n'
-        '\\\\n'
-        '\\\\n'
-        '-------------------')
-    command = "give TamalouMax minecraft:written_book" + \
-              toolbox.writeBook(text_adventurer_book, title="Village Presentation", author="Mayor",
-                                description="Presentation of the village")
+    book_writer: BookWriter = BookWriter()
+
+    book_writer.setInfo("Test", "Mayor")
+    book_writer.writeFirstPage("TestLand settlement", "book test")
+
+    command = "give TamalouMax minecraft:written_book" + book_writer.printBook()
+
     print(command)
     interfaceUtil.runCommand(command)
     exit()
-    """
+
 
     # Create Village
     village: Village = Village()

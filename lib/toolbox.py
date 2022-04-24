@@ -108,6 +108,60 @@ def writeBook(text, title="Chronicle", author=__author__,
                     else 10
                     for letter in word]) - 1
 
+
+def writeBook(text, title="Chronicle", author=__author__,
+              description="I wonder what\\'s inside?", desccolor='gold'):
+    r"""**Return NBT data for a correctly formatted book**.
+    The following special characters are used for formatting the book:
+    - `\n`: New line
+    - `\f`: Form/page break
+    - `§0`: Black text
+    - '§1': Dark blue text
+    - '§2': Dark_green text
+    - '§3': Dark_aqua text
+    - '§4': Dark_red text
+    - '§5': Dark_purple text
+    - '§6': Gold text
+    - '§7': Gray text
+    - '§8': Dark_gray text
+    - '§9': Blue text
+    - `§a`: Green text
+    - `§b`: Aqua text
+    - `§c`: Red text
+    - `§d`: Light_purple text
+    - `§e`: Yellow text
+    - `§f`: White text
+    - `§k`: Obfuscated text
+    - `§l`: **Bold** text
+    - `§m`: ~~Strikethrough~~ text
+    - `§n`: __Underline__ text
+    - `§o`: *Italic* text
+    - `§r`: Reset text formatting
+    - `\\\\s`: When at start of page, print page as string directly
+    - `\\c`: When at start of line, align text to center
+    - `\\r`: When at start of line, align text to right side
+    NOTE: For supported special characters see
+        https://minecraft.fandom.com/wiki/Language#Font
+    IMPORTANT: When using `\\s` text is directly interpreted by Minecraft,
+        so all line breaks must be `\\\\n` to function
+    """
+    pages_left = 97                     # per book
+    characters_left = CHARACTERS = 255  # per page
+    lines_left = LINES = 14             # per page
+    pixels_left = PIXELS = 113          # per line
+    toprint = ''
+
+    @lru_cache()
+    def fontwidth(word):
+        """**Return the length of a word based on character width**.
+        If a letter is not found, a width of 9 is assumed
+        A character spacing of 1 is automatically integrated
+        """
+        return sum([lookup.ASCIIPIXELS[letter] + 1
+                    if letter in lookup.ASCIIPIXELS
+                    else 10
+                    for letter in word]) - 1
+
     def printline():
         nonlocal bookData, toprint
         formatting = toprint[:2]
@@ -139,6 +193,25 @@ def writeBook(text, title="Chronicle", author=__author__,
         pixels_left = PIXELS
         bookData += '"}\',\'{"text":"'    # end page and start new page
 
+    def jokepage():
+        nonlocal bookData
+        bookData += ('"}\',\'{"text":"'
+                     '…and there was more\\\\n'
+                     'to say, but the paper\\\\n'
+                     '        ran out…\\\\n'
+                     '\\\\n'
+                     '\\\\n'
+                     '        ⌠       ⌠\\\\n'
+                     '        `|  THE  |\\\\n'
+                     '        `|  END  |\\\\n'
+                     '        ⌡`       ⌡\\\\n'
+                     '\\\\n'
+                     '\\\\n'
+                     '\\\\n'
+                     '§7§o…and frankly it was\\\\n'
+                     'getting boring…§r')
+        newpage()
+
     def finalpage():
         nonlocal bookData
         bookData += ('--------------\\\\n'
@@ -167,9 +240,9 @@ def writeBook(text, title="Chronicle", author=__author__,
     bookData += '\'{"text":"'   # start first page
     for page in pages:
         if pages_left < 1:
+            jokepage()
             break
         if page[:3] == '\\\\s':
-            #print(page[3:])
             bookData += page[3:]
             newpage()
             continue

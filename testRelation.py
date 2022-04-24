@@ -20,6 +20,9 @@ def state_relation_to_color(state: int) -> str:
 
 def plot_relation(positions_x: dict, positions_y: dict, interactions: list) -> None:
     for interaction in interactions:
+        if interaction.state == VillageInteraction.STATE_NEUTRAL:
+            continue
+
         x = [positions_x[interaction.village1], positions_x[interaction.village2]]
         y = [positions_y[interaction.village1], positions_y[interaction.village2]]
 
