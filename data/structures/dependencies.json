@@ -1,5 +1,5 @@
 {
-    "houses": {
+    "Houses": {
         "tier": {
             "0": [
                 "basichouse1",
@@ -22,7 +22,7 @@
         "conditions" : {
         }
     },
-    "lumberJackHut": {
+    "LumberJack Hut": {
         "tier": {
             "0": [
                 "basiclumberjackhut"
@@ -38,11 +38,11 @@
         "conditions" : {
             "villagerNeeded" : { "min" : 1 },
             "previous" : [
-                {  "name" : "lumberJackHut", "max" : 3 }
+                {  "name" : "self", "max" : 3 }
             ]
         }
     },
-    "farm" : {
+    "Farm" : {
         "tier": {
             "0": [
                 "basicfarm"
@@ -58,11 +58,11 @@
         "conditions" : {
             "villagerNeeded" : { "min" : 2 },
             "previous" :  [
-                { "name" : "farm", "max" : 4 }
+                { "name" : "self", "max" : 4 }
             ]
         }
     },
-    "quarry" : {
+    "Quarry" : {
         "tier": {
             "0": [
                 "basicgeneratedquarry"
@@ -78,11 +78,11 @@
         "conditions" : {
             "villagerNeeded" : { "min" : 2 },
             "previous" : [
-                { "name" : "quarry", "max" : 3 }
+                { "name" : "self", "max" : 3 }
             ]
         }
     },
-    "well" : {
+    "Well" : {
         "tier": {
             "0": [
                 "basicgeneratedwell"
@@ -97,11 +97,11 @@
         "type" : "representatives",
         "conditions" : {
             "previous" : [
-                { "name" : "well", "max" : 1 }
+                { "name" : "self", "max" : 1 }
             ]
         }
     },
-    "furnace" : {
+    "Furnace" : {
         "tier": {
             "0": [
                 "basicfurnace1"
@@ -117,11 +117,11 @@
         "conditions" : {
             "villagerNeeded" : { "min" : 2 },
             "previous" : [
-                { "name" : "furnace", "max" : 3 }
+                { "name" : "self", "max" : 3 }
             ]
         }
     },
-    "stoneCutter" : {
+    "Stone cutter" : {
         "tier": {
             "0": [
                 "basicstonecutter"
@@ -137,11 +137,11 @@
         "conditions" : {
             "villagerNeeded" : { "min" : 1 },
             "previous" : [
-                { "name" : "stoneCutter", "max" : 3 }
+                { "name" : "self", "max" : 3 }
             ]
         }
     },
-    "smeltery" : {
+    "Smeltery" : {
         "tier": {
             "0": [
                 "basicsmeltery"
@@ -157,11 +157,11 @@
         "conditions" : {
             "villagerNeeded" : { "min" : 2 },
             "previous" : [
-                { "name" : "smeltery", "max" : 3 }
+                { "name" : "self", "max" : 3 }
             ]
         }
     },
-    "workshop" : {
+    "Workshop" : {
         "tier": {
             "0": [
                 "basicworkshop"
@@ -177,11 +177,11 @@
         "conditions" : {
             "villagerNeeded" : { "min" : 2 },
             "previous" : [
-                { "name" : "workshop", "max" : 3 }
+                { "name" : "self", "max" : 3 }
             ]
         }
     },
-    "graveyard" : {
+    "Graveyard" : {
         "tier": {
             "0": [
                 "basicgraveyard"
@@ -196,12 +196,12 @@
         "type" : "representatives",
         "conditions" : {
             "previous" : [
-                { "name" : "graveyard", "max" : 1 }
+                { "name" : "self", "max" : 1 }
             ]
         },
         "priority" : "full"
     },
-    "jail" : {
+    "Jail" : {
         "tier": {
             "0": [
                 "basicjail"
@@ -217,11 +217,11 @@
         "conditions" : {
             "villagerNeeded" : { "min" : 0 },
             "previous" : [
-                { "name" : "jail", "max" : 2 }
+                { "name" : "self", "max" : 2 }
             ]
         }
     },
-    "townHall" : {
+    "Town hall" : {
         "tier": {
             "0": [
                 "basictownhall"
@@ -237,12 +237,12 @@
         "conditions" : {
             "villagerNeeded" : { "min" : 1 },
             "previous" : [
-                { "name" : "townHall", "max" : 1 }
+                { "name" : "self", "max" : 1 }
             ]
         },
         "priority" : "full"
     },
-    "windmill" : {
+    "Windmill" : {
         "tier": {
             "0": [
                 "basicwindmill"
@@ -258,11 +258,11 @@
         "conditions" : {
             "villagerNeeded" : { "min" : 2 },
             "previous" : [
-                { "name" : "windmill", "max" : 1 }
+                { "name" : "self", "max" : 1 }
             ]
         }
     },
-    "barrack" : {
+    "Barrack" : {
         "tier": {
             "0": [
                 "basicbarrack"
@@ -278,11 +278,11 @@
         "conditions" : {
             "villagerNeeded" : { "min" : 3 },
             "previous" : [
-                { "name" : "barrack", "max" : 2 }
+                { "name" : "self", "max" : 2 }
             ]
         }
     },
-    "tavern" : {
+    "Tavern" : {
         "tier": {
             "0": [
                 "basictavern"
@@ -298,12 +298,12 @@
         "conditions" : {
             "villagerNeeded" : { "min" : 1 },
             "previous" : [
-                { "name" : "tavern", "max" : 1 }
+                { "name" : "self", "max" : 1 }
             ]
         },
         "priority" : "full"
     },
-    "weaverHouse" : {
+    "Weaver house" : {
         "tier": {
             "0": [
                 "basicweaverhouse"
@@ -319,11 +319,11 @@
         "conditions" : {
             "villagerNeeded" : { "min" : 2 },
             "previous" : [
-                { "name" : "weaverHouse", "max" : 3 }
+                { "name" : "self", "max" : 3 }
             ]
         }
     },
-    "adventurerHouse" : {
+    "Adventurer house" : {
         "tier": {
             "2": [
                 "adventurerhouse"
@@ -332,12 +332,12 @@
         "type" : "representatives",
         "conditions" : {
             "previous" : [
-                { "name" : "adventurerHouse", "max" : 1 }
+                { "name" : "self", "max" : 1 }
             ],
             "tier" : {"values" : [2]}
         }
     },
-    "statue" : {
+    "Statue" : {
         "tier" : {
             "0": [
                 "mediumstatue"
@@ -353,11 +353,11 @@
         "conditions" : {
             "status" : {"values" : ["war"]},
             "previous" : [
-                { "name" : "statue", "max" : 1 }
+                { "name" : "self", "max" : 1 }
             ]
         }
     },
-    "shop" : {
+    "Shop" : {
         "tier": {
             "0": [
                 "basicshop"
@@ -373,11 +373,11 @@
         "conditions" : {
             "villagerNeeded" : { "min" : 1 },
             "previous" : [
-                { "name" : "shop", "max" : 2 }
+                { "name" : "self", "max" : 2 }
             ]
         }
     },
-    "horsebox" : {
+    "Horse box" : {
         "tier": {
             "0": [
                 "basichorseboxl", "basichorseboxh"
@@ -392,11 +392,11 @@
         "type" : "representatives",
         "conditions" : {
             "previous" : [
-                { "name" : "horsebox", "max" : 4 }
+                { "name" : "self", "max" : 4 }
             ]
         }
     },
-    "exchanger" : {
+    "Exchanger" : {
         "tier": {
             "0": [
                 "basicexchanger"
@@ -412,7 +412,7 @@
         "conditions" : {
             "villagerNeeded" : { "min" : 1 },
             "previous" : [
-                { "name" : "exchanger", "max" : 1 }
+                { "name" : "self", "max" : 1 }
             ],
             "relations": [
                 { "name" : "love", "min" : 1 }

@@ -20,13 +20,14 @@ import utils.argumentParser as argParser
 import lib.interfaceUtils as interfaceUtil
 import generation.generator as generator
 import utils.checkOrCreateConfig as chock
+
 from utils.bookWriter import BookWriter
 
 """
 Important information
 """
 
-structure_name: str = "mediumstonecutter"
+structure_name: str = "adventurerhouse"
 structure_type: str = LoreStructure.TYPE_FUNCTIONALS
 
 config: dict = chock.getOrCreateConfig()
@@ -41,6 +42,15 @@ build_area = argParser.getBuildArea(args)
 if build_area == -1:
     exit()
 
+book_writer: BookWriter = BookWriter()
+for i in range(BookWriter.NUMBER_LINE):
+    book_writer.writeLine(message="a" * 19, breakLine=False)
+
+book_writer.writeLine("a" * 19, breakLine=False)
+
+interfaceUtil.runCommand("give TamalouMax minecraft:written_book" + book_writer.printBook())
+exit()
+
 build_area: tuple = (
     build_area[0], build_area[1], build_area[2], build_area[3] - 1, build_area[4] - 1, build_area[5] - 1)
 size_area: list = [build_area[3] - build_area[0] + 1, build_area[5] - build_area[2] + 1]
@@ -48,22 +58,6 @@ size_area: list = [build_area[3] - build_area[0] + 1, build_area[5] - build_area
 if not args.remove:
     block_transformations: list = [OldStructureTransformation(), DamagedStructureTransformation(),
                                    BurnedStructureTransformation(), AbandonedStructureTransformation()]
-
-    book_writer: BookWriter = BookWriter()
-
-    book_writer.setInfo("Test", "Mayor")
-    book_writer.writeFirstPage("TestLand settlement", "book test")
-
-    book_writer.setColor(BookWriter.COLOR_RED)
-    book_writer.setTextMode(BookWriter.TEXT_UNDERLINE, True)
-    book_writer.writeLine("HEY")
-
-    command = "give TamalouMax minecraft:written_book" + book_writer.printBook()
-
-    print(command)
-    interfaceUtil.runCommand(command)
-    exit()
-
 
     # Create Village
     village: Village = Village()

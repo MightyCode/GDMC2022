@@ -13,11 +13,11 @@ class VillageInteraction:
     STATE_FRIENDSHIP = 3
     STATE_LOVE = 4
 
-    CHANCE_WAR = 0.12
-    CHANCE_TENSION = 0.18
+    CHANCE_WAR = 0.10
+    CHANCE_TENSION = 0.16
     CHANCE_NEUTRAL = 0.40
-    CHANCE_FRIENDSHIP = 0.28
-    CHANCE_LOVE = 0.12
+    CHANCE_FRIENDSHIP = 0.30
+    CHANCE_LOVE = 0.14
 
     # Relation reason
     UNKNOWN_REASON = 0

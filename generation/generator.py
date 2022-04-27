@@ -39,27 +39,25 @@ def generateVillageBooks(settlement_data: SettlementData) -> dict:
     village_model: Village = settlement_data.village_model
 
     # Create books for the village
+    writer_village_presentation_book = book.createTextOfPresentationVillage(village_model)
+    writer_village_presentation_book.setInfo(title="Village Presentation", author="Mayor",
+                                             description="Presentation of the village")
 
-    text_villagers_names = book.createTextForVillagersNames(
-            village_model.name, village_model.villagers)
-    text_dead_villagers = book.createTextForDeadVillagers(
-        village_model.name, village_model.villagers, village_model.dead_villagers)
+    writer_villagers_names = book.createTextForVillagersNames(village_model.name, village_model.villagers)
+    writer_villagers_names.setInfo(title="List of all villagers", author="Mayor",
+                                   description="List of all villagers")
 
-    text_village_presentation_book = book.createTextOfPresentationVillage(village_model)
+    writer_dead_villagers = book.createTextForDeadVillagers(village_model.name, village_model.villagers,
+                                                            village_model.dead_villagers)
+    writer_dead_villagers.setInfo(title="List of all dead villagers",
+                                  author="Mayor",
+                                  description="List of all dead villagers")
 
-    settlement_data.textOfBooks = [text_villagers_names, text_dead_villagers]
-
-    books: dict = {
-        "villageNameBook": toolbox.writeBook(text_village_presentation_book, title="Village Presentation",
-                                             author="Mayor",
-                                             description="Presentation of the village"),
-        "villagerNamesBook": toolbox.writeBook(text_villagers_names, title="List of all villagers", author="Mayor",
-                                               description="List of all villagers"),
-        "deadVillagersBook": toolbox.writeBook(text_dead_villagers[0], title="List of all dead villagers",
-                                               author="Mayor",
-                                               description="List of all dead villagers")}
-
-    return books
+    return {
+        "villageNameBook": writer_village_presentation_book.printBook(),
+        "villagerNamesBook": writer_villagers_names.printBook(),
+        "deadVillagersBook": writer_dead_villagers.printBook()
+    }
 
 
 def initNumberHouse(x_size: int, z_size: int) -> tuple:
@@ -175,12 +173,11 @@ def modifyBuildingConditionDependingOnStructure(building_conditions: BuildingCon
         util.parseVillagerNameInLines([name], building_conditions.special["sign"], 1)
 
     elif structure.name == "adventurerhouse":
-        building_conditions.special["adventurerhouse"] = [
-            "minecraft:written_book" + toolbox.writeBook(
-                book.createBookForAdventurerHouse(settlement_data.village_model.name, building_conditions.flip),
-                title="Portal Manual", author="Mayor",
-                description="Contains useful instruction")
-            ]
+        writer = book.createBookForAdventurerHouse(settlement_data.village_model.name, building_conditions.flip)
+        writer.setInfo(title="Portal Manual", author="Mayor",
+                       description="Contains useful instruction")
+        building_conditions.special["adventurerhouse"] = ["minecraft:written_book" + writer.printBook() ]
+
     elif "exchanger" in structure.name:
         building_conditions.special["exchanger"] = []
 
@@ -189,11 +186,11 @@ def modifyBuildingConditionDependingOnStructure(building_conditions: BuildingCon
 
             if interaction.economicalRelation:
                 building_conditions.special["exchanger"].append(
-                 'minecraft:paper{'
+                    'minecraft:paper{'
                     'display:{Name:\'{\"text\":\"Commercial alliance pact\"}\''
                     ',Lore:[\'{\"text\":\"' + villageKey.name + ' currency exchange permit.\"}\']'
-                    '}, Enchantments:[{}]'
-                 '}'
+                                                                '}, Enchantments:[{}]'
+                                                                '}'
                 )
 
         print(building_conditions.replacements["village_currency_item"])
@@ -218,8 +215,6 @@ def modifyBuildingConditionDependingOnStructure(building_conditions: BuildingCon
                     building_conditions.special["bedroomhouse"] = []
 
                 building_conditions.special["bedroomhouse"].append(villager.diary[0])
-
-                # print(len(building_conditions.special["bedroomhouse"]))
 
 
 def buildMurdererCache(lore_structure: LoreStructure, settlement_data: SettlementData, resources: Resources,

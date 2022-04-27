@@ -12,6 +12,7 @@ class StructureManager:
     PATH = "data/structures/dependencies.json"
 
     def __init__(self, settlementData: SettlementData, resources: Resources, nameGenerator: NameGenerator):
+        self.current_group_checked = ""
         self.houses: list = []
         self.functionals: list = []
         self.representatives: list = []
@@ -140,7 +141,8 @@ class StructureManager:
         self.village_model.villagers.remove(villager)
 
         for structure in self.village_model.lore_structures:
-            structure.villagers.remove(villager)
+            if villager in structure.villagers:
+                structure.villagers.remove(villager)
 
     def checkDependencies(self):
         # Make arrays empty
@@ -154,7 +156,7 @@ class StructureManager:
             # Check if the group can be added
             conditions = True
             for condition in self.dependencies[group]["conditions"]:
-
+                self.current_group_checked = group
                 if not self.checkOneCondition(condition, self.dependencies[group]["conditions"][condition]):
                     # Go to the next group
                     conditions = False
@@ -210,7 +212,8 @@ class StructureManager:
             return True
 
         elif name == "previousItem":
-            valueToCheck = self.numberOfStructuresForEachGroup[conditionValues["name"]]
+            group: str = self.current_group_checked if conditionValues["name"] == "self" else conditionValues["name"]
+            valueToCheck = self.numberOfStructuresForEachGroup[group]
 
         if "min" in conditionValues:
             if valueToCheck < conditionValues["min"]:

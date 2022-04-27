@@ -24,6 +24,11 @@ class BookWriter:
     TEXT_STRIKETHROUGH = "strikethrough"
     TEXT_UNDERLINE = "underlined"
     TEXT_ITALIC = "italic"
+    TEXT_BOLD = "bold"
+
+    NUMBER_LINE: int = 14
+    NUMBER_CHAR_LINE: int = 19
+    NUMBER_CHAR_PAGE: int = NUMBER_LINE * NUMBER_CHAR_LINE
 
     def __init__(self):
         self.title: str = ""
@@ -37,12 +42,17 @@ class BookWriter:
             self.TEXT_STRIKETHROUGH: False,
             self.TEXT_UNDERLINE: False,
             self.TEXT_ITALIC: False,
+            self.TEXT_BOLD: False
         }
 
         self.color: str = BookWriter.COLOR_BLACK
         self.texts: list = []
 
         self.text_created: bool = False
+
+        self.countChar: int = 0
+
+        self.newText()
 
     def setInfo(self, title, author, description=None, description_color='gold'):
         self.title = title
@@ -79,8 +89,23 @@ class BookWriter:
         return result
 
     def writeLine(self, message: str, breakLine: bool = True):
-        self.texts[-1]["text"] += message + ("\\\\n" if breakLine else "")
-        self.text_created = False
+        if len(message) + self.countChar <= BookWriter.NUMBER_CHAR_PAGE:
+            self.texts[-1]["text"] += message + ("\\\\n" if breakLine else "")
+            self.text_created = False
+            self.countChar += len(message)
+        else:
+            second: str = message[BookWriter.NUMBER_CHAR_PAGE - self.countChar:]
+
+            if BookWriter.NUMBER_CHAR_PAGE != self.countChar:
+                first: str = message[0:BookWriter.NUMBER_CHAR_PAGE - self.countChar]
+                self.texts[-1]["text"] += first
+
+            self.breakPage()
+
+            self.texts[-1]["text"] += second + ("\\\\n" if breakLine else "")
+            self.countChar += len(second)
+
+            self.text_created = False
 
     def writeEmptyLine(self, number: int):
         for i in range(number):
@@ -115,6 +140,7 @@ class BookWriter:
         if self.text_created:
             return
 
+        self.countChar = 0
         new: dict = self.createInfoForText()
         self.texts.append(new)
 
@@ -131,11 +157,13 @@ class BookWriter:
         self.textMode[BookWriter.TEXT_STRIKETHROUGH] = False
         self.textMode[BookWriter.TEXT_UNDERLINE] = False
         self.textMode[BookWriter.TEXT_ITALIC] = False
+        self.textMode[BookWriter.TEXT_BOLD] = False
 
         self.texts[-1]["form"][BookWriter.TEXT_OBFUSCATED] = False
         self.texts[-1]["form"][BookWriter.TEXT_STRIKETHROUGH] = False
         self.texts[-1]["form"][BookWriter.TEXT_UNDERLINE] = False
         self.texts[-1]["form"][BookWriter.TEXT_ITALIC] = False
+        self.texts[-1]["form"][BookWriter.TEXT_BOLD] = False
 
     def setColor(self, color: str):
         self.newText()
