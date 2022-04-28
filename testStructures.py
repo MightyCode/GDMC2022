@@ -21,13 +21,11 @@ import lib.interfaceUtils as interfaceUtil
 import generation.generator as generator
 import utils.checkOrCreateConfig as chock
 
-from utils.bookWriter import BookWriter
-
 """
 Important information
 """
 
-structure_name: str = "adventurerhouse"
+structure_name: str = "basicexchanger"
 structure_type: str = LoreStructure.TYPE_FUNCTIONALS
 
 config: dict = chock.getOrCreateConfig()
@@ -41,15 +39,6 @@ build_area = argParser.getBuildArea(args)
 
 if build_area == -1:
     exit()
-
-book_writer: BookWriter = BookWriter()
-for i in range(BookWriter.NUMBER_LINE):
-    book_writer.writeLine(message="a" * 19, breakLine=False)
-
-book_writer.writeLine("a" * 19, breakLine=False)
-
-interfaceUtil.runCommand("give TamalouMax minecraft:written_book" + book_writer.printBook())
-exit()
 
 build_area: tuple = (
     build_area[0], build_area[1], build_area[2], build_area[3] - 1, build_area[4] - 1, build_area[5] - 1)
@@ -86,8 +75,8 @@ if not args.remove:
     village.villagers = villagers
     village.dead_villagers = deadVillagers
     village.murderer_data = MurdererData()
-    village.murderer_data.villagerTarget = villagers[2]
-    village.murderer_data.villagerMurderer = villagers[0]
+    """village.murderer_data.villagerTarget = villagers[2]
+    village.murderer_data.villagerMurderer = villagers[0]"""
 
     resources: Resources = Resources()
     resLoader.loadAllResources(resources)
@@ -110,7 +99,7 @@ if not args.remove:
     lore_structure.name = structure_name
     lore_structure.villagers = [villagers[0], villagers[2]]
     lore_structure.type = structure_type
-    lore_structure.position = [build_area[0] + size_area[0] / 2, 64, build_area[2] + size_area[1] / 2]
+    lore_structure.position = [build_area[0] + size_area[0] / 2, 79, build_area[2] + size_area[1] / 2]
     lore_structure.preBuildingInfo = structure.getNextBuildingInformation(lore_structure.flip, lore_structure.rotation)
 
     settlement_data: SettlementData = generator.createSettlementData(build_area, village, resources)

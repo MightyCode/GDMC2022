@@ -192,8 +192,6 @@ def modifyBuildingConditionDependingOnStructure(building_conditions: BuildingCon
                                                                 '}, Enchantments:[{}]'
                                                                 '}'
                 )
-
-        print(building_conditions.replacements["village_currency_item"])
     elif structure.name == "mediumstatue":
         building_conditions.special = {"sign": ["", "", "", "", "", "", "", ""]}
         index: int = 0

@@ -168,7 +168,6 @@ class NbtStructures(BaseStructure):
 
     def build(self, world_modification, building_conditions: BuildingCondition, chest_generation: ChestGeneration,
               block_transformations: list) -> None:
-
         ## Pre computing :
         building_conditions.referencePoint = building_conditions.referencePoint.copy()
         self.computeOrientation(building_conditions.rotation, building_conditions.flip)
@@ -232,10 +231,9 @@ class NbtStructures(BaseStructure):
                         break
 
         block_name = self.convertNbtBlockToStr(block_palette, should_take_original_block)
-
         # Check for block air replacement
         for air_block in NbtStructures.AIR_BLOCKS:
-            if air_block in block_name and building_conditions.replaceAirMethod != BuildingCondition.NO_AIR_PLACEMENT:
+            if air_block in block_name and building_conditions.replaceAirMethod != BuildingCondition.ALL_AIR_PLACEMENT:
                 return
 
         # Compute position of block from local space to world space

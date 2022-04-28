@@ -59,8 +59,10 @@ def createTextOfPresentationVillage(village: Village) -> BookWriter:
     # Status of the village relationship
 
     book_writer.fillLineWith('-')
-    book_writer.writeLine('Village relationships:')
-    book_writer.writeEmptyLine(1)
+
+    tier: str = "basic " if village.tier == 0 else "medium " if village.tier == 1 else "advanced "
+    book_writer.writeLine(f'Welcome to the {"old " if village.age == 1 else "" + tier} village of {village.name}')
+
     book_writer.writeLine(f'Status of {village.name} :', breakLine=False)
     book_writer.setTextMode(BookWriter.TEXT_BOLD, True)
     book_writer.writeLine(f'{village.status}')
@@ -68,6 +70,8 @@ def createTextOfPresentationVillage(village: Village) -> BookWriter:
     book_writer.writeEmptyLine(1)
 
     hadBrokeARelation: bool = False
+    book_writer.writeLine('Village relationships:')
+    book_writer.writeEmptyLine(1)
 
     for village_key in village.village_interactions:
         interaction: VillageInteraction = village.village_interactions[village_key]

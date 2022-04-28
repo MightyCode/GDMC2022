@@ -365,8 +365,7 @@ class BaseStructure:
 
                 for x in range(min(block_from[0], block_to[0]), max(block_from[0], block_to[0]) + 1):
                     for z in range(min(block_from[2], block_to[2]), max(block_from[2], block_to[2]) + 1):
-                        if interfaceUtils.getBlock(x, block_to[1] + 1,
-                                                                 z) in BaseStructure.AIR_FILLING_PROBLEMATIC_BLOCS:
+                        if interfaceUtils.getBlock(x, block_to[1] + 1, z) in BaseStructure.AIR_FILLING_PROBLEMATIC_BLOCS:
                             world_modification.setBlock(x, block_to[1] + 1, z, "minecraft:stone",
                                                         place_immediately=True)
 
