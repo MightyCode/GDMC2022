@@ -25,7 +25,6 @@ import utils.argumentParser as argParser
 import generation.loreMaker as loreMaker
 import generation.road as road
 import lib.interfaceUtils as interfaceUtil
-import lib.toolbox as toolbox
 import utils.checkOrCreateConfig as chock
 
 import random
@@ -80,9 +79,11 @@ if not args.remove:
     print("Generate lore of the world")
     number_of_existing_village_in_lore = 7
 
-    villages: list = loreMaker.initializedVillages(
-        loreMaker.gen_position_of_village(settlement_zones, number_of_existing_village_in_lore), name_generator)
+    villages_positions: list = loreMaker.genPositionOfVillage(settlement_zones, number_of_existing_village_in_lore)
+
+    villages: list = loreMaker.initializedVillages(villages_positions, name_generator)
     villageInteractions: list = loreMaker.createVillageRelationAndAssign(villages)
+
     loreMaker.checkForImpossibleInteractions(villages, villageInteractions)
     loreMaker.generateLoreAfterRelation(villages)
 
@@ -129,6 +130,7 @@ if not args.remove:
         best_relation: int = VillageInteraction.STATE_WAR
         for interactionKey in current_village.village_interactions.keys():
             interaction = current_village.village_interactions[interactionKey]
+
             if VillageInteraction.isBestRelationThen(interaction.state, best_relation):
                 best_relation = interaction.state
 

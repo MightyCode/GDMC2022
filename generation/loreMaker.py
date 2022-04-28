@@ -1,4 +1,5 @@
 import random
+import copy
 
 import utils.util as util
 from generation.data.village import Village
@@ -7,7 +8,7 @@ from generation.data.village import VillageInteraction
 from generation.data.loreStructure import LoreStructure
 
 
-def gen_position_of_village(existing_areas: list, goal_number: int) -> list:
+def genPositionOfVillage(existing_areas: list, goal_number: int) -> list:
     positions: list = []
 
     for area in existing_areas:
@@ -18,8 +19,12 @@ def gen_position_of_village(existing_areas: list, goal_number: int) -> list:
 
     for i in range(goal_number - remaining_index_start):
         random_index: int = random.randint(0, len(positions) - 1)
-        positions.append([positions[random_index][0] - 500, positions[random_index][0] + 500,
-                          positions[random_index][1] - 500, positions[random_index][1] + 500])
+
+        reference: list = copy.copy(positions[random_index])
+        reference[0] += random.randint(400, 900) if random.randint(1, 2) == 1 else random.randint(-900, 400)
+        reference[1] += random.randint(400, 900) if random.randint(1, 2) == 1 else random.randint(-900, 400)
+
+        positions.append(reference)
 
     return positions
 

@@ -15,7 +15,7 @@ class VillageInteraction:
 
     CHANCE_WAR = 0.10
     CHANCE_TENSION = 0.16
-    CHANCE_NEUTRAL = 0.40
+    CHANCE_NEUTRAL = 0.30
     CHANCE_FRIENDSHIP = 0.30
     CHANCE_LOVE = 0.14
 
@@ -70,6 +70,7 @@ class VillageInteraction:
         self.brokeTheirRelation = True
         self.reason = self.REASON_TWO_FRIENDS_WENT_IN_WAR
         self.economicalRelation = False
+        self.state = VillageInteraction.STATE_NEUTRAL
 
     @staticmethod
     def isBestRelationThen(relation1, relation2) -> bool:
