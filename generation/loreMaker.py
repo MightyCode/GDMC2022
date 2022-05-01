@@ -113,7 +113,7 @@ def generateLoreAfterRelation(villages: list):
 def alterSettlementDataWithNewStructures(settlement_data, lore_structure: LoreStructure):
     result: dict = isDestroyStructure(settlement_data.village_model, lore_structure)
     if result != {}:
-        #print("DESTRUCTED STRUCTURE")
+        # print("DESTRUCTED STRUCTURE")
         lore_structure.destroyed = True
         lore_structure.causeDestroy = result
         applyStructureDestroy(settlement_data.village_model, lore_structure)
@@ -144,6 +144,7 @@ def generateLoreAfterAllStructure(village: Village, name_generator):
     createListOfDeadVillager(village, name_generator)
     handleVillageDestroy(village)
     handleMurderer(village)
+    generateOrders(village)
 
 
 # Minimum of 10 deaths
@@ -267,3 +268,28 @@ def handleMurderer(village: Village):
     for structureData in village.lore_structures:
         if village.murderer_data.villagerTarget in structureData.villagers:
             structureData.gift = "minecraft:tnt"
+
+
+def generateOrders(village: Village):
+    for structure in village.lore_structures:
+        if structure.type != LoreStructure.TYPE_FUNCTIONALS:
+            return
+
+        orders: list = []
+        # Between (0, 1); (0, 2) or (0, 3)
+        number: int = random.randint(0, village.tier + 1)
+
+        size: int = len(village.villagers)
+        # Order for
+        for j in range(min(number, size)):
+
+            villager: Villager = village.villagers[
+                random.choice(
+                    [i for i in range(size) if
+                     village.villagers[i] not in structure.villagers and village.villagers[i] not in orders])]
+
+            orders.append(villager)
+
+        for ordering in orders:
+            print(ordering.name)
+            structure.addOrder(ordering, "uninitialized", 0)

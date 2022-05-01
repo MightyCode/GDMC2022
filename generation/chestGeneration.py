@@ -30,12 +30,12 @@ class ChestGeneration:
         else:
             number_item = loot_table["rolls"]
 
-        item_places = self.generatePlaces(number_item + len(additional_object) - 1)
+        item_places = self.generatePlaces(number_item + len(additional_object))
         item_places.sort()
+
         items = []
 
-        additional_places, additional_indices = self.generateAdditionalPlacesIndices(item_places.copy(),
-                                                                                     len(additional_object))
+        additional_places, additional_indices = self.generateAdditionalPlacesIndices(item_places.copy(), len(additional_object))
 
         sum_weight = 0
         for item in loot_table["entries"]:

@@ -30,5 +30,11 @@
     "facing" : "north",
     "tier" : 2,
     "name" : "Exchanger"
+  },
+  "special" : {
+    "additionalItem": {
+      "order" : [2, 2, 2],
+      "trade" : [2, 2, 2]
+    }
   }
 }

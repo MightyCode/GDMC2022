@@ -17,7 +17,7 @@ def loadAllResources(resources: Resources) -> None:
     resources.loadStructures("houses/basic/basichouse3.nbt", "houses/basic/basichouse3.json", "basichouse3")
 
     resources.loadStructures("houses/medium/mediumhouse1.nbt", "houses/medium/mediumhouse1.json", "mediumhouse1")
-    resources.loadStructures("houses/medium/mediumhouse2.nbt", "houses/medium/mediumhouse1.json", "mediumhouse2")
+    resources.loadStructures("houses/medium/mediumhouse2.nbt", "houses/medium/mediumhouse2.json", "mediumhouse2")
     resources.loadStructures("houses/medium/mediumhouse3.nbt", "houses/medium/mediumhouse3.json", "mediumhouse3")
 
     resources.loadStructures("houses/advanced/advancedhouse1.nbt", "houses/advanced/advancedhouse1.json",
@@ -138,6 +138,8 @@ def loadAllResources(resources: Resources) -> None:
                              "decorations/statue/mediumstatue.json", "mediumstatue")
 
     # Load lootTable
+    resources.loadLootTable("emptyloottable.json", "empty")
+
     resources.loadLootTable("houses/kitchenhouse.json", "kitchenhouse")
     resources.loadLootTable("houses/bedroomhouse.json", "bedroomhouse")
 

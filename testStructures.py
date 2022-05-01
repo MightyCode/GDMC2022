@@ -1,7 +1,6 @@
 from generation.data.village import Village
 from generation.data.villager import Villager
 from generation.data.villageInteraction import VillageInteraction
-from generation.data.trade import Trade
 
 from generation.data.loreStructure import LoreStructure
 from generation.chestGeneration import ChestGeneration
@@ -25,8 +24,8 @@ import utils.checkOrCreateConfig as chock
 Important information
 """
 
-structure_name: str = "basicexchanger"
-structure_type: str = LoreStructure.TYPE_FUNCTIONALS
+structure_name: str = "mediumhouse3"
+structure_type: str = LoreStructure.TYPE_HOUSES
 
 config: dict = chock.getOrCreateConfig()
 
@@ -91,31 +90,47 @@ if not args.remove:
 
     lore_structure: LoreStructure = LoreStructure()
     lore_structure.age = 1
-    lore_structure.flip = 2
-    lore_structure.rotation = 1
+    lore_structure.flip = 0
+    lore_structure.rotation = 0
     lore_structure.destroyed = True
     # lore_structure.causeDestroy = {"burned": "burned", "abandoned": "abandoned", "damaged": "damaged"}
 
     lore_structure.name = structure_name
-    lore_structure.villagers = [villagers[0], villagers[2]]
+    lore_structure.villagers = [villagers[0], villagers[2], villagers[2]]
     lore_structure.type = structure_type
-    lore_structure.position = [build_area[0] + size_area[0] / 2, 79, build_area[2] + size_area[1] / 2]
+    lore_structure.position = [build_area[0] + size_area[0] / 2, 66, build_area[2] + size_area[1] / 2]
     lore_structure.preBuildingInfo = structure.getNextBuildingInformation(lore_structure.flip, lore_structure.rotation)
 
     settlement_data: SettlementData = generator.createSettlementData(build_area, village, resources)
 
+    village.lore_structures.append(lore_structure)
+    import generation.loreMaker as loreMaker
+
+    loreMaker.generateOrders(village)
+
     structure.block_transformation = block_transformations
+
+    import utils.book as book
+
+    for i in [0, 2]:
+        villagers[i].diary = book.createBookForVillager(settlement_data.village_model, villagers[i])
+        villagers[i].diary[0].setInfo(title="Diary of " + villagers[i].name, author=villagers[i].name,
+                                      description="Diary of " + villagers[i].name)
+
+        villagers[i].diary[0] = "minecraft:written_book" + villagers[i].diary[0].printBook()
 
     generator.generateStructure(lore_structure, settlement_data, resources, world_modifications,
                                 chestGeneration, block_transformations)
 
+    """
+    from generation.data.trade import Trade
     for villager in lore_structure.villagers:
         if villager.job == Villager.DEFAULT_JOB:
             continue
 
         Trade.generateFromTradeTable(village, villager, resources.trades[villager.job], settlement_data.getMatRepDeepCopy())
 
-    # util.spawnVillagerForStructure(settlement_data, lore_structure, lore_structure.position)
+    util.spawnVillagerForStructure(settlement_data, lore_structure, lore_structure.position)"""
 
     books: dict = generator.generateVillageBooks(settlement_data)
     generator.placeBooks(settlement_data, books, world_modifications)

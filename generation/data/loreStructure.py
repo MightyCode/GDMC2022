@@ -1,5 +1,7 @@
 import random
 
+from generation.data.order import Order
+
 
 class LoreStructure:
     CHANCE_VILLAGE_YOUNG_TIER_2_OLD = 0.05
@@ -34,6 +36,8 @@ class LoreStructure:
         self.causeDestroy: bool = {}
         self.inConstruction: bool = False
 
+        self.orders: list = []
+
     def generateAge(self, village):
         if village.tier == 0:
             return
@@ -54,3 +58,12 @@ class LoreStructure:
 
             if village.age == 1 and random.uniform(0, 1) <= LoreStructure.CHANCE_VILLAGE_OLD_TIER_3_OLD:
                 self.age = 1
+
+    def addOrder(self, villager, item: str, quantity: int):
+        order: Order = Order()
+        order.structure = self
+        order.villager_ordering = villager
+        order.order_item = item
+        order.order_quantity = quantity
+
+        self.orders.append(order)

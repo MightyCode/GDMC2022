@@ -1,32 +1,49 @@
 {
-    "mainEntry": {
-      "facing" : "north",
-      "position" : [3, 1, 0]
+  "mainEntry": {
+    "facing": "north",
+    "position": [
+      3,
+      1,
+      0
+    ]
+  },
+  "replacements": {
+    "oak": {
+      "type": "woodType",
+      "state": 2
     },
-    "replacements" : {
-      "oak" : { "type" : "woodType", "state" : 2 },
-      "spruce" : { "type" : "woodType2", "state" : 2}
-    },
-    "air" : {
-      "preferredAirMode" : 1,
-      "replacements" : [
-      ]
-    },
-    "lootTables" : [
-      ["basicstonecutter"]
-    ],
-    "villageInfo" : {
-      "villager" : 1,
-      "gameProfession" : "mason",
-      "profession" : "Stone Worker"
-    },
-    "ground" : {
-      "info" : "all"
-    },
-    "sign" : {
-      "position" : [0, 2, 0],
-      "facing" : "north",
-      "tier" : 2,
-      "name" : "Stone Cutter"
+    "spruce": {
+      "type": "woodType2",
+      "state": 2
+    }
+  },
+  "air": {
+    "preferredAirMode": 1,
+    "replacements": [
+    ]
+  },
+  "lootTables": [
+    [
+      "basicstonecutter"
+    ]
+  ],
+  "villageInfo": {
+    "villager": 1,
+    "gameProfession": "mason",
+    "profession": "Stone Worker"
+  },
+  "ground": {
+    "info": "all"
+  },
+  "sign": {
+    "position": [ 0, 2, 0 ],
+    "facing": "north",
+    "tier": 2,
+    "name": "Stone Cutter"
+  },
+  "special" : {
+    "additionalItem": {
+      "order" : [4, 3, 2]
     }
   }
+}

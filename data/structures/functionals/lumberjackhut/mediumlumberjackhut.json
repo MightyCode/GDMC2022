@@ -23,7 +23,7 @@
   },
   "ground" : {
     "zones" : [
-      [1, 1, 5, 13]
+      [1, 1, 6, 13]
     ]
   },
   "sign" : {
@@ -31,5 +31,10 @@
     "facing" : "north",
     "tier" : 2,
     "name" : "LumberJack Hut"
+  },
+  "special" : {
+    "additionalItem": {
+      "order" : [4, 1, 12]
+    }
   }
 }

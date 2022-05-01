@@ -179,18 +179,18 @@ def modifyBuildingConditionDependingOnStructure(building_conditions: BuildingCon
         building_conditions.special["adventurerhouse"] = ["minecraft:written_book" + writer.printBook() ]
 
     elif "exchanger" in structure.name:
-        building_conditions.special["exchanger"] = []
+        building_conditions.special["trade"] = []
 
         for villageKey in settlement_data.village_model.village_interactions:
             interaction = settlement_data.village_model.village_interactions[villageKey]
 
             if interaction.economicalRelation:
-                building_conditions.special["exchanger"].append(
+                building_conditions.special["trade"].append(
                     'minecraft:paper{'
-                    'display:{Name:\'{\"text\":\"Commercial alliance pact\"}\''
-                    ',Lore:[\'{\"text\":\"' + villageKey.name + ' currency exchange permit.\"}\']'
-                                                                '}, Enchantments:[{}]'
-                                                                '}'
+                        'display:{Name:\'{\"text\":\"Commercial alliance pact\"}\''
+                        ',Lore:[\'{\"text\":\"' + villageKey.name + ' currency exchange permit.\"}\']'
+                        '}, Enchantments:[{}]'
+                    '}'
                 )
     elif structure.name == "mediumstatue":
         building_conditions.special = {"sign": ["", "", "", "", "", "", "", ""]}
@@ -207,12 +207,29 @@ def modifyBuildingConditionDependingOnStructure(building_conditions: BuildingCon
             building_conditions.special["sign"] = building_conditions.special["sign"][0:4]
 
     if structure.type == LoreStructure.TYPE_HOUSES:
+        i: int = 0
         for villager in structure.villagers:
             if len(villager.diary) > 0:
-                if "bedroomhouse" not in building_conditions.special:
-                    building_conditions.special["bedroomhouse"] = []
+                name: str = f'diary{i}'
 
-                building_conditions.special["bedroomhouse"].append(villager.diary[0])
+                if name not in building_conditions.special:
+                    building_conditions.special[name] = []
+
+                building_conditions.special[name].append(villager.diary[0])
+
+            i += 1
+
+    if len(structure.orders) > 0:
+        building_conditions.special["order"] = []
+
+    for order in structure.orders:
+        building_conditions.special["order"].append(
+            'minecraft:paper{'
+                'display:{Name:\'{\"text\":\"' + order.villager_ordering.name + '\\\'s order\"}\''
+                 #',Lore:[\'{\"text\":\" currency exchange permit.\"}\']'
+                '}, Enchantments:[{}]'
+            '}'
+        )
 
 
 def buildMurdererCache(lore_structure: LoreStructure, settlement_data: SettlementData, resources: Resources,

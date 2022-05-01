@@ -8,25 +8,6 @@ import generation.generator as generator
 
 import random as rd
 
-REASON_OF_DEATHS = ["murdered", "died because of old age", "died of creeper attack", "died of skeleton attack",
-                    "died of spider attack (he did not became Spider-Man)",
-                    "died of zombie attack", "died of witch attack", "died suffocating from sand falling",
-                    "died eating too much cake", "died crushing by a rock",
-                    "died suffocating from gravel falling"]
-DIARY_TEXTS_WITHOUT_TARGETS = [" I really like the color of the village. ", " I really like the name of the village. ",
-                               " I hate the color of the village.",
-                               " I am afraid of spiders. ", " I am afraid of creppers. ", " I am afraid of zombies. ",
-                               " I am afraid of skeletons. ",
-                               " I don't like the facade of my house. ", " I don't like the flower of the village. ",
-                               " I really like the flower of the village. ", " I really like the mayor. ",
-                               " I hate the flower of the village. ", " I hate the mayor. ",
-                               " I would like to have a better house. ",
-                               " I hope he finds the gift I left him under his door. ",
-                               " I really like pigs. ", " I really like cows. ", " I am interested about sheeps.  ",
-                               " I am interested about chickens. "]
-DIARY_TEXTS_WITH_TARGETS = [" I am sad since the death of ", " I am happy since the death of ", " I used to hate ",
-                            " I once hit "]
-
 VILLAGER_NAME_PATH = "data/names/"
 
 MIN_SIZE = 4
@@ -169,6 +150,23 @@ def createTextForVillagersNames(village_name: str, villagers: list):
 
     return book_writer
 
+REASON_OF_DEATHS = ["murdered", "died because of old age", "died of creeper attack", "died of skeleton attack",
+                    "died of spider attack (he did not became Spider-Man)",
+                    "died of zombie attack", "died of witch attack", "died suffocating from sand falling",
+                    "died eating too much cake", "died crushing by a rock",
+                    "died suffocating from gravel falling"]
+DIARY_TEXTS_WITHOUT_TARGETS = [" I really like the color of the village. ", " I really like the name of the village. ",
+                               " I hate the color of the village.",
+                               " I am afraid of spiders. ", " I am afraid of creppers. ", " I am afraid of zombies. ",
+                               " I am afraid of skeletons. ",
+                               " I don\\'t like the facade of my house. ", " I don\\'t like the flower of the village. ",
+                               " I really like the flower of the village. ", " I really like the mayor. ",
+                               " I hate the flower of the village. ", " I hate the mayor. ",
+                               " I would like to have a better house. ",
+                               " I really like pigs. ", " I really like cows. ", " I am interested about sheeps.  ",
+                               " I am interested about chickens. "]
+DIARY_TEXTS_WITH_TARGETS = [" I am sad since the death of ", " I am happy since the death of ", " I used to hate ",
+                            " I once hit "]
 
 """
 Return the text of the book of the dead villagers names and professions

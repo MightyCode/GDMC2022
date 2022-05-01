@@ -32,5 +32,10 @@
     "facing" : "north",
     "tier" : 2,
     "name" : "Workshop"
+  },
+  "special" : {
+    "additionalItem": {
+      "order" : [4, 1, 5]
+    }
   }
 }

@@ -255,42 +255,6 @@ class NbtStructures(BaseStructure):
         if "chest" in block_name or "shulker" in block_name or "lectern" in block_name or "barrel" in block_name:
             self.placeImmediately = True
 
-    def checkAfterPlacing(self, x, y, z, block_name, world_position, chestGeneration,
-                          building_conditions: BuildingCondition):
-        # If structure has loot tables and chest encounter
-        if "chest" in block_name or "barrel" in block_name:
-            if "lootTables" not in self.info:
-                return
-
-            if self.lootTable:
-                chosen_loot_table: str = ""
-                for lootTable in self.info["lootTables"]:
-                    if len(lootTable) == 1:
-                        chosen_loot_table = lootTable[0]
-                    elif projectMath.isPointInCube([x, y, z], lootTable[1]):
-                        chosen_loot_table = lootTable[0]
-
-                if chosen_loot_table != "":
-                    additional_objects = []
-                    if chosen_loot_table in building_conditions.special.keys():
-                        additional_objects = building_conditions.special[chosen_loot_table]
-
-                    chestGeneration.generate(world_position[0], world_position[1], world_position[2], chosen_loot_table,
-                                             building_conditions.replacements, additional_objects)
-
-        if "lectern" in block_name:
-            if "lectern" not in self.info:
-                return
-
-            for key in self.info["lectern"].keys():
-                if [x, y, z] == self.info["lectern"][key]:
-                    result = util.changeNameWithReplacements(key, building_conditions.replacements)
-                    if result[0] >= 0:
-                        util.addBookToLectern(world_position[0], world_position[1], world_position[2], result[1])
-                    else:
-                        print("Can't add a book to a lectern at pos : " + str(world_position))
-                    break
-
     def convertNbtBlockToStr(self, block_palette, take_original_block_name=False):
         block: str
         if take_original_block_name:

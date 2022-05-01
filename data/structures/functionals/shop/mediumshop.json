@@ -16,18 +16,23 @@
   "lootTables" : [
     ["shop"]
   ],
-    "villageInfo" : {
-      "villager" : 1,
-      "gameProfession" : "toolsmith",
-      "profession" : "Merchant"
-    },
-    "ground" : {
-      "info" : "all"
-    },
-    "sign" : {
-      "position" : [2, 2, 1],
-      "facing" : "north",
-      "tier" : 2,
-      "name" : "Shop"
+  "villageInfo" : {
+    "villager" : 1,
+    "gameProfession" : "toolsmith",
+    "profession" : "Merchant"
+  },
+  "ground" : {
+    "info" : "all"
+  },
+  "sign" : {
+    "position" : [2, 2, 1],
+    "facing" : "north",
+    "tier" : 2,
+    "name" : "Shop"
+  },
+  "special" : {
+    "additionalItem": {
+      "order" : [6, 1, 7]
     }
   }
+}
