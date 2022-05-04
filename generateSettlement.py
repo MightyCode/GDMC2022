@@ -114,8 +114,9 @@ if not args.remove:
             current_zone_x = 0
 
         current_village = villages[settlement_index]
-        print("\n-----------------------\nMake village named " + current_village.name)
+        print("\nMake village named " + current_village.name)
         interfaceUtil.setBuildArea(area[0], area[1], area[2], area[3] + 1, area[4] + 1, area[5] + 1)
+
         print("Make global slice")
         interfaceUtil.makeGlobalSlice()
         print("Global slice done")

@@ -14,6 +14,8 @@ from generation.data.murdererData import MurdererData
 from generation.structures.baseStructure import BaseStructure
 from generation.data.settlementData import SettlementData
 
+from generation.wallConstruction import WallConstruction
+
 import generation.resourcesLoader as resLoader
 import utils.argumentParser as argParser
 import lib.interfaceUtils as interfaceUtil
@@ -42,6 +44,14 @@ if build_area == -1:
 build_area: tuple = (
     build_area[0], build_area[1], build_area[2], build_area[3] - 1, build_area[4] - 1, build_area[5] - 1)
 size_area: list = [build_area[3] - build_area[0] + 1, build_area[5] - build_area[2] + 1]
+
+wallConstruction: WallConstruction = WallConstruction()
+wallConstruction.setConstructionZone(build_area)
+print(wallConstruction.detection_grid_size)
+
+wallConstruction.addPoints([build_area[0], build_area[1], build_area[2]])
+wallConstruction.showImageRepresenting()
+exit()
 
 if not args.remove:
     block_transformations: list = [OldStructureTransformation(), DamagedStructureTransformation(),
