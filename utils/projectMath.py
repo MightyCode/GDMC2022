@@ -97,3 +97,12 @@ def computeSquaredZoneWitNumber(zone_number: list, build_area: list) -> list:
                         z + 1) * zone_number[1]])
 
     return areas
+
+
+def generateCorners(position: list, offsetCorner: list) -> list:
+    return [
+        [position[0] + offsetCorner[0], position[1], position[2] + offsetCorner[1]],
+        [position[0] + offsetCorner[2], position[1], position[2] + offsetCorner[3]],
+        [position[0] + offsetCorner[2], position[1], position[2] + offsetCorner[3]],
+        [position[0] + offsetCorner[2], position[1], position[2] + offsetCorner[1]],
+    ]

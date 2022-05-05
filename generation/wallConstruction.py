@@ -27,26 +27,50 @@ class WallConstruction:
 
         self.connected_area = [False] * (self.detection_grid_size[0] * self.detection_grid_size[1])
 
-    def addPoints(self, point):
-        if not pmath.isPointInCube(point, self.area):
-            return
-
+    def returnPositionPoint(self, point):
         grid_position: list = [0, 0]
-        positions: list = [0, 0]
-        rest: list = [0, 0]
+        positions: float
+        rest: float
 
         for i in [0, 1]:
-            positions[i] = self.area[i * 2 + 3] - point[i * 2]
-            rest[i] = point[i * 2] % self.zone_size
+            positions = point[i] - self.area[i * 2]
+            rest = self.area[i * 2] % self.zone_size
 
-            if rest[i] > positions[i]:
-                grid_position[i] = 0
-            else:
-                grid_position[i] = (positions[i] - rest[i]) // self.zone_size
+            grid_position[i] = (positions - rest) // self.zone_size
 
-            print(rest[i], positions[i], grid_position[i])
+            if rest < positions:
+                grid_position[i] += 1
 
-        self.connected_area[grid_position[1] * self.detection_grid_size[0] + grid_position[0]] = True
+        return grid_position
+
+    def addRectangle(self, rectangle):
+        connected_rectangle: list = [-1, -1, -1, -1]
+
+        connected_rectangle[0], connected_rectangle[1] = self.returnPositionPoint(rectangle[0:2])
+        connected_rectangle[2], connected_rectangle[3] = self.returnPositionPoint(rectangle[2:])
+
+        if connected_rectangle[0] > self.detection_grid_size[0] \
+                or connected_rectangle[1] > self.detection_grid_size[1] \
+                or connected_rectangle[2] < 0 \
+                or connected_rectangle[3] < 0:
+            return
+
+        for x in range(connected_rectangle[0], connected_rectangle[2] + 1):
+            for y in range(connected_rectangle[1], connected_rectangle[3] + 1):
+                if 0 <= x < self.detection_grid_size[0] \
+                        and 0 <= y < self.detection_grid_size[1]:
+                    self.connected_area[x * self.detection_grid_size[0] + y] = True
+
+    def addPoints(self, point):
+        grid_position: list = [-1, -1]
+        if len(point) == 3:
+            grid_position = self.returnPositionPoint([point[0], point[2]])
+        elif len(point) == 2:
+            grid_position = self.returnPositionPoint(point)
+
+        if 0 <= grid_position[0] < self.detection_grid_size[0] \
+                and 0 <= grid_position[1] < self.detection_grid_size[1]:
+            self.connected_area[grid_position[1] * self.detection_grid_size[0] + grid_position[0]] = True
 
     def showImageRepresenting(self):
         img = Image.new("RGB", (self.detection_grid_size[0], self.detection_grid_size[1]))
@@ -63,3 +87,4 @@ class WallConstruction:
 
         plt.imshow(img)
         plt.show()
+        plt.close()

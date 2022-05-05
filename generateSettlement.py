@@ -272,6 +272,20 @@ if not args.remove:
         """ Fourth main step : creates the roads of the village """
         road.initRoad(floodFill.listHouse, settlement_data, world_modification)
 
+        from generation.wallConstruction import WallConstruction
+
+        wallConstruction: WallConstruction = WallConstruction(8)
+        wallConstruction.setConstructionZone(area)
+
+        for lore_structure in current_village.lore_structures:
+            wallConstruction.addRectangle([
+                lore_structure.position[0] + lore_structure.preBuildingInfo["corner"][0], lore_structure.position[2] + lore_structure.preBuildingInfo["corner"][1],
+                lore_structure.position[0] + lore_structure.preBuildingInfo["corner"][2], lore_structure.position[2] + lore_structure.preBuildingInfo["corner"][3]
+            ])
+
+        wallConstruction.showImageRepresenting()
+        #exit()
+
         """ Five main step : places every structure and after that every decorations """
         i: int = 0
         current_time: int = int(round(time.time() * 1000)) - milliseconds

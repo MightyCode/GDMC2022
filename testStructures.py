@@ -45,11 +45,13 @@ build_area: tuple = (
     build_area[0], build_area[1], build_area[2], build_area[3] - 1, build_area[4] - 1, build_area[5] - 1)
 size_area: list = [build_area[3] - build_area[0] + 1, build_area[5] - build_area[2] + 1]
 
-wallConstruction: WallConstruction = WallConstruction()
-wallConstruction.setConstructionZone(build_area)
-print(wallConstruction.detection_grid_size)
+from generation.wallConstruction import WallConstruction
 
-wallConstruction.addPoints([build_area[0], build_area[1], build_area[2]])
+wallConstruction: WallConstruction = WallConstruction(8)
+wallConstruction.setConstructionZone(build_area)
+
+wallConstruction.addRectangle([build_area[0] + 20, build_area[2] + 20, build_area[0] + 150, build_area[2] + 150])
+
 wallConstruction.showImageRepresenting()
 exit()
 

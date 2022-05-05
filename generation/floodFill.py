@@ -14,7 +14,7 @@ class FloodFill:
         self.set_number_of_houses(settlement_data.structure_number_goal)
         self.listHouse = []
         #random.seed(None, 2)
-        self.startPosRange = [0.98, 0.98]
+        self.startPosRange = [0.75, 0.75]
 
         self.distanceFirstHouse = 40
         self.distanceFirstHouseIncrease = 3
