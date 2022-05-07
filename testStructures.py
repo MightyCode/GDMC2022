@@ -50,9 +50,13 @@ from generation.wallConstruction import WallConstruction
 wallConstruction: WallConstruction = WallConstruction(8)
 wallConstruction.setConstructionZone(build_area)
 
-wallConstruction.addRectangle([build_area[0] + 20, build_area[2] + 20, build_area[0] + 150, build_area[2] + 150])
+wallConstruction.addRectangle([build_area[0] + 100, build_area[2] + 100, build_area[0] + 116, build_area[2] + 116])
+wallConstruction.computeWall()
+wallConstruction.placeWall(world_modifications)
 
-wallConstruction.showImageRepresenting()
+world_modifications.setBlock(build_area[0] + 100, 65, build_area[2] + 100, "minecraft:stone")
+
+world_modifications.setBlock(build_area[0] + 116, 65, build_area[2] + 116, "minecraft:stone")
 exit()
 
 if not args.remove:

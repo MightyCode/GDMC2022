@@ -301,7 +301,7 @@ def generateRoad(world_modification: WorldModification, start: list, goal: list,
 
             for i in [0, 1, 2, 3]:
                 position = [block[0] + diffX[i], block[1] + diffZ[i]]
-                if not position in path and not projectMath.isInHouse(list_house, position) and not isInRoad(position):
+                if position not in path and not projectMath.isInHouse(list_house, position) and not isInRoad(position):
                     POSITION_OF_LANTERN.append([block[0], block[1]])
                     world_modification.setBlock(position[0], y - 1, position[1], 'minecraft:cobblestone')
                     world_modification.setBlock(position[0], y, position[1], 'minecraft:cobblestone_wall')

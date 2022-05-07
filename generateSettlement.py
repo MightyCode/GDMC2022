@@ -283,8 +283,9 @@ if not args.remove:
                 lore_structure.position[0] + lore_structure.preBuildingInfo["corner"][2], lore_structure.position[2] + lore_structure.preBuildingInfo["corner"][3]
             ])
 
+        wallConstruction.computeWall()
+        wallConstruction.placeWall(world_modification)
         wallConstruction.showImageRepresenting()
-        #exit()
 
         """ Five main step : places every structure and after that every decorations """
         i: int = 0

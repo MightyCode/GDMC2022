@@ -21,10 +21,11 @@ class FloodFill:
 
         self.buildArea = settlement_data.area
         self.size = settlement_data.size
-        self.validHouseFloodFillPosition = [self.buildArea[0] + self.size[0] / 10,
-                                            self.buildArea[2] + self.size[1] / 10,
-                                            self.buildArea[3] - self.size[0] / 10,
-                                            self.buildArea[5] - self.size[1] / 10]
+        coef: int = 7
+        self.validHouseFloodFillPosition = [self.buildArea[0] + self.size[0] / coef,
+                                            self.buildArea[2] + self.size[1] / coef,
+                                            self.buildArea[3] - self.size[0] / coef,
+                                            self.buildArea[5] - self.size[1] / coef]
         self.minDistanceHouse = 4
         self.floodfillHouseSpace = 10
         self.previousStructure = -1
