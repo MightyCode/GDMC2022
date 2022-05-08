@@ -81,15 +81,17 @@ if not args.remove:
 
     from generation.wallConstruction import WallConstruction
 
-    wallConstruction: WallConstruction = WallConstruction(village, 8)
+    wallConstruction: WallConstruction = WallConstruction(village, 9)
     wallConstruction.setConstructionZone(build_area)
 
     wallConstruction.addRectangle([build_area[0] + 100, build_area[2] + 100, build_area[0] + 116, build_area[2] + 116])
     wallConstruction.addRectangle([build_area[0] + size_area[0] // 2 - 10, build_area[2] + size_area[1] // 2 - 10,
                                    build_area[0] + size_area[0] // 2 + 10, build_area[2] + size_area[1] // 2 + 10])
-    wallConstruction.computeWall(WallConstruction.BOUNDING_RECTANGULAR)
-    #wallConstruction.showImageRepresenting()
-    #wallConstruction.placeWall(world_modifications)
+    wallConstruction.addRectangle([build_area[0] + 10, build_area[2] + 50, build_area[0] + 27, build_area[2] + 145])
+    wallConstruction.computeWall(WallConstruction.BOUNDING_CONVEX_HULL)
+    wallConstruction.showImageRepresenting()
+    exit()
+    wallConstruction.placeWall(world_modifications)
 
     from generation.terrainModification import TerrainModification
     terrainModification: TerrainModification = TerrainModification(build_area, wallConstruction)

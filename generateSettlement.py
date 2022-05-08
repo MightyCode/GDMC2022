@@ -150,7 +150,7 @@ if not args.remove:
 
         structureManager = StructureManager(settlement_data, resources, name_generator)
 
-        wallConstruction: WallConstruction = WallConstruction(current_village, 8)
+        wallConstruction: WallConstruction = WallConstruction(current_village, 9)
         wallConstruction.setConstructionZone(area)
 
         terrain_modification: TerrainModification = TerrainModification(area, wallConstruction)
@@ -288,7 +288,7 @@ if not args.remove:
         for blockPath in path:
             wallConstruction.addPoints(blockPath)
 
-        wallConstruction.computeWall(WallConstruction.BOUNDING_RECTANGULAR)
+        wallConstruction.computeWall(WallConstruction.BOUNDING_CONVEX_HULL)
         wallConstruction.showImageRepresenting()
         wallConstruction.placeWall(world_modification)
 
