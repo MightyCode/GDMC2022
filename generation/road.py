@@ -174,7 +174,7 @@ def computeZEntry(zLocalPosition: int, cornerProjection, facingStruct, cornerStr
     return z
 
 
-def initRoad(listHouse: list, settlement_data: SettlementData, world_modification: WorldModification):
+def initRoad(listHouse: list, settlement_data: SettlementData) -> list:
     NODE_IN_ROAD.clear()
     POSITION_OF_LANTERN.clear()
 
@@ -193,6 +193,8 @@ def initRoad(listHouse: list, settlement_data: SettlementData, world_modificatio
 
         square_list.append([entry_temp[0] + listHouse[index][3][0], entry_temp[2] + listHouse[index][3][1],
                             entry_temp[0] + listHouse[index][3][2], entry_temp[2] + listHouse[index][3][3]])
+
+    result: list = []
 
     # print(square_list)
     for indexFrom in range(0, len(lore_structures)):
@@ -241,23 +243,17 @@ def initRoad(listHouse: list, settlement_data: SettlementData, world_modificatio
                 y += 1
         # print("stuck1")
 
-        try:
-            generateRoad(world_modification, start, goal, listHouse, square_list, settlement_data, entryStructFrom)
-        except ValueError:
-            print("ValueError, path can't be implemented there")
+        result.extend(astar(start, goal, square_list))
 
+    return result
 
 """
 Generating the path among 2 houses
 """
 
 
-def generateRoad(world_modification: WorldModification, start: list, goal: list, list_house: list,
-                 square_list: list, settlement_data: SettlementData, entryStructFrom):
-    path = astar(start, goal, square_list)
-    temp = 1
-
-    yTemp = entryStructFrom[1]
+def generateRoad(path: list, world_modification: WorldModification, list_house: list, settlement_data: SettlementData, terrain_modification):
+    yTemp = 64
     for block in path:
         y = yTemp
         material = 'minecraft:grass_path'
@@ -276,12 +272,19 @@ def generateRoad(world_modification: WorldModification, start: list, goal: list,
 
         # Here, we need to check if there is a tree above the path, and if yes, we want to remove it
         world_modification.setBlock(block[0], y, block[1], "minecraft:air")
+        terrain_modification.removeRecursivelyAt(world_modification, block[0], y, block[1])
+
         world_modification.setBlock(block[0], y + 1, block[1], "minecraft:air")
+        terrain_modification.removeRecursivelyAt(world_modification, block[0], y + 1, block[1])
+
         world_modification.setBlock(block[0], y + 2, block[1], "minecraft:air")
+        terrain_modification.removeRecursivelyAt(world_modification, block[0], y + 2, block[1])
+
         world_modification.setBlock(block[0], y - 1, block[1], material)
         yTemp = y
 
-    yTemp = entryStructFrom[1]
+    temp = 1
+    yTemp = 64
     for block in path:
         y = yTemp
         while not (Constants.is_air(block[0], y + 1, block[1])) or Constants.is_air(block[0], y, block[1]):

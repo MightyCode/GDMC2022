@@ -1,16 +1,32 @@
 from PIL import Image
-import matplotlib.pyplot as plt
 from utils.constants import Constants
+
+import matplotlib.pyplot as plt
+import utils.projectMath as pmath
 
 
 class WallConstruction:
-    def __init__(self, zone_size=16):
+    BOUNDING_RECTANGULAR: int = 0
+    BOUNDING_CONVEX_HULL: int = 1
+
+    MODEL_LINE: int = 0
+    MODEL_CORNER: int = 1
+
+    def __init__(self, village, zone_size=16):
+        self.village = village
         self.zone_size: int = zone_size
         self.detection_grid_size: list = [0, 0]
         self.area: tuple = ()
         self.connected_area: list = []
-        self.wall_simplification = [-1, -1, -1, -1]
-        self.wall_zone = []
+
+        # List of defined dict
+        self.wall_list: list = []
+
+        self.bounding_type: int = self.BOUNDING_RECTANGULAR
+        # Bounding depending variables
+
+        self.wall_simplification: list = [-1, -1, -1, -1]
+        self.hull: list = []
 
     def setConstructionZone(self, area):
         self.detection_grid_size = [0, 0]
@@ -24,7 +40,6 @@ class WallConstruction:
                 size -= self.zone_size
 
         self.connected_area = [False] * (self.detection_grid_size[0] * self.detection_grid_size[1])
-        self.wall_zone = [""] * len(self.connected_area)
 
     def returnPositionPoint(self, point):
         grid_position: list = [0, 0]
@@ -50,10 +65,10 @@ class WallConstruction:
             return
 
         for x in range(connected_rectangle[0], connected_rectangle[2] + 1):
-            for y in range(connected_rectangle[1], connected_rectangle[3] + 1):
+            for z in range(connected_rectangle[1], connected_rectangle[3] + 1):
                 if 0 <= x < self.detection_grid_size[0] \
-                        and 0 <= y < self.detection_grid_size[1]:
-                    self.connected_area[y * self.detection_grid_size[0] + x] = True
+                        and 0 <= z < self.detection_grid_size[1]:
+                    self.connected_area[z * self.detection_grid_size[0] + x] = True
 
     def addPoints(self, point):
         grid_position: list = [-1, -1]
@@ -66,76 +81,111 @@ class WallConstruction:
                 and 0 <= grid_position[1] < self.detection_grid_size[1]:
             self.connected_area[grid_position[1] * self.detection_grid_size[0] + grid_position[0]] = True
 
-    def computeWall(self):
+    def computeWall(self, bounding_type: int = BOUNDING_RECTANGULAR):
+        self.bounding_type = bounding_type
+
+        if self.bounding_type == self.BOUNDING_RECTANGULAR:
+            self.computeRectangular()
+        elif self.bounding_type == self.BOUNDING_CONVEX_HULL:
+            self.computeConvexFull()
+
+    def computeRectangular(self):
         self.wall_simplification = [self.detection_grid_size[0], self.detection_grid_size[1], -1, -1]
 
-        for y in range(self.detection_grid_size[1]):
+        for z in range(self.detection_grid_size[1]):
             for x in range(self.detection_grid_size[0]):
-                if self.connected_area[y * self.detection_grid_size[0] + x]:
+                if self.connected_area[z * self.detection_grid_size[0] + x]:
                     if x > self.wall_simplification[2]:
                         self.wall_simplification[2] = x
                     if x < self.wall_simplification[0]:
                         self.wall_simplification[0] = x
 
-                    if y > self.wall_simplification[3]:
-                        self.wall_simplification[3] = y
-                    if y < self.wall_simplification[1]:
-                        self.wall_simplification[1] = y
+                    if z > self.wall_simplification[3]:
+                        self.wall_simplification[3] = z
+                    if z < self.wall_simplification[1]:
+                        self.wall_simplification[1] = z
 
-        # generate
+        # generate bounding
+
         for x in range(self.wall_simplification[0], self.wall_simplification[2] + 1):
-            yMin: int = self.wall_simplification[1] - 1
-            yMax: int = self.wall_simplification[3] + 1
+            zMin: int = self.wall_simplification[1] - 1
+            zMax: int = self.wall_simplification[3] + 1
 
-            self.wall_zone[yMin * self.detection_grid_size[0] + x] = "up"
-            self.wall_zone[yMax * self.detection_grid_size[0] + x] = "down"
+            self.wall_list.append(self.createWallCell(x, zMin, self.MODEL_LINE, 0, 3))
+            self.wall_list.append(self.createWallCell(x, zMax, self.MODEL_LINE, 1, 3))
 
-        for y in range(self.wall_simplification[1], self.wall_simplification[3] + 1):
+        for z in range(self.wall_simplification[1], self.wall_simplification[3] + 1):
             xMin: int = self.wall_simplification[0] - 1
             xMax: int = self.wall_simplification[2] + 1
 
-            self.wall_zone[y * self.detection_grid_size[0] + xMin] = "left"
-            self.wall_zone[y * self.detection_grid_size[0] + xMax] = "right"
+            self.wall_list.append(self.createWallCell(xMin, z, self.MODEL_LINE, 0, 0))
+            self.wall_list.append(self.createWallCell(xMax, z, self.MODEL_LINE, 1, 0))
+
+        self.wall_list.append(
+            self.createWallCell(self.wall_simplification[0] - 1, self.wall_simplification[1] - 1, self.MODEL_CORNER, 0,
+                                0))
+        self.wall_list.append(
+            self.createWallCell(self.wall_simplification[2] + 1, self.wall_simplification[1] - 1, self.MODEL_CORNER, 0,
+                                3))
+        self.wall_list.append(
+            self.createWallCell(self.wall_simplification[2] + 1, self.wall_simplification[3] + 1, self.MODEL_CORNER, 0,
+                                2))
+        self.wall_list.append(
+            self.createWallCell(self.wall_simplification[0] - 1, self.wall_simplification[3] + 1, self.MODEL_CORNER, 0,
+                                1))
+
+    def computeConvexFull(self):
+        positions: list = []
+
+        lower_left_most_positions = -1
+
+        self.hull = []
+        for x in range(self.detection_grid_size[0]):
+            for y in range(self.detection_grid_size[1]):
+                if self.connected_area[y * self.detection_grid_size[0] + x]:
+                    if lower_left_most_positions == -1:
+                        lower_left_most_positions = len(positions)
+
+                    positions.append([x, y])
+
+        self.hull = pmath.convexHull(positions)
 
     def placeWall(self, world_modification):
-        for z in range(self.detection_grid_size[1]):
-            for x in range(self.detection_grid_size[0]):
-                position: str = self.wall_zone[z * self.detection_grid_size[0] + x]
-                if position == "":
-                    continue
+        x: int
+        z: int
+        model: list = []
 
-                flip = 0
-                rotation = 0
+        y = 64
 
-                # Composed position
-                if position == "right":
-                    flip = 1
-                elif position == "up":
-                    rotation = 1
-                elif position == "down":
-                    flip = 1
-                    rotation = 1
+        for wallCell in self.wall_list:
+            x, z = wallCell["position"]
+            x_real: int = x * self.zone_size + self.area[0]
+            z_real: int = z * self.zone_size + self.area[2]
 
-                self.placeModel(world_modification, x, z, self.applyOnModel(self.modelWallLine(), flip, rotation),)
+            print(self.area, x_real, z_real)
+            if not (self.area[0] <= x_real and x_real + self.zone_size <= self.area[3]
+                    and self.area[2] <= z_real and z_real + self.zone_size <= self.area[5]):
+                continue
 
-    def placeModel(self, world_modification, x_zone, z_zone, model):
-        x_real: int = x_zone * self.zone_size + self.area[0]
-        z_real: int = z_zone * self.zone_size + self.area[2]
+            if wallCell["type"] == self.MODEL_LINE:
+                model = self.modelWallLine()
+            elif wallCell["type"] == self.MODEL_CORNER:
+                model = self.modelWallCorner()
 
-        y = 200
+            model = self.applyOnModel(model, wallCell["flip"], wallCell["rotation"])
 
-        for xr in range(self.zone_size):
-            for zr in range(self.zone_size):
+            for xr in range(self.zone_size):
+                for zr in range(self.zone_size):
+                    while (not Constants.is_air(x_real + xr, y + 1, z_real + zr) or Constants.is_air(x_real + xr, y,
+                                                                                                     z_real + zr)) and 0 <= y <= 255:
+                        if Constants.is_air(x_real + xr, y, z_real + zr):
+                            y -= 1
+                        if not Constants.is_air(x_real + xr, y + 1, z_real + zr):
+                            y += 1
 
-                while not Constants.is_air(x_real + xr, y + 1, z_real + zr) or Constants.is_air(x_real + xr, y, z_real + zr) and 0 <= y <= 255:
-                    if Constants.is_air(x_real + xr, y, z_real + zr):
-                        y -= 1
-                    if not Constants.is_air(x_real + xr, y + 1, z_real + zr):
-                        y += 1
-
-                for y_offset in range(len(model[zr][xr])):
-                    if 0 <= y + y_offset <= 255:
-                        world_modification.setBlock(x_real + xr, y + y_offset, z_real + zr, model[zr][xr][y_offset])
+                    for y_offset in range(len(model[zr][xr])):
+                        if 0 <= y + y_offset <= 255:
+                            world_modification.setBlock(x_real + xr, y + y_offset, z_real + zr, model[zr][xr][y_offset])
 
     def applyOnModel(self, model, flip, rotation):
         if flip == 0 and rotation == 0:
@@ -152,19 +202,11 @@ class WallConstruction:
         else:
             newModel = model
 
-        newModel2 = []
+        while rotation > 0:
+            newModel = pmath.rotateSquaredMatrix(newModel)
+            rotation -= 1
 
-        if rotation == 1:
-            for x in range(self.zone_size):
-                newModel2.append([])
-
-                for z in range(self.zone_size):
-                    newModel2[x].append(newModel[z][x])
-
-        else:
-            newModel2 = newModel
-
-        return newModel2
+        return newModel
 
     def modelWallLine(self):
         result: list = []
@@ -175,14 +217,52 @@ class WallConstruction:
 
                 result[z].append([])
 
-                if x == (self.zone_size - 1):
-                    result[z][x].append("minecraft:oak_fence")
+                if self.village.status == "war":
+                    if x == 0:
+                        for a in range(self.village.tier + 2):
+                            result[z][x].append("minecraft:oak_planks")
+                else:
+                    if x == 0:
+                        result[z][x].append("minecraft:oak_fence")
 
         return result
 
-    def isBlockInEnclosure(self, x, z):
-        return self.wall_simplification[0] <= x <= self.wall_simplification[2] and self.wall_simplification[1] <= z <= \
-               self.wall_simplification[3]
+    def modelWallCorner(self):
+        result: list = []
+
+        for z in range(self.zone_size):
+            result.append([])
+            for x in range(self.zone_size):
+
+                result[z].append([])
+
+                if self.village.status == "war":
+                    if x == 0 or z == 0:
+                        for a in range(self.village.tier + 2):
+                            result[z][x].append("minecraft:oak_planks")
+                else:
+                    if x == 0 or z == 0:
+                        result[z][x].append("minecraft:oak_fence")
+
+        return result
+
+    @staticmethod
+    def createWallCell(x: int, z: int, wallType: int, flip: int, rotation: int) -> dict:
+        return {
+            "position": [x, z],
+            "type": wallType,
+            "flip": flip,
+            "rotation": rotation
+        }
+
+    def isBlockInEnclosure(self, x, z) -> bool:
+        if self.bounding_type == self.BOUNDING_RECTANGULAR:
+            return self.area[0] + self.wall_simplification[0] * self.zone_size <= x <= self.area[0] + \
+                   self.wall_simplification[2] * self.zone_size and \
+                   self.area[2] + self.wall_simplification[1] * self.zone_size <= z <= self.area[2] + \
+                   self.wall_simplification[3] * self.zone_size
+
+        return True
 
     def showImageRepresenting(self):
         img = Image.new("RGB", (self.detection_grid_size[0], self.detection_grid_size[1]))
@@ -197,11 +277,18 @@ class WallConstruction:
 
                 counter += 1
         plt.imshow(img)
-        plt.plot([self.wall_simplification[0], self.wall_simplification[2], self.wall_simplification[2],
-                  self.wall_simplification[0], self.wall_simplification[0]],
-                 [self.wall_simplification[1], self.wall_simplification[1], self.wall_simplification[3],
-                  self.wall_simplification[3], self.wall_simplification[1]],
-                 color="blue")
+
+        if self.bounding_type == self.BOUNDING_RECTANGULAR:
+            plt.plot([self.wall_simplification[0], self.wall_simplification[2], self.wall_simplification[2],
+                      self.wall_simplification[0], self.wall_simplification[0]],
+                     [self.wall_simplification[1], self.wall_simplification[1], self.wall_simplification[3],
+                      self.wall_simplification[3], self.wall_simplification[1]],
+                     color="blue")
+
+        elif self.bounding_type == self.BOUNDING_CONVEX_HULL:
+            for i in range(len(self.hull)):
+                plt.plot([self.hull[i][0], self.hull[(i + 1) % len(self.hull)][0]],
+                         [self.hull[i][1], self.hull[(i + 1) % len(self.hull)][1]], color="blue")
 
         plt.show()
         plt.close()

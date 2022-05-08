@@ -12,6 +12,8 @@ from generation.structures.blockTransformation.burnedStructureTransformation imp
 from generation.structures.blockTransformation.abandonedStructureTransformation import AbandonedStructureTransformation
 from generation.resources import Resources
 from generation.floodFill import FloodFill
+from generation.wallConstruction import WallConstruction
+from generation.terrainModification import TerrainModification
 from utils.nameGenerator import NameGenerator
 from utils.worldModification import WorldModification
 from utils.constants import Constants
@@ -97,6 +99,7 @@ if not args.remove:
     current_zone_z: int = 0
 
     while current_zone_z < settlement_zones_number[1]:
+        """ First main step : init settlement information """
         current_time: int = int(round(time.time() * 1000)) - milliseconds
 
         if current_time / 1000 >= TIME_LIMIT - TIME_TO_BUILD_A_VILLAGE:
@@ -140,13 +143,17 @@ if not args.remove:
         current_village.generated = True
         block_transformation[0].age = current_village.age
 
-        """ First main step : init settlementData """
         settlement_data = generator.createSettlementData(area, current_village, resources)
         loreMaker.applyLoreToSettlementData(settlement_data)
 
         floodFill = FloodFill(world_modification, settlement_data)
 
         structureManager = StructureManager(settlement_data, resources, name_generator)
+
+        wallConstruction: WallConstruction = WallConstruction(current_village, 8)
+        wallConstruction.setConstructionZone(area)
+
+        terrain_modification: TerrainModification = TerrainModification(area, wallConstruction)
 
         """ Second main step : choose structures and their position """
         i = 0
@@ -269,13 +276,8 @@ if not args.remove:
             Trade.generateFromTradeTable(current_village, villager, resources.trades[villager.job],
                                          settlement_data.getMatRepDeepCopy())
 
-        """ Fourth main step : creates the roads of the village """
-        road.initRoad(floodFill.listHouse, settlement_data, world_modification)
-
-        from generation.wallConstruction import WallConstruction
-
-        wallConstruction: WallConstruction = WallConstruction(8)
-        wallConstruction.setConstructionZone(area)
+        """ Fourth main step : creates the roads and wall of the village """
+        path: list = road.initRoad(floodFill.listHouse, settlement_data)
 
         for lore_structure in current_village.lore_structures:
             wallConstruction.addRectangle([
@@ -283,11 +285,16 @@ if not args.remove:
                 lore_structure.position[0] + lore_structure.preBuildingInfo["corner"][2], lore_structure.position[2] + lore_structure.preBuildingInfo["corner"][3]
             ])
 
-        wallConstruction.computeWall()
-        wallConstruction.placeWall(world_modification)
+        for blockPath in path:
+            wallConstruction.addPoints(blockPath)
+
+        wallConstruction.computeWall(WallConstruction.BOUNDING_RECTANGULAR)
         wallConstruction.showImageRepresenting()
+        wallConstruction.placeWall(world_modification)
 
         """ Five main step : places every structure and after that every decorations """
+        road.generateRoad(path, world_modification, floodFill.listHouse, settlement_data, terrain_modification)
+
         i: int = 0
         current_time: int = int(round(time.time() * 1000)) - milliseconds
         while i < len(current_village.lore_structures) and current_time / 1000 < TIME_LIMIT:

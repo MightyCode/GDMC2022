@@ -45,20 +45,6 @@ build_area: tuple = (
     build_area[0], build_area[1], build_area[2], build_area[3] - 1, build_area[4] - 1, build_area[5] - 1)
 size_area: list = [build_area[3] - build_area[0] + 1, build_area[5] - build_area[2] + 1]
 
-from generation.wallConstruction import WallConstruction
-
-wallConstruction: WallConstruction = WallConstruction(8)
-wallConstruction.setConstructionZone(build_area)
-
-wallConstruction.addRectangle([build_area[0] + 100, build_area[2] + 100, build_area[0] + 116, build_area[2] + 116])
-wallConstruction.computeWall()
-wallConstruction.placeWall(world_modifications)
-
-world_modifications.setBlock(build_area[0] + 100, 65, build_area[2] + 100, "minecraft:stone")
-
-world_modifications.setBlock(build_area[0] + 116, 65, build_area[2] + 116, "minecraft:stone")
-exit()
-
 if not args.remove:
     block_transformations: list = [OldStructureTransformation(), DamagedStructureTransformation(),
                                    BurnedStructureTransformation(), AbandonedStructureTransformation()]
@@ -92,6 +78,19 @@ if not args.remove:
     village.murderer_data = MurdererData()
     """village.murderer_data.villagerTarget = villagers[2]
     village.murderer_data.villagerMurderer = villagers[0]"""
+
+    from generation.wallConstruction import WallConstruction
+
+    wallConstruction: WallConstruction = WallConstruction(village, 8)
+    wallConstruction.setConstructionZone(build_area)
+
+    wallConstruction.addRectangle([build_area[0] + 100, build_area[2] + 100, build_area[0] + 116, build_area[2] + 116])
+    wallConstruction.addRectangle([build_area[0] + size_area[0] // 2 - 10, build_area[2] + size_area[1] // 2 - 10,
+                                   build_area[0] + size_area[0] // 2 + 10, build_area[2] + size_area[1] // 2 + 10])
+    wallConstruction.computeWall(WallConstruction.BOUNDING_RECTANGULAR)
+    #wallConstruction.showImageRepresenting()
+    wallConstruction.placeWall(world_modifications)
+    exit()
 
     resources: Resources = Resources()
     resLoader.loadAllResources(resources)

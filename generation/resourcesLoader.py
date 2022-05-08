@@ -4,8 +4,8 @@ from generation.resources import Resources
 
 
 def loadAllResources(resources: Resources) -> None:
-    print("Begin load ressources")
-    # Loads structures
+    print("Begin load resources")
+    # Load structures
     ## Load houses
     resources.loadStructures("houses/haybale/haybalehouse1.nbt", "houses/haybale/haybalehouse1.json", "haybalehouse1")
     resources.loadStructures("houses/haybale/haybalehouse2.nbt", "houses/haybale/haybalehouse2.json", "haybalehouse2")
