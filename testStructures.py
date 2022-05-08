@@ -89,7 +89,11 @@ if not args.remove:
                                    build_area[0] + size_area[0] // 2 + 10, build_area[2] + size_area[1] // 2 + 10])
     wallConstruction.computeWall(WallConstruction.BOUNDING_RECTANGULAR)
     #wallConstruction.showImageRepresenting()
-    wallConstruction.placeWall(world_modifications)
+    #wallConstruction.placeWall(world_modifications)
+
+    from generation.terrainModification import TerrainModification
+    terrainModification: TerrainModification = TerrainModification(build_area, wallConstruction)
+    terrainModification.removeRecursivelyAt(world_modifications, 228, 71, -190)
     exit()
 
     resources: Resources = Resources()

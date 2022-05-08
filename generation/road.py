@@ -271,13 +271,8 @@ def generateRoad(path: list, world_modification: WorldModification, list_house: 
             material = "minecraft:nether_bricks"
 
         # Here, we need to check if there is a tree above the path, and if yes, we want to remove it
-        world_modification.setBlock(block[0], y, block[1], "minecraft:air")
         terrain_modification.removeRecursivelyAt(world_modification, block[0], y, block[1])
-
-        world_modification.setBlock(block[0], y + 1, block[1], "minecraft:air")
         terrain_modification.removeRecursivelyAt(world_modification, block[0], y + 1, block[1])
-
-        world_modification.setBlock(block[0], y + 2, block[1], "minecraft:air")
         terrain_modification.removeRecursivelyAt(world_modification, block[0], y + 2, block[1])
 
         world_modification.setBlock(block[0], y - 1, block[1], material)
