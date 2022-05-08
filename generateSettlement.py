@@ -150,7 +150,7 @@ if not args.remove:
 
         structureManager = StructureManager(settlement_data, resources, name_generator)
 
-        wallConstruction: WallConstruction = WallConstruction(current_village, 9)
+        wallConstruction: WallConstruction = WallConstruction(current_village, random.choice([7, 9, 11]))
         wallConstruction.setConstructionZone(area)
 
         terrain_modification: TerrainModification = TerrainModification(area, wallConstruction)

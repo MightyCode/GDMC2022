@@ -14,7 +14,7 @@ class WallConstruction:
     MODEL_LINE: int = 0
     MODEL_CORNER: int = 1
 
-    def __init__(self, village, zone_size=16):
+    def __init__(self, village, zone_size=15):
         self.village = village
         self.zone_size: int = zone_size
         self.detection_grid_size: list = [0, 0]
@@ -172,7 +172,7 @@ class WallConstruction:
             diff = [point2[0] - point1[0] * 1.0, point2[1] - point1[1] * 1.0]
 
             distance = math.dist(point1, point2)
-            subdivision = math.floor(distance) * 40
+            subdivision = math.floor(distance) * 150
 
             for a in range(subdivision):
                 position = [round(point1[0] + (diff[0] / subdivision * a)),
@@ -359,7 +359,7 @@ class WallConstruction:
         elif self.bounding_type == self.BOUNDING_CONVEX_HULL:
             for i in range(len(self.hull)):
                 plt.plot([self.hull[i][0], self.hull[(i + 1) % len(self.hull)][0]],
-                         [self.hull[i][1], self.hull[(i + 1) % len(self.hull)][1]], color="blue")
+                         [self.hull[i][1], self.hull[(i + 1) % len(self.hull)][1]], color="gray")
 
         plt.show()
         plt.close()
