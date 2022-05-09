@@ -87,7 +87,7 @@ if not args.remove:
     wallConstruction.addRectangle([build_area[0] + 100, build_area[2] + 100, build_area[0] + 116, build_area[2] + 116])
     wallConstruction.addRectangle([build_area[0] + size_area[0] // 2 - 10, build_area[2] + size_area[1] // 2 - 10,
                                    build_area[0] + size_area[0] // 2 + 10, build_area[2] + size_area[1] // 2 + 10])
-    wallConstruction.addRectangle([build_area[0] - 10, build_area[2] + 50, build_area[0] + 27, build_area[2] + 145])
+    wallConstruction.addRectangle([build_area[0] - 30, build_area[2] + 50, build_area[0] + 200, build_area[2] + 200])
     wallConstruction.computeWall(WallConstruction.BOUNDING_CONVEX_HULL)
     wallConstruction.showImageRepresenting()
     wallConstruction.placeWall(world_modifications)

@@ -171,6 +171,8 @@ class WallConstruction:
 
         extended_size: list = [pos_max[0] - pos_min[0] + 1, pos_max[1] - pos_min[1] + 1]
         extended_offset: list = pos_min
+        print("Extended size", extended_size, "Extended offset", extended_offset)
+
         extended_matrix: list = [False] * (extended_size[0] * extended_size[1])
         diff: list
         distance: int
@@ -188,13 +190,14 @@ class WallConstruction:
             diff = [point2[0] - point1[0] * 1.0, point2[1] - point1[1] * 1.0]
 
             distance = math.dist(point1, point2)
-            subdivision = math.floor(distance) * 150
+            subdivision = math.floor(distance) * 300
 
             for a in range(subdivision):
                 position = [round(point1[0] + (diff[0] / subdivision * a)),
                             round(point1[1] + (diff[1] / subdivision * a))]
 
-                extended_matrix[(position[1] - extended_offset[1]) * extended_size[0] + (position[0] - extended_offset[0])] = True
+                extended_matrix[
+                    (position[1] - extended_offset[1]) * extended_size[0] + (position[0] - extended_offset[0])] = True
 
                 if position not in to_visit:
                     to_visit.append(position)
@@ -205,31 +208,35 @@ class WallConstruction:
 
             return extended_matrix[z_pos * extended_size[0] + x_pos]
 
-        def isInStack(list, ref):
-            for block in list:
+        def isInStack(list_blok, ref):
+            for block in list_blok:
                 if pmath.is2DPointEqual(block, ref):
                     return True
 
             return False
 
-        recursion_start: list
         remaining: list = []
         founded: list = []
 
-        for x in range(extended_size[0]):
+        for x in range(1, extended_size[0] - 1):
             if getValue_extended(x, 0):
                 if not getValue_extended(x, 1):
                     remaining.append([x, 1])
                     break
+
+        for y in range(extended_size[1]):
+            print("")
+            for x in range(extended_size[0]):
+                print("1" if extended_matrix[y * extended_size[0] + x] else "0", end="")
 
         while len(remaining) != 0:
             x, z = remaining[0]
             founded.append([x, z])
             del remaining[0]
 
-            if 0 <= x + extended_offset[0] <= self.detection_grid_size[0] and 0 <= z + extended_offset[1] <= \
+            if 0 <= x + extended_offset[0] < self.detection_grid_size[0] and 0 <= z + extended_offset[1] < \
                     self.detection_grid_size[1]:
-                self.matrix[(z + extended_offset[1]) * self.detection_grid_size[0] + x + extended_offset[0]] = True
+                self.matrix[(z + extended_offset[1]) * self.detection_grid_size[0] + (x + extended_offset[0])] = True
 
             for x_offset in range(-1, 2):
                 for z_offset in range(-1, 2):
@@ -306,7 +313,7 @@ class WallConstruction:
                     elif info[0][z_matrix * 3 + x_matrix] == 2:
                         if not getValue(
                                 cell[0] + x_matrix - 1,
-                                cell[1]+ z_matrix - 1):
+                                cell[1] + z_matrix - 1):
                             return False
 
             return True
@@ -317,7 +324,6 @@ class WallConstruction:
                 info: list = info_ajustment[i]
 
                 if doesTheMatrixIsRecognize(cell, info):
-                    print(cell[0], cell[1], i)
                     self.appendWallCell(cell[0], cell[1], info[1], info[2], info[3])
                     i = len(info_ajustment)
                 else:

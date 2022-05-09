@@ -277,6 +277,7 @@ if not args.remove:
                                          settlement_data.getMatRepDeepCopy())
 
         """ Fourth main step : creates the roads and wall of the village """
+        print("\nInitialized road")
         path: list = road.initRoad(floodFill.listHouse, settlement_data)
 
         for lore_structure in current_village.lore_structures:
@@ -288,11 +289,14 @@ if not args.remove:
         for blockPath in path:
             wallConstruction.addPoints(blockPath)
 
+        print("\nCompute wall")
         wallConstruction.computeWall(WallConstruction.BOUNDING_CONVEX_HULL)
         wallConstruction.showImageRepresenting()
+        print("\nConstruct wall")
         wallConstruction.placeWall(world_modification)
 
         """ Five main step : places every structure and after that every decorations """
+        print("\nConstruct road")
         road.generateRoad(path, world_modification, floodFill.listHouse, settlement_data, terrain_modification)
 
         i: int = 0
