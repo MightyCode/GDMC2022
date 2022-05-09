@@ -1,7 +1,7 @@
+import copy
 import math
 
 from PIL import Image
-from utils.constants import Constants
 
 import matplotlib.pyplot as plt
 import utils.projectMath as pmath
@@ -13,6 +13,7 @@ class WallConstruction:
 
     MODEL_LINE: int = 0
     MODEL_CORNER: int = 1
+    MODEL_CORNER_INTERIOR: int = 2
 
     def __init__(self, village, zone_size=15):
         self.village = village
@@ -148,23 +149,38 @@ class WallConstruction:
 
         self.hull = []
         for x in range(self.detection_grid_size[0]):
-            for y in range(self.detection_grid_size[1]):
-                if self.connected_area[y * self.detection_grid_size[0] + x]:
-                    positions.append([x-1, y-1])
-                    positions.append([x+1, y-1])
-                    positions.append([x+1, y+1])
-                    positions.append([x-1, y+1])
+            for z in range(self.detection_grid_size[1]):
+                if self.connected_area[z * self.detection_grid_size[0] + x]:
+                    positions.append([x - 1, z - 1])
+                    positions.append([x + 1, z - 1])
+                    positions.append([x + 1, z + 1])
+                    positions.append([x - 1, z + 1])
 
         self.hull: list = pmath.convexHull(positions)
 
-        # Mark on matrix the representation of the convex hull
-        self.matrix: list = [False] * (self.detection_grid_size[0] * self.detection_grid_size[1])
+        pos_min = copy.copy(self.hull[0])
+        pos_max = copy.copy(self.hull[0])
+
+        for position in self.hull:
+            for dim in [0, 1]:
+                if pos_min[dim] > position[dim]:
+                    pos_min[dim] = position[dim]
+
+                if pos_max[dim] < position[dim]:
+                    pos_max[dim] = position[dim]
+
+        extended_size: list = [pos_max[0] - pos_min[0] + 1, pos_max[1] - pos_min[1] + 1]
+        extended_offset: list = pos_min
+        extended_matrix: list = [False] * (extended_size[0] * extended_size[1])
         diff: list
         distance: int
         subdivision: int
 
         to_visit: list = []
 
+        self.matrix: list = [False] * (self.detection_grid_size[0] * self.detection_grid_size[1])
+
+        # Mark
         for index in range(len(self.hull)):
             point1 = self.hull[index]
             point2 = self.hull[(index + 1) % len(self.hull)]
@@ -178,12 +194,57 @@ class WallConstruction:
                 position = [round(point1[0] + (diff[0] / subdivision * a)),
                             round(point1[1] + (diff[1] / subdivision * a))]
 
-                self.matrix[position[1] * self.detection_grid_size[0] + position[0]] = True
+                extended_matrix[(position[1] - extended_offset[1]) * extended_size[0] + (position[0] - extended_offset[0])] = True
+
                 if position not in to_visit:
                     to_visit.append(position)
 
-        # Fill self.matrix for is block in zone
+        def getValue_extended(x_pos, z_pos) -> bool:
+            if 0 > x_pos or x_pos >= extended_size[0] or 0 > z_pos or z_pos >= extended_size[1]:
+                return False
 
+            return extended_matrix[z_pos * extended_size[0] + x_pos]
+
+        def isInStack(list, ref):
+            for block in list:
+                if pmath.is2DPointEqual(block, ref):
+                    return True
+
+            return False
+
+        recursion_start: list
+        remaining: list = []
+        founded: list = []
+
+        for x in range(extended_size[0]):
+            if getValue_extended(x, 0):
+                if not getValue_extended(x, 1):
+                    remaining.append([x, 1])
+                    break
+
+        while len(remaining) != 0:
+            x, z = remaining[0]
+            founded.append([x, z])
+            del remaining[0]
+
+            if 0 <= x + extended_offset[0] <= self.detection_grid_size[0] and 0 <= z + extended_offset[1] <= \
+                    self.detection_grid_size[1]:
+                self.matrix[(z + extended_offset[1]) * self.detection_grid_size[0] + x + extended_offset[0]] = True
+
+            for x_offset in range(-1, 2):
+                for z_offset in range(-1, 2):
+                    if getValue_extended(x + x_offset, z + z_offset):
+                        continue
+
+                    if isInStack(remaining, [x + x_offset, z + z_offset]):
+                        continue
+
+                    if isInStack(founded, [x + x_offset, z + z_offset]):
+                        continue
+
+                    remaining.append([x + x_offset, z + z_offset])
+
+        # Fill self.matrix for is block in zone
         def getValue(x_pos, z_pos) -> bool:
             if 0 > x_pos or x_pos >= self.detection_grid_size[0] or 0 > z_pos or z_pos >= self.detection_grid_size[1]:
                 return False
@@ -191,22 +252,73 @@ class WallConstruction:
             return self.matrix[z_pos * self.detection_grid_size[0] + x_pos]
 
         info_ajustment: list = [
-            [-1, 0, 1, 0, self.MODEL_LINE, 0, 1],  # Horizontal
-            [0, -1, 0, 1, self.MODEL_LINE, 0, 0],  # Vertical
-            [0, -1, 1, 0, self.MODEL_CORNER, 0, 1],  # Left Up corner
-            [-1, 0, 0, 1, self.MODEL_CORNER, 0, 3],  # Right Up corner
-            [-1, 0, 0, -1, self.MODEL_CORNER, 0, 2],  # Right Down corner
-            [0, 1, 1, 0, self.MODEL_CORNER, 0, 0]  # Left Down corner
+            [[-1, 1, -1,
+              -1, -1, 2,
+              -1, 1, -1], self.MODEL_LINE, 0, 0],  # Left 0
+            [[-1, 1, -1,
+              2, -1, -1,
+              -1, 1, -1], self.MODEL_LINE, 1, 0],  # Right 1
+            [[-1, -1, -1,
+              1, -1, 1,
+              -1, 2, -1], self.MODEL_LINE, 1, 1],  # Up 2
+            [[-1, 2, -1,
+              1, -1, 1,
+              -1, -1, -1], self.MODEL_LINE, 0, 1],  # Down 3
+            [[-1, -1, -1,
+              -1, -1, 1,
+              -1, 1, 2], self.MODEL_CORNER, 0, 0],  # Left Up corner 4
+            [[-1, 1, -1,
+              1, -1, 2,
+              -1, 2, -1], self.MODEL_CORNER_INTERIOR, 0, 0],  # Left Up interior corner 5
+            [[-1, -1, -1,
+              1, -1, -1,
+              2, 1, -1], self.MODEL_CORNER, 0, 3],  # Right Up corner 6
+            [[-1, 1, -1,
+              2, -1, 1,
+              -1, 2, -1], self.MODEL_CORNER_INTERIOR, 0, 3],  # Right Up interior corner 7
+            [[2, 1, -1,
+              1, -1, -1,
+              -1, -1, -1], self.MODEL_CORNER, 0, 2],  # Right Down corner 8
+            [[-1, 2, -1,
+              2, -1, 1,
+              -1, 1, -1], self.MODEL_CORNER_INTERIOR, 0, 2],  # Right Down interior corner 9
+            [[-1, 1, 2,
+              -1, -1, 1,
+              -1, -1, -1], self.MODEL_CORNER, 0, 1],  # Left Down corner 10
+            [[-1, 2, -1,
+              1, -1, 2,
+              -1, 1, -1], self.MODEL_CORNER_INTERIOR, 0, 1]  # Left Down interior corner 11
         ]
+
+        def doesTheMatrixIsRecognize(cell, info):
+            for z_matrix in [0, 1, 2]:
+                for x_matrix in [0, 1, 2]:
+                    if z_matrix == 1 and x_matrix == 1:
+                        continue
+
+                    # Check if barrier
+                    if info[0][z_matrix * 3 + x_matrix] == 1:
+                        if not getValue_extended(
+                                cell[0] - extended_offset[0] + x_matrix - 1,
+                                cell[1] - extended_offset[1] + z_matrix - 1):
+                            return False
+                    # Check if interior
+                    elif info[0][z_matrix * 3 + x_matrix] == 2:
+                        if not getValue(
+                                cell[0] + x_matrix - 1,
+                                cell[1]+ z_matrix - 1):
+                            return False
+
+            return True
 
         for cell in to_visit:
             i: int = 0
-
             while i < len(info_ajustment):
-                info = info_ajustment[i]
+                info: list = info_ajustment[i]
 
-                if getValue(cell[0] + info[0], cell[1] + info[1]) and getValue(cell[0] + info[2], cell[1] + info[3]):
-                    self.appendWallCell(cell[0], cell[1], info[4], info[5], info[6])
+                if doesTheMatrixIsRecognize(cell, info):
+                    print(cell[0], cell[1], i)
+                    self.appendWallCell(cell[0], cell[1], info[1], info[2], info[3])
                     i = len(info_ajustment)
                 else:
                     i += 1
@@ -231,17 +343,19 @@ class WallConstruction:
                 model = self.modelWallLine()
             elif wallCell["type"] == self.MODEL_CORNER:
                 model = self.modelWallCorner()
+            elif wallCell["type"] == self.MODEL_CORNER_INTERIOR:
+                model = self.modelWallCornerInterior()
 
             model = self.applyOnModel(model, wallCell["flip"], wallCell["rotation"])
 
             for xr in range(self.zone_size):
                 for zr in range(self.zone_size):
-                    while (not Constants.is_air(x_real + xr, y + 1, z_real + zr) or Constants.is_air(x_real + xr, y,
+                    """while (not Constants.is_air(x_real + xr, y + 1, z_real + zr) or Constants.is_air(x_real + xr, y,
                                                                                                      z_real + zr)) and 0 <= y <= 255:
                         if Constants.is_air(x_real + xr, y, z_real + zr):
                             y -= 1
                         if not Constants.is_air(x_real + xr, y + 1, z_real + zr):
-                            y += 1
+                            y += 1"""
 
                     for y_offset in range(len(model[zr][xr])):
                         if 0 <= y + y_offset <= 255:
@@ -278,11 +392,11 @@ class WallConstruction:
                 result[z].append([])
 
                 if self.village.status == "war":
-                    if self.zone_size // 2 == x:
+                    if 0 == x:
                         for a in range(self.village.tier + 2):
                             result[z][x].append("minecraft:oak_planks")
                 else:
-                    if self.zone_size // 2 == x:
+                    if 0 == x:
                         result[z][x].append("minecraft:oak_fence")
 
         return result
@@ -297,13 +411,30 @@ class WallConstruction:
                 result[z].append([])
 
                 if self.village.status == "war":
-                    if (x >= self.zone_size // 2 and self.zone_size // 2 == z) or \
-                        (z >= self.zone_size // 2 and self.zone_size // 2 == x):
+                    if x == 0 or z == 0:
                         for a in range(self.village.tier + 2):
                             result[z][x].append("minecraft:oak_planks")
                 else:
-                    if (x >= self.zone_size // 2 and -1 < self.zone_size / 2 - z < 1) or \
-                        (z >= self.zone_size // 2 and -1 < self.zone_size / 2 - x < 1):
+                    if x == 0 or z == 0:
+                        result[z][x].append("minecraft:oak_fence")
+
+        return result
+
+    def modelWallCornerInterior(self):
+        result: list = []
+
+        for z in range(self.zone_size):
+            result.append([])
+            for x in range(self.zone_size):
+
+                result[z].append([])
+
+                if self.village.status == "war":
+                    if x == 0 and z == 0:
+                        for a in range(self.village.tier + 2):
+                            result[z][x].append("minecraft:oak_planks")
+                else:
+                    if x == 0 and z == 0:
                         result[z][x].append("minecraft:oak_fence")
 
         return result
@@ -354,9 +485,6 @@ class WallConstruction:
                     pixels[x, y] = (255, 0, 0)
 
                 if self.bounding_type == self.BOUNDING_CONVEX_HULL:
-                    if not self.connected_area[counter] and self.matrix[counter]:
-                        pixels[x, y] = (255, 255, 0)
-
                     if self.matrix[counter]:
                         pixels[x, y] = (pixels[x, y][0] // 2, 0, 255)
 
