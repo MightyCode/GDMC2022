@@ -182,6 +182,8 @@ class WallConstruction:
                 if position not in to_visit:
                     to_visit.append(position)
 
+        # Fill self.matrix for is block in zone
+
         def getValue(x_pos, z_pos) -> bool:
             if 0 > x_pos or x_pos >= self.detection_grid_size[0] or 0 > z_pos or z_pos >= self.detection_grid_size[1]:
                 return False
@@ -306,7 +308,7 @@ class WallConstruction:
 
         return result
 
-    def appendWallCell(self, x: int, z: int, wallType: int, flip: int, rotation: int) -> dict:
+    def appendWallCell(self, x: int, z: int, wallType: int, flip: int, rotation: int) -> None:
         for wall in self.wall_list:
             if pmath.is2DPointEqual([x, z], wall["position"]):
                 wall["type"] = wallType
@@ -329,7 +331,16 @@ class WallConstruction:
                    self.area[2] + self.wall_simplification[1] * self.zone_size <= z <= self.area[2] + \
                    self.wall_simplification[3] * self.zone_size
 
-        return True
+        if self.bounding_type == self.BOUNDING_CONVEX_HULL:
+            pos_x: int = x - self.area[0] // self.zone_size
+            pos_z: int = z - self.area[2] // self.zone_size
+
+            if x < 0 or x >= self.detection_grid_size[0] or z < 0 or z >= self.detection_grid_size[1]:
+                return False
+
+            return self.matrix[pos_z * self.detection_grid_size[0] + pos_x]
+
+        return False
 
     def showImageRepresenting(self):
         img = Image.new("RGB", (self.detection_grid_size[0], self.detection_grid_size[1]))
@@ -343,6 +354,9 @@ class WallConstruction:
                     pixels[x, y] = (255, 0, 0)
 
                 if self.bounding_type == self.BOUNDING_CONVEX_HULL:
+                    if not self.connected_area[counter] and self.matrix[counter]:
+                        pixels[x, y] = (255, 255, 0)
+
                     if self.matrix[counter]:
                         pixels[x, y] = (pixels[x, y][0] // 2, 0, 255)
 
