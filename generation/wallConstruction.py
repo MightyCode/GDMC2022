@@ -190,7 +190,7 @@ class WallConstruction:
             diff = [point2[0] - point1[0] * 1.0, point2[1] - point1[1] * 1.0]
 
             distance = math.dist(point1, point2)
-            subdivision = math.floor(distance) * 300
+            subdivision = math.floor(distance) * 40
 
             for a in range(subdivision):
                 position = [round(point1[0] + (diff[0] / subdivision * a)),
@@ -238,18 +238,16 @@ class WallConstruction:
                     self.detection_grid_size[1]:
                 self.matrix[(z + extended_offset[1]) * self.detection_grid_size[0] + (x + extended_offset[0])] = True
 
-            for x_offset in range(-1, 2):
-                for z_offset in range(-1, 2):
-                    if getValue_extended(x + x_offset, z + z_offset):
-                        continue
+            for x_offset, z_offset in [[-1, 0], [1, 0], [0, -1], [0, 1]]:
+                if getValue_extended(x + x_offset, z + z_offset):
+                    continue
 
-                    if isInStack(remaining, [x + x_offset, z + z_offset]):
-                        continue
+                if isInStack(remaining, [x + x_offset, z + z_offset]):
+                    continue
 
-                    if isInStack(founded, [x + x_offset, z + z_offset]):
-                        continue
-
-                    remaining.append([x + x_offset, z + z_offset])
+                if isInStack(founded, [x + x_offset, z + z_offset]):
+                    continue
+                remaining.append([x + x_offset, z + z_offset])
 
         # Fill self.matrix for is block in zone
         def getValue(x_pos, z_pos) -> bool:
