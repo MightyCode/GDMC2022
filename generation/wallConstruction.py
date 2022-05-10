@@ -181,6 +181,9 @@ class WallConstruction:
         to_visit: list = []
 
         def add_border_cell(x_real, z_real):
+            if x_real < 0 or x_real >= self.detection_grid_size[0] or z_real < 0 or z_real >= self.detection_grid_size[1]:
+                return
+
             extended_matrix[(z_real - extended_offset[1]) * extended_size[0] + (x_real - extended_offset[0])] = True
 
             if [x_real, z_real] not in to_visit:
@@ -223,49 +226,17 @@ class WallConstruction:
 
             return False
 
-        # Complete diagonal border
-        for cell in to_visit:
-            # Diagonal left up to right down
-            # Or Diagonal right up to left down
-            if (getValue_extended(cell[0] - extended_offset[0] - 1, cell[1] - extended_offset[0] - 1)
-                and getValue_extended(cell[0] - extended_offset[0] + 1, cell[1] - extended_offset[1] + 1)) or \
-                (getValue_extended(cell[0] - extended_offset[0] + 1, cell[1] - extended_offset[0] - 1)
-                and getValue_extended(cell[0] - extended_offset[0] - 1, cell[1] - extended_offset[1] + 1)):
-                # If left is interior of border, should add right as border
-                if not getValue_extended(cell[0] - extended_offset[0] - 1, cell[1] - extended_offset[0]) \
-                        and getValue(cell[0] - 1, cell[1]):
-                    add_border_cell(cell[0] + 1, cell[1])
-                    print("Fix border")
-                # If right is interior of border, should add left as border
-                elif not getValue_extended(cell[0] - extended_offset[0] + 1, cell[1] - extended_offset[0]) \
-                        and getValue(cell[0] + 1, cell[1]):
-                    add_border_cell(cell[0] - 1, cell[1])
-                    print("Fix border")
-                # If up is interior of border, should add down as border
-                if not getValue_extended(cell[0] - extended_offset[0], cell[1] - extended_offset[0] - 1) \
-                        and getValue(cell[0], cell[1] - 1):
-                    add_border_cell(cell[0], cell[1] + 1)
-                    print("Fix border")
-                # If down is interior of border, should up left as border
-                elif not getValue_extended(cell[0] - extended_offset[0], cell[1] - extended_offset[0] + 1) \
-                        and getValue(cell[0], cell[1] + 1):
-                    add_border_cell(cell[0], cell[1] - 1)
-                    print("Fix border")
-
         remaining: list = []
         founded: list = []
 
+        # Detect where start recursion to compute inner wall zon
         for x in range(1, extended_size[0] - 1):
             if getValue_extended(x, 0):
                 if not getValue_extended(x, 1):
                     remaining.append([x, 1])
                     break
 
-        for y in range(extended_size[1]):
-            print("")
-            for x in range(extended_size[0]):
-                print("1" if extended_matrix[y * extended_size[0] + x] else "0", end="")
-
+        # Make the recursion
         while len(remaining) != 0:
             x, z = remaining[0]
             founded.append([x, z])
@@ -286,7 +257,34 @@ class WallConstruction:
                     continue
                 remaining.append([x + x_offset, z + z_offset])
 
-        # Fill self.matrix for is block in zone
+        # Complete diagonal border
+        for cell in to_visit:
+            # Diagonal left up to right down
+            # Or Diagonal right up to left down
+            if getValue_extended(cell[0] - extended_offset[0] - 1, cell[1] - extended_offset[1] - 1) \
+                or getValue_extended(cell[0] - extended_offset[0] + 1, cell[1] - extended_offset[1] + 1) \
+                or getValue_extended(cell[0] - extended_offset[0] + 1, cell[1] - extended_offset[1] - 1) \
+                or getValue_extended(cell[0] - extended_offset[0] - 1, cell[1] - extended_offset[1] + 1):
+                # If left is interior of border, should add right as border
+                if getValue(cell[0] - 1, cell[1]):
+                    add_border_cell(cell[0] + 1, cell[1])
+                # If right is interior of border, should add left as border
+                elif getValue(cell[0] + 1, cell[1]):
+                    add_border_cell(cell[0] - 1, cell[1])
+                # If up is interior of border, should add down as border
+                if getValue(cell[0], cell[1] - 1):
+                    add_border_cell(cell[0], cell[1] + 1)
+                # If down is interior of border, should up left as border
+                elif getValue(cell[0], cell[1] + 1):
+                    add_border_cell(cell[0], cell[1] - 1)
+
+        """    
+        # Display status of border
+        for y in range(extended_size[1]):
+            print("")
+            for x in range(extended_size[0]):
+                print("1" if extended_matrix[y * extended_size[0] + x] else "0", end="")
+        """
 
         info_ajustment: list = [
             [[-1, 1, -1,
