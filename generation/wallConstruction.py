@@ -184,6 +184,10 @@ class WallConstruction:
             if x_real < 0 or x_real >= self.detection_grid_size[0] or z_real < 0 or z_real >= self.detection_grid_size[1]:
                 return
 
+            if z_real - extended_offset[1] < 0 or z_real - extended_offset[1] >= extended_size[1] or \
+                x_real - extended_offset[0] < 0 or x_real - extended_offset[0] >= extended_size[0]:
+                return
+
             extended_matrix[(z_real - extended_offset[1]) * extended_size[0] + (x_real - extended_offset[0])] = True
 
             if [x_real, z_real] not in to_visit:
