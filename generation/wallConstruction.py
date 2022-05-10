@@ -180,9 +180,15 @@ class WallConstruction:
 
         to_visit: list = []
 
+        def add_border_cell(x_real, z_real):
+            extended_matrix[(z_real - extended_offset[1]) * extended_size[0] + (x_real - extended_offset[0])] = True
+
+            if [x_real, z_real] not in to_visit:
+                to_visit.append([x_real, z_real])
+
         self.matrix: list = [False] * (self.detection_grid_size[0] * self.detection_grid_size[1])
 
-        # Mark
+        # Mark border on a extended matrix
         for index in range(len(self.hull)):
             point1 = self.hull[index]
             point2 = self.hull[(index + 1) % len(self.hull)]
@@ -196,11 +202,7 @@ class WallConstruction:
                 position = [round(point1[0] + (diff[0] / subdivision * a)),
                             round(point1[1] + (diff[1] / subdivision * a))]
 
-                extended_matrix[
-                    (position[1] - extended_offset[1]) * extended_size[0] + (position[0] - extended_offset[0])] = True
-
-                if position not in to_visit:
-                    to_visit.append(position)
+                add_border_cell(position[0], position[1])
 
         def getValue_extended(x_pos, z_pos) -> bool:
             if 0 > x_pos or x_pos >= extended_size[0] or 0 > z_pos or z_pos >= extended_size[1]:
@@ -208,12 +210,47 @@ class WallConstruction:
 
             return extended_matrix[z_pos * extended_size[0] + x_pos]
 
+        def getValue(x_pos, z_pos) -> bool:
+            if 0 > x_pos or x_pos >= self.detection_grid_size[0] or 0 > z_pos or z_pos >= self.detection_grid_size[1]:
+                return False
+
+            return self.matrix[z_pos * self.detection_grid_size[0] + x_pos]
+
         def isInStack(list_blok, ref):
             for block in list_blok:
                 if pmath.is2DPointEqual(block, ref):
                     return True
 
             return False
+
+        # Complete diagonal border
+        for cell in to_visit:
+            # Diagonal left up to right down
+            # Or Diagonal right up to left down
+            if (getValue_extended(cell[0] - extended_offset[0] - 1, cell[1] - extended_offset[0] - 1)
+                and getValue_extended(cell[0] - extended_offset[0] + 1, cell[1] - extended_offset[1] + 1)) or \
+                (getValue_extended(cell[0] - extended_offset[0] + 1, cell[1] - extended_offset[0] - 1)
+                and getValue_extended(cell[0] - extended_offset[0] - 1, cell[1] - extended_offset[1] + 1)):
+                # If left is interior of border, should add right as border
+                if not getValue_extended(cell[0] - extended_offset[0] - 1, cell[1] - extended_offset[0]) \
+                        and getValue(cell[0] - 1, cell[1]):
+                    add_border_cell(cell[0] + 1, cell[1])
+                    print("Fix border")
+                # If right is interior of border, should add left as border
+                elif not getValue_extended(cell[0] - extended_offset[0] + 1, cell[1] - extended_offset[0]) \
+                        and getValue(cell[0] + 1, cell[1]):
+                    add_border_cell(cell[0] - 1, cell[1])
+                    print("Fix border")
+                # If up is interior of border, should add down as border
+                if not getValue_extended(cell[0] - extended_offset[0], cell[1] - extended_offset[0] - 1) \
+                        and getValue(cell[0], cell[1] - 1):
+                    add_border_cell(cell[0], cell[1] + 1)
+                    print("Fix border")
+                # If down is interior of border, should up left as border
+                elif not getValue_extended(cell[0] - extended_offset[0], cell[1] - extended_offset[0] + 1) \
+                        and getValue(cell[0], cell[1] + 1):
+                    add_border_cell(cell[0], cell[1] - 1)
+                    print("Fix border")
 
         remaining: list = []
         founded: list = []
@@ -250,11 +287,6 @@ class WallConstruction:
                 remaining.append([x + x_offset, z + z_offset])
 
         # Fill self.matrix for is block in zone
-        def getValue(x_pos, z_pos) -> bool:
-            if 0 > x_pos or x_pos >= self.detection_grid_size[0] or 0 > z_pos or z_pos >= self.detection_grid_size[1]:
-                return False
-
-            return self.matrix[z_pos * self.detection_grid_size[0] + x_pos]
 
         info_ajustment: list = [
             [[-1, 1, -1,
