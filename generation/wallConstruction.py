@@ -181,8 +181,7 @@ class WallConstruction:
         to_visit: list = []
 
         def add_border_cell(x_real, z_real):
-            if x_real < 0 or x_real >= self.detection_grid_size[0] or z_real < 0 or z_real >= self.detection_grid_size[
-                1]:
+            if x_real < 0 or x_real >= self.detection_grid_size[0] or z_real < 0 or z_real >= self.detection_grid_size[1]:
                 return
 
             if z_real - extended_offset[1] < 0 or z_real - extended_offset[1] >= extended_size[1] or \

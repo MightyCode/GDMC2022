@@ -248,7 +248,7 @@ def initRoad(listHouse: list, settlement_data: SettlementData) -> list:
 
         roadData: RoadData = RoadData(lore_structures[indexFrom], lore_structures[indexTo])
         roadData.setPath(astar(start, goal, square_list), entryStructFrom, entryStructTo)
-        result.append(result)
+        result.append(roadData)
 
     return result
 
@@ -263,10 +263,12 @@ def generateRoad(roadDataArray: list, world_modification: WorldModification, lis
     old_transformation.setLoreStructure(lore_structure)
 
     for roadData in roadDataArray:
-        yTemp = roadData.yEntry1
+        yTemp = roadData.yEntry1[1]
+        print(roadData.path)
         for block in roadData.path:
             y = yTemp
             material = 'minecraft:grass_path'
+            print(block)
             while not (Constants.is_air(block[0], y + 1, block[1])) or Constants.is_air(block[0], y, block[1]):
                 if Constants.is_air(block[0], y, block[1]):
                     y -= 1
@@ -291,7 +293,7 @@ def generateRoad(roadDataArray: list, world_modification: WorldModification, lis
 
     temp = 1
     for roadData in roadDataArray:
-        yTemp = roadData.yEntry1
+        yTemp = roadData.yEntry1[1]
         for block in roadData.path:
             y = yTemp
             while not (Constants.is_air(block[0], y + 1, block[1])) or Constants.is_air(block[0], y, block[1]):
