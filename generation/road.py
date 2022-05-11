@@ -291,7 +291,7 @@ def generateRoad(roadDataArray: list, world_modification: WorldModification, lis
 
     temp = 1
     for roadData in roadDataArray:
-        yTemp = 64
+        yTemp = roadData.yEntry1
         for block in roadData.path:
             y = yTemp
             while not (Constants.is_air(block[0], y + 1, block[1])) or Constants.is_air(block[0], y, block[1]):
