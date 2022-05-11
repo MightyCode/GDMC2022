@@ -516,6 +516,7 @@ class BaseStructure:
         if block_name == "minecraft:air" \
                 or block_name == "minecraft:cave_air" \
                 or block_name == "minecraft:void_air" \
+                or block_name == "minecraft:coarse_dirt" \
                 or "coal" in block_name \
                 or "cobweb" in block_name:
             return False

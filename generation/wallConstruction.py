@@ -181,11 +181,12 @@ class WallConstruction:
         to_visit: list = []
 
         def add_border_cell(x_real, z_real):
-            if x_real < 0 or x_real >= self.detection_grid_size[0] or z_real < 0 or z_real >= self.detection_grid_size[1]:
+            if x_real < 0 or x_real >= self.detection_grid_size[0] or z_real < 0 or z_real >= self.detection_grid_size[
+                1]:
                 return
 
             if z_real - extended_offset[1] < 0 or z_real - extended_offset[1] >= extended_size[1] or \
-                x_real - extended_offset[0] < 0 or x_real - extended_offset[0] >= extended_size[0]:
+                    x_real - extended_offset[0] < 0 or x_real - extended_offset[0] >= extended_size[0]:
                 return
 
             extended_matrix[(z_real - extended_offset[1]) * extended_size[0] + (x_real - extended_offset[0])] = True
@@ -266,9 +267,9 @@ class WallConstruction:
             # Diagonal left up to right down
             # Or Diagonal right up to left down
             if getValue_extended(cell[0] - extended_offset[0] - 1, cell[1] - extended_offset[1] - 1) \
-                or getValue_extended(cell[0] - extended_offset[0] + 1, cell[1] - extended_offset[1] + 1) \
-                or getValue_extended(cell[0] - extended_offset[0] + 1, cell[1] - extended_offset[1] - 1) \
-                or getValue_extended(cell[0] - extended_offset[0] - 1, cell[1] - extended_offset[1] + 1):
+                    or getValue_extended(cell[0] - extended_offset[0] + 1, cell[1] - extended_offset[1] + 1) \
+                    or getValue_extended(cell[0] - extended_offset[0] + 1, cell[1] - extended_offset[1] - 1) \
+                    or getValue_extended(cell[0] - extended_offset[0] - 1, cell[1] - extended_offset[1] + 1):
                 # If left is interior of border, should add right as border
                 if getValue(cell[0] - 1, cell[1]):
                     add_border_cell(cell[0] + 1, cell[1])
@@ -282,13 +283,11 @@ class WallConstruction:
                 elif getValue(cell[0], cell[1] + 1):
                     add_border_cell(cell[0], cell[1] - 1)
 
-        """    
         # Display status of border
         for y in range(extended_size[1]):
             print("")
             for x in range(extended_size[0]):
                 print("1" if extended_matrix[y * extended_size[0] + x] else "0", end="")
-        """
 
         info_ajustment: list = [
             [[-1, 1, -1,
@@ -410,7 +409,6 @@ class WallConstruction:
                 newModel.append([])
                 for x in range(self.zone_size):
                     newModel[z].append(model[z][self.zone_size - x - 1])
-
         else:
             newModel = model
 

@@ -1,4 +1,6 @@
 from generation.data.settlementData import SettlementData
+from generation.data.loreStructure import LoreStructure
+from generation.structures.blockTransformation.oldStructureTransformation import OldStructureTransformation
 from utils.worldModification import WorldModification
 
 import utils.projectMath as projectMath
@@ -247,12 +249,16 @@ def initRoad(listHouse: list, settlement_data: SettlementData) -> list:
 
     return result
 
+
 """
 Generating the path among 2 houses
 """
-
-
 def generateRoad(path: list, world_modification: WorldModification, list_house: list, settlement_data: SettlementData, terrain_modification):
+    lore_structure: LoreStructure = LoreStructure()
+    lore_structure.age = 1 if settlement_data.village_model.isDestroyed else 0
+    old_transformation: OldStructureTransformation = OldStructureTransformation()
+    old_transformation.setLoreStructure(lore_structure)
+
     yTemp = 64
     for block in path:
         y = yTemp
@@ -275,7 +281,8 @@ def generateRoad(path: list, world_modification: WorldModification, list_house: 
         terrain_modification.removeRecursivelyAt(world_modification, block[0], y + 1, block[1])
         terrain_modification.removeRecursivelyAt(world_modification, block[0], y + 2, block[1])
 
-        world_modification.setBlock(block[0], y - 1, block[1], material)
+        world_modification.setBlock(block[0], y - 1, block[1],
+                                    old_transformation.replaceBlock(material))
         yTemp = y
 
     temp = 1

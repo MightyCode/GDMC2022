@@ -318,7 +318,7 @@ if not args.remove:
 
         print("\nBuild decoration")
         if not current_village.isDestroyed:
-            floodFill.placeDecorations(settlement_data)
+            floodFill.placeDecorations(settlement_data, wallConstruction)
         print("Position of lectern for village", current_zone_z * settlement_zones_number[0], ":",
               [settlement_data.center[0],
                Constants.getHeight(
