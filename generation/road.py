@@ -2,6 +2,7 @@ from generation.data.settlementData import SettlementData
 from generation.data.loreStructure import LoreStructure
 from generation.structures.blockTransformation.oldStructureTransformation import OldStructureTransformation
 from utils.worldModification import WorldModification
+from generation.data.roadData import RoadData
 
 import utils.projectMath as projectMath
 import lib.interfaceUtils as iu
@@ -201,8 +202,8 @@ def initRoad(listHouse: list, settlement_data: SettlementData) -> list:
     # print(square_list)
     for indexFrom in range(0, len(lore_structures)):
         # To know if the house doesn't have parent...
-        start: list = [0, 0]
-        goal: list = [0, 0]
+        start: list
+        goal: list
 
         indexTo: int = listHouse[indexFrom][5]
         if indexTo == -1:
@@ -245,7 +246,9 @@ def initRoad(listHouse: list, settlement_data: SettlementData) -> list:
                 y += 1
         # print("stuck1")
 
-        result.extend(astar(start, goal, square_list))
+        roadData: RoadData = RoadData(lore_structures[indexFrom], lore_structures[indexTo])
+        roadData.setPath(astar(start, goal, square_list), entryStructFrom, entryStructTo)
+        result.append(result)
 
     return result
 
@@ -253,65 +256,67 @@ def initRoad(listHouse: list, settlement_data: SettlementData) -> list:
 """
 Generating the path among 2 houses
 """
-def generateRoad(path: list, world_modification: WorldModification, list_house: list, settlement_data: SettlementData, terrain_modification):
+def generateRoad(roadDataArray: list, world_modification: WorldModification, list_house: list, settlement_data: SettlementData, terrain_modification):
     lore_structure: LoreStructure = LoreStructure()
     lore_structure.age = 1 if settlement_data.village_model.isDestroyed else 0
     old_transformation: OldStructureTransformation = OldStructureTransformation()
     old_transformation.setLoreStructure(lore_structure)
 
-    yTemp = 64
-    for block in path:
-        y = yTemp
-        material = 'minecraft:grass_path'
-        while not (Constants.is_air(block[0], y + 1, block[1])) or Constants.is_air(block[0], y, block[1]):
-            if Constants.is_air(block[0], y, block[1]):
-                y -= 1
-            if not (Constants.is_air(block[0], y + 1, block[1])):
-                y += 1
+    for roadData in roadDataArray:
+        yTemp = roadData.yEntry1
+        for block in roadData.path:
+            y = yTemp
+            material = 'minecraft:grass_path'
+            while not (Constants.is_air(block[0], y + 1, block[1])) or Constants.is_air(block[0], y, block[1]):
+                if Constants.is_air(block[0], y, block[1]):
+                    y -= 1
+                if not (Constants.is_air(block[0], y + 1, block[1])):
+                    y += 1
 
-        while iu.getBlock(block[0], y, block[1]) == 'minecraft:water':
-            y = y + 1
-            material = "minecraft:" + settlement_data.getMaterialReplacement("woodType") + "_planks"
-        while iu.getBlock(block[0], y, block[1]) == 'minecraft:lava':
-            y = y + 1
-            material = "minecraft:nether_bricks"
+            while iu.getBlock(block[0], y, block[1]) == 'minecraft:water':
+                y = y + 1
+                material = "minecraft:" + settlement_data.getMaterialReplacement("woodType") + "_planks"
+            while iu.getBlock(block[0], y, block[1]) == 'minecraft:lava':
+                y = y + 1
+                material = "minecraft:nether_bricks"
 
-        # Here, we need to check if there is a tree above the path, and if yes, we want to remove it
-        terrain_modification.removeRecursivelyAt(world_modification, block[0], y, block[1])
-        terrain_modification.removeRecursivelyAt(world_modification, block[0], y + 1, block[1])
-        terrain_modification.removeRecursivelyAt(world_modification, block[0], y + 2, block[1])
+            # Here, we need to check if there is a tree above the path, and if yes, we want to remove it
+            terrain_modification.removeRecursivelyAt(world_modification, block[0], y, block[1])
+            terrain_modification.removeRecursivelyAt(world_modification, block[0], y + 1, block[1])
+            terrain_modification.removeRecursivelyAt(world_modification, block[0], y + 2, block[1])
 
-        world_modification.setBlock(block[0], y - 1, block[1],
-                                    old_transformation.replaceBlock(material))
-        yTemp = y
+            world_modification.setBlock(block[0], y - 1, block[1],
+                                        old_transformation.replaceBlock(material))
+            yTemp = y
 
     temp = 1
-    yTemp = 64
-    for block in path:
-        y = yTemp
-        while not (Constants.is_air(block[0], y + 1, block[1])) or Constants.is_air(block[0], y, block[1]):
-            if Constants.is_air(block[0], y, block[1]):
-                y -= 1
+    for roadData in roadDataArray:
+        yTemp = 64
+        for block in roadData.path:
+            y = yTemp
+            while not (Constants.is_air(block[0], y + 1, block[1])) or Constants.is_air(block[0], y, block[1]):
+                if Constants.is_air(block[0], y, block[1]):
+                    y -= 1
 
-            if not (Constants.is_air(block[0], y + 1, block[1])):
-                y += 1
+                if not (Constants.is_air(block[0], y + 1, block[1])):
+                    y += 1
 
-        while iu.getBlock(block[0], y, block[1]) == 'minecraft:water' or iu.getBlock(block[0], y,
-                                                                                     block[1]) == 'minecraft:lava':
-            y = y + 1
+            while iu.getBlock(block[0], y, block[1]) == 'minecraft:water' or iu.getBlock(block[0], y,
+                                                                                         block[1]) == 'minecraft:lava':
+                y = y + 1
 
-        if temp % 12 == 0 and temp < len(path) - 3:
-            diffX = [-1, 0, 1, 0]
-            diffZ = [0, -1, 0, 1]
+            if temp % 12 == 0 and temp < len(roadData.path) - 3:
+                diffX = [-1, 0, 1, 0]
+                diffZ = [0, -1, 0, 1]
 
-            for i in [0, 1, 2, 3]:
-                position = [block[0] + diffX[i], block[1] + diffZ[i]]
-                if position not in path and not projectMath.isInHouse(list_house, position) and not isInRoad(position):
-                    POSITION_OF_LANTERN.append([block[0], block[1]])
-                    world_modification.setBlock(position[0], y - 1, position[1], 'minecraft:cobblestone')
-                    world_modification.setBlock(position[0], y, position[1], 'minecraft:cobblestone_wall')
-                    world_modification.setBlock(position[0], y + 1, position[1], 'minecraft:torch')
-                    break
+                for i in [0, 1, 2, 3]:
+                    position = [block[0] + diffX[i], block[1] + diffZ[i]]
+                    if position not in roadData.path and not projectMath.isInHouse(list_house, position) and not isInRoad(position):
+                        POSITION_OF_LANTERN.append([position[0], position[1]])
+                        world_modification.setBlock(position[0], y - 1, position[1], 'minecraft:cobblestone')
+                        world_modification.setBlock(position[0], y, position[1], 'minecraft:cobblestone_wall')
+                        world_modification.setBlock(position[0], y + 1, position[1], 'minecraft:torch')
+                        break
 
-        temp += 1
-        yTemp = y
+            yTemp = y
+            temp += 1
