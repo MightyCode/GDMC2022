@@ -23,7 +23,7 @@ def loadAllResources(resources: Resources) -> None:
     resources.loadStructures("houses/advanced/advancedhouse1.nbt", "houses/advanced/advancedhouse1.json",
                              "advancedhouse1")
 
-    ## Load work structures : functionnals
+    ## Load work structures : functionals
 
     resources.addGeneratedStructures(GeneratedQuarry(), "functionals/quarry/basicgeneratedquarry.json",
                                      "basicgeneratedquarry")
@@ -160,5 +160,13 @@ def loadAllResources(resources: Resources) -> None:
     resources.loadLootTable("representatives/exchanger.json", "exchanger")
 
     resources.loadLootTable("decorations/murderercache.json", "murderercache")
+
+    print("Load partial nbt file")
+    wall_types: list = ["line", "stairs", "door", "externcorner", "innercorner"]
+
+    for wall_type in wall_types:
+        resources.loadNbtFiles("wall/basic/basicwall" + wall_type + ".nbt", "basicwall" + wall_type)
+        resources.loadNbtFiles("wall/medium/mediumwall" + wall_type + ".nbt", "mediumwall" + wall_type)
+        resources.loadNbtFiles("wall/advanced/advancedwall" + wall_type + ".nbt", "advancedwall" + wall_type)
 
     print("End load ressources")
