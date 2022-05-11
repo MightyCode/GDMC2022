@@ -17,6 +17,7 @@ from generation.terrainModification import TerrainModification
 from utils.nameGenerator import NameGenerator
 from utils.worldModification import WorldModification
 from utils.constants import Constants
+from generation.road import Road
 
 import generation.generator as generator
 import generation.resourcesLoader as resLoader
@@ -25,7 +26,6 @@ import utils.book as book
 import utils.projectMath as projectMath
 import utils.argumentParser as argParser
 import generation.loreMaker as loreMaker
-import generation.road as road
 import lib.interfaceUtils as interfaceUtil
 import utils.checkOrCreateConfig as chock
 
@@ -278,6 +278,7 @@ if not args.remove:
 
         """ Fourth main step : creates the roads and wall of the village """
         print("\nInitialized road")
+        road = Road()
         roadDataArray: list = road.initRoad(floodFill.listHouse, settlement_data)
 
         for lore_structure in current_village.lore_structures:
@@ -319,7 +320,7 @@ if not args.remove:
 
         print("\nBuild decoration")
         if not current_village.isDestroyed:
-            floodFill.placeDecorations(settlement_data, wallConstruction)
+            floodFill.placeDecorations(settlement_data, wallConstruction, road)
         print("Position of lectern for village", current_zone_z * settlement_zones_number[0], ":",
               [settlement_data.center[0],
                Constants.getHeight(
