@@ -137,7 +137,16 @@ def loadAllResources(resources: Resources) -> None:
     resources.loadStructures("decorations/statue/mediumstatue.nbt",
                              "decorations/statue/mediumstatue.json", "mediumstatue")
 
+    wall_types: list = ["line", "stairs", "door", "externcorner", "innercorner"]
+
+    for wall_type in wall_types:
+        resources.loadStructures("wall/basic/basicwall" + wall_type + ".nbt", "wall/wall.json", "basicwall" + wall_type)
+        resources.loadStructures("wall/advanced/advancedwall" + wall_type + ".nbt", "wall/wall.json", "advancedwall" + wall_type)
+        resources.loadStructures("wall/medium/mediumwall" + wall_type + ".nbt", "wall/wall.json", "mediumwall" + wall_type)
+
+
     # Load lootTable
+
     resources.loadLootTable("emptyloottable.json", "empty")
 
     resources.loadLootTable("houses/kitchenhouse.json", "kitchenhouse")
@@ -162,11 +171,4 @@ def loadAllResources(resources: Resources) -> None:
     resources.loadLootTable("decorations/murderercache.json", "murderercache")
 
     print("Load partial nbt file")
-    wall_types: list = ["line", "stairs", "door", "externcorner", "innercorner"]
-
-    for wall_type in wall_types:
-        resources.loadNbtFiles("wall/basic/basicwall" + wall_type + ".nbt", "basicwall" + wall_type)
-        resources.loadNbtFiles("wall/medium/mediumwall" + wall_type + ".nbt", "mediumwall" + wall_type)
-        resources.loadNbtFiles("wall/advanced/advancedwall" + wall_type + ".nbt", "advancedwall" + wall_type)
-
     print("End load ressources")

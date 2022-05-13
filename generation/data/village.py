@@ -54,6 +54,7 @@ class Village:
 
     def defineTierAndAge(self):
         self.tier = random.randint(0, 2)
+        self.tier = 1
         self.age = 0
 
         if self.tier == 1:

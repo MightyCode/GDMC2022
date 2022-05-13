@@ -150,7 +150,7 @@ if not args.remove:
 
         structureManager = StructureManager(settlement_data, resources, name_generator)
 
-        wallConstruction: WallConstruction = WallConstruction(current_village, random.choice([7, 9, 11]))
+        wallConstruction: WallConstruction = WallConstruction(current_village, 7)
         wallConstruction.setConstructionZone(area)
 
         terrain_modification: TerrainModification = TerrainModification(area, wallConstruction)
@@ -295,7 +295,7 @@ if not args.remove:
         wallConstruction.computeWall(WallConstruction.BOUNDING_CONVEX_HULL)
         #wallConstruction.showImageRepresenting()
         print("\nConstruct wall")
-        wallConstruction.placeWall(world_modification)
+        wallConstruction.placeWall(settlement_data, resources, world_modification, block_transformation)
 
         """ Five main step : places every structure and after that every decorations """
         print("\nConstruct road")
@@ -320,7 +320,7 @@ if not args.remove:
 
         print("\nBuild decoration")
         if not current_village.isDestroyed:
-            floodFill.placeDecorations(settlement_data, wallConstruction, road)
+            floodFill.placeDecorations(settlement_data, road, wallConstruction)
         print("Position of lectern for village", current_zone_z * settlement_zones_number[0], ":",
               [settlement_data.center[0],
                Constants.getHeight(

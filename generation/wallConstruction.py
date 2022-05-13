@@ -1,3 +1,9 @@
+from generation.data.loreStructure import LoreStructure
+from generation.data.settlementData import SettlementData
+from generation.resources import Resources
+from utils.constants import Constants
+import generation.generator as generator
+
 import copy
 import math
 
@@ -5,6 +11,7 @@ from PIL import Image
 
 import matplotlib.pyplot as plt
 import utils.projectMath as pmath
+from utils.worldModification import WorldModification
 
 
 class WallConstruction:
@@ -19,8 +26,7 @@ class WallConstruction:
 
     WALL_PARTS = ["line", "externcorner", "innercorner", "door", "stairs"]
 
-    def __init__(self, resources, village, zone_size=15):
-        self.resources = resources
+    def __init__(self, village, zone_size=15):
         self.village = village
         self.zone_size: int = zone_size
         self.detection_grid_size: list = [0, 0]
@@ -186,7 +192,8 @@ class WallConstruction:
         to_visit: list = []
 
         def add_border_cell(x_real, z_real):
-            if x_real < 0 or x_real >= self.detection_grid_size[0] or z_real < 0 or z_real >= self.detection_grid_size[1]:
+            if x_real < 0 or x_real >= self.detection_grid_size[0] or z_real < 0 or z_real >= self.detection_grid_size[
+                1]:
                 return
 
             if z_real - extended_offset[1] < 0 or z_real - extended_offset[1] >= extended_size[1] or \
@@ -296,40 +303,40 @@ class WallConstruction:
         info_ajustment: list = [
             [[-1, 1, -1,
               -1, -1, 2,
-              -1, 1, -1], self.MODEL_LINE, 0, 0],  # Left 0
+              -1, 1, -1], self.MODEL_LINE, 2, 3],  # Left 0
             [[-1, 1, -1,
               2, -1, -1,
-              -1, 1, -1], self.MODEL_LINE, 1, 0],  # Right 1
+              -1, 1, -1], self.MODEL_LINE, 2, 1],  # Right 1
             [[-1, -1, -1,
               1, -1, 1,
-              -1, 2, -1], self.MODEL_LINE, 1, 1],  # Up 2
+              -1, 2, -1], self.MODEL_LINE, 2, 0],  # Up 2
             [[-1, 2, -1,
               1, -1, 1,
-              -1, -1, -1], self.MODEL_LINE, 0, 1],  # Down 3
+              -1, -1, -1], self.MODEL_LINE, 2, 2],  # Down 3
             [[-1, -1, -1,
               -1, -1, 1,
-              -1, 1, 2], self.MODEL_CORNER, 0, 0],  # Left Up corner 4
+              -1, 1, 2], self.MODEL_CORNER, 3, 0],  # Left Up corner 4
             [[-1, 1, -1,
               1, -1, 2,
-              -1, 2, -1], self.MODEL_CORNER_INTERIOR, 0, 0],  # Left Up interior corner 5
+              -1, 2, -1], self.MODEL_CORNER_INTERIOR, 3, 0],  # Left Up interior corner 5
             [[-1, -1, -1,
               1, -1, -1,
-              2, 1, -1], self.MODEL_CORNER, 0, 3],  # Right Up corner 6
+              2, 1, -1], self.MODEL_CORNER, 3, 1],  # Right Up corner 6
             [[-1, 1, -1,
               2, -1, 1,
-              -1, 2, -1], self.MODEL_CORNER_INTERIOR, 0, 3],  # Right Up interior corner 7
+              -1, 2, -1], self.MODEL_CORNER_INTERIOR, 3, 1],  # Right Up interior corner 7
             [[2, 1, -1,
               1, -1, -1,
-              -1, -1, -1], self.MODEL_CORNER, 0, 2],  # Right Down corner 8
+              -1, -1, -1], self.MODEL_CORNER, 3, 2],  # Right Down corner 8
             [[-1, 2, -1,
               2, -1, 1,
-              -1, 1, -1], self.MODEL_CORNER_INTERIOR, 0, 2],  # Right Down interior corner 9
+              -1, 1, -1], self.MODEL_CORNER_INTERIOR, 3, 2],  # Right Down interior corner 9
             [[-1, 1, 2,
               -1, -1, 1,
-              -1, -1, -1], self.MODEL_CORNER, 0, 1],  # Left Down corner 10
+              -1, -1, -1], self.MODEL_CORNER, 3, 3],  # Left Down corner 10
             [[-1, 2, -1,
               1, -1, 2,
-              -1, 1, -1], self.MODEL_CORNER_INTERIOR, 0, 1]  # Left Down interior corner 11
+              -1, 1, -1], self.MODEL_CORNER_INTERIOR, 3, 3]  # Left Down interior corner 11
         ]
 
         def doesTheMatrixIsRecognize(cell, info):
@@ -364,115 +371,43 @@ class WallConstruction:
                 else:
                     i += 1
 
-    def placeWall(self, world_modification):
+    def placeWall(self, settlement_data: SettlementData, resources: Resources,
+                      world_modification: WorldModification, block_transformations: list):
         x: int
         z: int
-        model: list = []
-
         y = 64
 
         for wallCell in self.wall_list:
             x, z = wallCell["position"]
-            x_real: int = x * self.zone_size + self.area[0]
-            z_real: int = z * self.zone_size + self.area[2]
+            # Centered on zone
+            x_real: int = x * self.zone_size + self.area[0] + self.zone_size // 2 + 1
+            z_real: int = z * self.zone_size + self.area[2] + self.zone_size // 2 + 1
 
             if not (self.area[0] <= x_real and x_real + self.zone_size <= self.area[3]
                     and self.area[2] <= z_real and z_real + self.zone_size <= self.area[5]):
                 continue
 
-            model = self.getModelWall(self.wallCell["type"])
+            tier: str = "basic" if self.village.tier == 0 else "medium" if self.village.tier == 1 else "advanced"
 
-            model = self.applyOnModel(model, wallCell["flip"], wallCell["rotation"])
+            lore_structure: LoreStructure = LoreStructure()
+            lore_structure.name = tier + "wall" + self.WALL_PARTS[wallCell["type"]]
+            lore_structure.position = [x_real, y - 1, z_real]
+            lore_structure.flip = wallCell["flip"]
+            lore_structure.rotation = wallCell["rotation"]
 
-            for xr in range(self.zone_size):
-                for zr in range(self.zone_size):
-                    """while (not Constants.is_air(x_real + xr, y + 1, z_real + zr) or Constants.is_air(x_real + xr, y,
-                                                                                                     z_real + zr)) and 0 <= y <= 255:
-                        if Constants.is_air(x_real + xr, y, z_real + zr):
-                            y -= 1
-                        if not Constants.is_air(x_real + xr, y + 1, z_real + zr):
-                            y += 1"""
+            lore_structure.preBuildingInfo = resources.structures[lore_structure.name].getNextBuildingInformation(
+                lore_structure.flip, lore_structure.rotation
+            )
 
-                    for y_offset in range(len(model[zr][xr])):
-                        if 0 <= y + y_offset <= 255:
-                            world_modification.setBlock(x_real + xr, y + y_offset, z_real + zr, model[zr][xr][y_offset])
+            while (not Constants.is_air(x_real, y + 1, z_real) or Constants.is_air(x_real, y,
+                                                                                   z_real)) and 0 <= y <= 255:
+                if Constants.is_air(x_real, y, z_real):
+                    y -= 1
+                if not Constants.is_air(x_real, y + 1, z_real):
+                    y += 1
 
-    def applyOnModel(self, model, flip, rotation):
-        if flip == 0 and rotation == 0:
-            return model
-
-        newModel = []
-
-        if flip == 1:
-            for z in range(self.zone_size):
-                newModel.append([])
-                for x in range(self.zone_size):
-                    newModel[z].append(model[z][self.zone_size - x - 1])
-        else:
-            newModel = model
-
-        while rotation > 0:
-            newModel = pmath.rotateSquaredMatrix(newModel)
-            rotation -= 1
-
-        return newModel
-
-    def getModelWall(self, wall_type: int):
-        result: list = []
-
-        for z in range(self.zone_size):
-            result.append([])
-            for x in range(self.zone_size):
-
-                result[z].append([])
-
-                if self.village.status == "war":
-                    if 0 == x:
-                        for a in range(self.village.tier + 2):
-                            result[z][x].append("minecraft:oak_planks")
-                else:
-                    if 0 == x:
-                        result[z][x].append("minecraft:oak_fence")
-
-        return result
-
-    def modelWallCorner(self):
-        result: list = []
-
-        for z in range(self.zone_size):
-            result.append([])
-            for x in range(self.zone_size):
-
-                result[z].append([])
-
-                if self.village.status == "war":
-                    if x == 0 or z == 0:
-                        for a in range(self.village.tier + 2):
-                            result[z][x].append("minecraft:oak_planks")
-                else:
-                    if x == 0 or z == 0:
-                        result[z][x].append("minecraft:oak_fence")
-
-        return result
-
-    def modelWallCornerInterior(self):
-        result: list = []
-
-        for z in range(self.zone_size):
-            result.append([])
-            for x in range(self.zone_size):
-
-                result[z].append([])
-
-                if self.village.status == "war":
-                    if x == 0 and z == 0:
-                        for a in range(self.village.tier + 2):
-                            result[z][x].append("minecraft:oak_planks")
-                else:
-                    if x == 0 and z == 0:
-                        result[z][x].append("minecraft:oak_fence")
-
-        return result
+            generator.generateStructure(lore_structure, settlement_data, resources, world_modification, None,
+                                        block_transformations)
 
     def appendWallCell(self, x: int, z: int, wallType: int, flip: int, rotation: int) -> None:
         for wall in self.wall_list:

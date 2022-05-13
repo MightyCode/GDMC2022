@@ -1,0 +1,16 @@
+{
+    "mainEntry": {
+      "facing" : "north",
+      "position" : [4, 0, 4]
+    },
+    "replacements" : {
+    },
+    "air" : {
+      "preferredAirMode" : 1
+    },
+    "ground" : {
+      "zones" : [
+        [0, 0, 9, 9]
+      ]
+    }
+}
