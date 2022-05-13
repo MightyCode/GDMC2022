@@ -12,10 +12,20 @@ import utils.projectMath as projectMath
 import lib.interfaceUtils as iu
 import utils.projectMath as pmath
 
+
 class Road:
+    CORNER_PROJECTION: dict = {
+        "north": [0, 1, 0, 0],
+        "south": [0, 0, 0, 1],
+        "west": [1, 0, 0, 0],
+        "east": [0, 0, 1, 0]
+    }
+
     def __init__(self):
         self.roads: list = []
         self.lanterns: list = []
+        self.square_list: list = []
+        self.roadParts: list = []
 
     def isInRoad(self, coord: list) -> bool:
         for index in self.roads:
@@ -101,43 +111,52 @@ class Road:
             closed_list.append(current)
         raise ValueError('No Path Found')
 
-    def computeXEntry(self, xLocalPosition: int, cornerProjection, facingStruct, cornerStruct):
+    def computeXEntry(self, xLocalPosition: int, facingStruct, cornerStruct):
         x: int = xLocalPosition
-        x += cornerProjection[facingStruct][0] * cornerStruct[0]
-        x += cornerProjection[facingStruct][2] * cornerStruct[2]
-        x += -cornerProjection[facingStruct][0] + cornerProjection[facingStruct][2]
+        x += self.CORNER_PROJECTION[facingStruct][0] * cornerStruct[0]
+        x += self.CORNER_PROJECTION[facingStruct][2] * cornerStruct[2]
+        x += -self.CORNER_PROJECTION[facingStruct][0] + self.CORNER_PROJECTION[facingStruct][2]
 
         return x
 
-    def computeZEntry(self, zLocalPosition: int, cornerProjection, facingStruct, cornerStruct):
+    def computeZEntry(self, zLocalPosition: int, facingStruct, cornerStruct):
         z: int = zLocalPosition
-        z += cornerProjection[facingStruct][1] * cornerStruct[1]
-        z += cornerProjection[facingStruct][3] * cornerStruct[3]
-        z += -cornerProjection[facingStruct][1] + cornerProjection[facingStruct][3]
+        z += self.CORNER_PROJECTION[facingStruct][1] * cornerStruct[1]
+        z += self.CORNER_PROJECTION[facingStruct][3] * cornerStruct[3]
+        z += -self.CORNER_PROJECTION[facingStruct][1] + self.CORNER_PROJECTION[facingStruct][3]
 
         return z
 
-    def initRoad(self, listHouse: list, settlement_data: SettlementData) -> list:
+    @staticmethod
+    def computeSquareList(list_house: list) -> list:
+        result: list = []
+        entry_temp: list
+
+        for index in range(0, len(list_house)):
+            entry_temp = [list_house[index][0], list_house[index][1], list_house[index][2]]
+
+            result.append([entry_temp[0] + list_house[index][3][0], entry_temp[2] + list_house[index][3][1],
+                           entry_temp[0] + list_house[index][3][2], entry_temp[2] + list_house[index][3][3]])
+
+        return result
+
+    def addRoad(self, start_complete: list, goal_complete: list, lore_structure_from: LoreStructure = None,
+                lore_structure_to: LoreStructure = None):
+        start: list = [start_complete[0], start_complete[2]]
+        goal: list = self.findClosestNodeInRoad(start, [goal_complete[0], goal_complete[2]])
+
+        roadData: RoadData = RoadData(lore_structure_from, lore_structure_to)
+        roadData.setPath(self.astar(start, goal, self.square_list), start_complete[1], goal_complete[1])
+
+        self.roadParts.append(roadData)
+
+    def initRoad(self, list_house: list, settlement_data: SettlementData) -> list:
         self.roads.clear()
         self.lanterns.clear()
+        self.roadParts.clear()
 
-        cornerProjection: dict = {
-            "north": [0, 1, 0, 0],
-            "south": [0, 0, 0, 1],
-            "west": [1, 0, 0, 0],
-            "east": [0, 0, 1, 0]
-        }
-
-        square_list: list = []
+        self.square_list: list = self.computeSquareList(list_house)
         lore_structures: list = settlement_data.village_model.lore_structures
-
-        for index in range(0, len(lore_structures)):
-            entry_temp: list = [listHouse[index][0], listHouse[index][1], listHouse[index][2]]
-
-            square_list.append([entry_temp[0] + listHouse[index][3][0], entry_temp[2] + listHouse[index][3][1],
-                                entry_temp[0] + listHouse[index][3][2], entry_temp[2] + listHouse[index][3][3]])
-
-        result: list = []
 
         # print(square_list)
         for indexFrom in range(0, len(lore_structures)):
@@ -145,65 +164,48 @@ class Road:
             start: list
             goal: list
 
-            indexTo: int = listHouse[indexFrom][5]
+            indexTo: int = list_house[indexFrom][5]
             if indexTo == -1:
                 continue
 
             # House From
             facingStructFrom = lore_structures[indexFrom].preBuildingInfo["entry"]["facing"]
             cornerStructFrom = lore_structures[indexFrom].preBuildingInfo["corner"]
-            entryStructFrom = [listHouse[indexFrom][0], listHouse[indexFrom][1], listHouse[indexFrom][2]]
+            entryStructFrom = [list_house[indexFrom][0], list_house[indexFrom][1], list_house[indexFrom][2]]
 
-            x = self.computeXEntry(entryStructFrom[0], cornerProjection, facingStructFrom, cornerStructFrom)
-            y = entryStructFrom[1]
-            z = self.computeZEntry(entryStructFrom[2], cornerProjection, facingStructFrom, cornerStructFrom)
+            x = self.computeXEntry(entryStructFrom[0], facingStructFrom, cornerStructFrom)
+            z = self.computeZEntry(entryStructFrom[2], facingStructFrom, cornerStructFrom)
 
-            while not (Constants.is_air(x, y + 2, z)) or Constants.is_air(x, y + 1, z):
-                if Constants.is_air(x, y + 1, z):
-                    y -= 1
-
-                if not (Constants.is_air(x, y + 2, z)):
-                    y += 1
-            start = [x, z]
+            start_complete = [x, entryStructFrom[1], z]
 
             # House to
             facingStructTo = lore_structures[indexTo].preBuildingInfo["entry"]["facing"]
             cornerStructTo = lore_structures[indexTo].preBuildingInfo["corner"]
 
-            entryStructTo = [listHouse[indexTo][0], listHouse[indexTo][1] - 1, listHouse[indexTo][2]]
+            entryStructTo = [list_house[indexTo][0], list_house[indexTo][1] - 1, list_house[indexTo][2]]
 
-            x = self.computeXEntry(entryStructTo[0], cornerProjection, facingStructTo, cornerStructTo)
-            y = entryStructTo[1]
-            z = self.computeZEntry(entryStructTo[2], cornerProjection, facingStructTo, cornerStructTo)
+            x = self.computeXEntry(entryStructTo[0], facingStructTo, cornerStructTo)
+            z = self.computeZEntry(entryStructTo[2], facingStructTo, cornerStructTo)
 
-            goal = [x, z]
-            goal = self.findClosestNodeInRoad(start, goal)
+            goal_complete = [x, entryStructTo[1], z]
 
-            while not (Constants.is_air(x, y + 2, z)) or Constants.is_air(x, y + 1, z):
-                if Constants.is_air(x, y + 1, z):
-                    y -= 1
-                if not (Constants.is_air(x, y + 2, z)):
-                    y += 1
-            # print("stuck1")
+            self.addRoad(start_complete, goal_complete, lore_structures[indexFrom], lore_structures[indexTo])
 
-            roadData: RoadData = RoadData(lore_structures[indexFrom], lore_structures[indexTo])
-            roadData.setPath(self.astar(start, goal, square_list), entryStructFrom, entryStructTo)
-            result.append(roadData)
-
-        return result
-
+        return self.roadParts
 
     """
     Generating the path among 2 houses
     """
-    def generateRoad(self, roadDataArray: list, world_modification: WorldModification, list_house: list, settlement_data: SettlementData, terrain_modification):
+
+    def generateRoad(self, world_modification: WorldModification, list_house: list,
+                     settlement_data: SettlementData, terrain_modification):
         lore_structure: LoreStructure = LoreStructure()
         lore_structure.age = 1 if settlement_data.village_model.isDestroyed else 0
         old_transformation: OldStructureTransformation = OldStructureTransformation()
         old_transformation.setLoreStructure(lore_structure)
 
-        for roadData in roadDataArray:
-            yTemp = roadData.yEntry1[1]
+        for roadData in self.roadParts:
+            yTemp = roadData.yEntry1
             for block in roadData.path:
                 y = yTemp
                 material = 'minecraft:grass_path'
@@ -230,8 +232,8 @@ class Road:
                 yTemp = y
 
         temp = 1
-        for roadData in roadDataArray:
-            yTemp = roadData.yEntry1[1]
+        for roadData in self.roadParts:
+            yTemp = roadData.yEntry1
             for block in roadData.path:
                 y = yTemp
                 while not (Constants.is_air(block[0], y + 1, block[1])) or Constants.is_air(block[0], y, block[1]):
@@ -242,7 +244,8 @@ class Road:
                         y += 1
 
                 while iu.getBlock(block[0], y, block[1]) == 'minecraft:water' or iu.getBlock(block[0], y,
-                                                                                             block[1]) == 'minecraft:lava':
+                                                                                             block[
+                                                                                                 1]) == 'minecraft:lava':
                     y = y + 1
 
                 if (3 + temp) % 12 == 0 and temp < len(roadData.path) - 3:
@@ -253,7 +256,9 @@ class Road:
 
                     for i in order:
                         position = [block[0] + diffX[i], block[1] + diffZ[i]]
-                        if position not in roadData.path and not projectMath.isInHouse(list_house, position) and not self.isInRoad(position):
+                        if position not in roadData.path and not projectMath.isInHouse(list_house,
+                                                                                       position) and not self.isInRoad(
+                            position):
                             self.lanterns.append([position[0], position[1]])
 
                             world_modification.setBlock(position[0], y - 1, position[1], 'minecraft:cobblestone')

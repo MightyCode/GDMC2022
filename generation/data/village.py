@@ -62,7 +62,6 @@ class Village:
         elif self.tier == 2:
             if random.uniform(0, 1) <= Village.CHANCE_TIER_3_OLD:
                 self.age = 1
-
         # print("Tier : " + str(self.tier) + ", Age : " + str(self.age))
 
     def generateVillageLore(self):

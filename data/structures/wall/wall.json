@@ -7,6 +7,7 @@
       "oak" : { "type" : "woodType", "state" : 2 },
       "spruce" : { "type" : "woodType2", "state" : 2 },
       "acacia" : { "type" : "woodType3", "state" : 2 },
+      "minecraft:white_wall_banner" : { "type" : "wall_banner", "state" : 1 },
       "minecraft:white_banner" : { "type" : "banner", "state" : 1 }
     },
     "air" : {

@@ -279,27 +279,43 @@ if not args.remove:
         """ Fourth main step : creates the roads and wall of the village """
         print("\nInitialized road")
         road = Road()
-        roadDataArray: list = road.initRoad(floodFill.listHouse, settlement_data)
+        roadParts: list = road.initRoad(floodFill.listHouse, settlement_data)
 
         for lore_structure in current_village.lore_structures:
             wallConstruction.addRectangle([
-                lore_structure.position[0] + lore_structure.preBuildingInfo["corner"][0], lore_structure.position[2] + lore_structure.preBuildingInfo["corner"][1],
-                lore_structure.position[0] + lore_structure.preBuildingInfo["corner"][2], lore_structure.position[2] + lore_structure.preBuildingInfo["corner"][3]
+                lore_structure.position[0] + lore_structure.preBuildingInfo["corner"][0],
+                lore_structure.position[2] + lore_structure.preBuildingInfo["corner"][1],
+                lore_structure.position[0] + lore_structure.preBuildingInfo["corner"][2],
+                lore_structure.position[2] + lore_structure.preBuildingInfo["corner"][3]
             ])
 
-        for roadData in roadDataArray:
+        for roadData in roadParts:
             for blockPath in roadData.path:
                 wallConstruction.addPoints(blockPath)
 
         print("\nCompute wall")
         wallConstruction.computeWall(WallConstruction.BOUNDING_CONVEX_HULL)
-        wallConstruction.showImageRepresenting()
+        #wallConstruction.showImageRepresenting()
         print("\nConstruct wall")
         wallConstruction.placeWall(settlement_data, resources, world_modification, block_transformation)
 
+        # Connect entry of village in wall to rest of village paths
+        wallEntries: list = wallConstruction.returnWallEntries()
+        mayorPosition = [roadParts[0].path[0][0], roadParts[0].yEntry1, roadParts[0].path[0][1]]
+        mayorStruct: LoreStructure = roadParts[0].structure_ref_1
+        for roadData in roadParts:
+            if "townhall" in roadData.structure_ref_1.name:
+                mayorPosition = [roadData.path[0][0], roadData.yEntry1, roadData.path[0][1]]
+                mayorStruct = roadData.structure_ref_1
+                break
+
+        print(wallEntries, mayorPosition)
+        for entry in wallEntries:
+            road.addRoad(entry, mayorPosition, mayorStruct, mayorStruct)
+
         """ Five main step : places every structure and after that every decorations """
         print("\nConstruct road")
-        road.generateRoad(roadDataArray, world_modification, floodFill.listHouse, settlement_data, terrain_modification)
+        road.generateRoad(world_modification, floodFill.listHouse, settlement_data, terrain_modification)
 
         i: int = 0
         current_time: int = int(round(time.time() * 1000)) - milliseconds
