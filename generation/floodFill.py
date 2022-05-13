@@ -2,7 +2,6 @@ from utils.constants import Constants
 from generation.data.settlementData import SettlementData
 import lib.interfaceUtils as Iu
 import utils.projectMath as projectMath
-import generation.road as road
 
 import random
 
@@ -301,7 +300,7 @@ class FloodFill:
         # print("range of the village is : ", x_min, x_max, z_min, z_max)
         return x_min, x_max, z_min, z_max
 
-    def placeDecorations(self, settlement_data: SettlementData, wallConstruction):
+    def placeDecorations(self, settlement_data: SettlementData, road, wallConstruction):
         x_min, x_max, z_min, z_max = self.decideMinMax()
         decorations_coord: list = []
 

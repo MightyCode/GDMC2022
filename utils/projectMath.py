@@ -175,3 +175,7 @@ def rotateSquaredMatrix(matrix):
             matrix[N - 1 - y][x] = temp
 
     return matrix
+
+
+def manhattanForCoord(point: list, point2: list):
+    return abs(point2[0] - point[0]) + abs(point2[1] - point[1])

@@ -15,5 +15,5 @@ class RoadData:
         self.yEntry1 = yEntry1
         self.yEntry2 = yEntry2
 
-    def isAbandonnedRoad(self) -> bool:
+    def isAbandonedRoad(self) -> bool:
         return self.structure_ref_1.destroyed or self.structure_ref_2.destroyed

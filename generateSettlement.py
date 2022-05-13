@@ -17,6 +17,7 @@ from generation.terrainModification import TerrainModification
 from utils.nameGenerator import NameGenerator
 from utils.worldModification import WorldModification
 from utils.constants import Constants
+from generation.road import Road
 
 import generation.generator as generator
 import generation.resourcesLoader as resLoader
@@ -25,7 +26,6 @@ import utils.book as book
 import utils.projectMath as projectMath
 import utils.argumentParser as argParser
 import generation.loreMaker as loreMaker
-import generation.road as road
 import lib.interfaceUtils as interfaceUtil
 import utils.checkOrCreateConfig as chock
 
@@ -278,7 +278,8 @@ if not args.remove:
 
         """ Fourth main step : creates the roads and wall of the village """
         print("\nInitialized road")
-        path: list = road.initRoad(floodFill.listHouse, settlement_data)
+        road = Road()
+        roadDataArray: list = road.initRoad(floodFill.listHouse, settlement_data)
 
         for lore_structure in current_village.lore_structures:
             wallConstruction.addRectangle([
@@ -286,18 +287,19 @@ if not args.remove:
                 lore_structure.position[0] + lore_structure.preBuildingInfo["corner"][2], lore_structure.position[2] + lore_structure.preBuildingInfo["corner"][3]
             ])
 
-        for blockPath in path:
-            wallConstruction.addPoints(blockPath)
+        for roadData in roadDataArray:
+            for blockPath in roadData.path:
+                wallConstruction.addPoints(blockPath)
 
         print("\nCompute wall")
         wallConstruction.computeWall(WallConstruction.BOUNDING_CONVEX_HULL)
-        wallConstruction.showImageRepresenting()
+        #wallConstruction.showImageRepresenting()
         print("\nConstruct wall")
         wallConstruction.placeWall(world_modification)
 
         """ Five main step : places every structure and after that every decorations """
         print("\nConstruct road")
-        road.generateRoad(path, world_modification, floodFill.listHouse, settlement_data, terrain_modification)
+        road.generateRoad(roadDataArray, world_modification, floodFill.listHouse, settlement_data, terrain_modification)
 
         i: int = 0
         current_time: int = int(round(time.time() * 1000)) - milliseconds
@@ -318,7 +320,7 @@ if not args.remove:
 
         print("\nBuild decoration")
         if not current_village.isDestroyed:
-            floodFill.placeDecorations(settlement_data, wallConstruction)
+            floodFill.placeDecorations(settlement_data, wallConstruction, road)
         print("Position of lectern for village", current_zone_z * settlement_zones_number[0], ":",
               [settlement_data.center[0],
                Constants.getHeight(
