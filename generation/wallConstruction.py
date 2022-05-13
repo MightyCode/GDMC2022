@@ -14,8 +14,13 @@ class WallConstruction:
     MODEL_LINE: int = 0
     MODEL_CORNER: int = 1
     MODEL_CORNER_INTERIOR: int = 2
+    MODEL_DOOR = 3
+    MODEL_STAIRS = 4
 
-    def __init__(self, village, zone_size=15):
+    WALL_PARTS = ["line", "externcorner", "innercorner", "door", "stairs"]
+
+    def __init__(self, resources, village, zone_size=15):
+        self.resources = resources
         self.village = village
         self.zone_size: int = zone_size
         self.detection_grid_size: list = [0, 0]
@@ -181,8 +186,7 @@ class WallConstruction:
         to_visit: list = []
 
         def add_border_cell(x_real, z_real):
-            if x_real < 0 or x_real >= self.detection_grid_size[0] or z_real < 0 or z_real >= self.detection_grid_size[
-                1]:
+            if x_real < 0 or x_real >= self.detection_grid_size[0] or z_real < 0 or z_real >= self.detection_grid_size[1]:
                 return
 
             if z_real - extended_offset[1] < 0 or z_real - extended_offset[1] >= extended_size[1] or \
@@ -376,12 +380,7 @@ class WallConstruction:
                     and self.area[2] <= z_real and z_real + self.zone_size <= self.area[5]):
                 continue
 
-            if wallCell["type"] == self.MODEL_LINE:
-                model = self.modelWallLine()
-            elif wallCell["type"] == self.MODEL_CORNER:
-                model = self.modelWallCorner()
-            elif wallCell["type"] == self.MODEL_CORNER_INTERIOR:
-                model = self.modelWallCornerInterior()
+            model = self.getModelWall(self.wallCell["type"])
 
             model = self.applyOnModel(model, wallCell["flip"], wallCell["rotation"])
 
@@ -418,7 +417,7 @@ class WallConstruction:
 
         return newModel
 
-    def modelWallLine(self):
+    def getModelWall(self, wall_type: int):
         result: list = []
 
         for z in range(self.zone_size):
