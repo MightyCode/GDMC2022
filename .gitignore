@@ -4,7 +4,7 @@ logs
 logs/*
 temp
 config/config.json
-config/*
+config/
 
 # Created by .ignore support plugin (hsz.mobi)
 ### Python template

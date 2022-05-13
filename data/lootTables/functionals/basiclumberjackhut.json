@@ -92,13 +92,8 @@
         },
         {
           "type": "item",
-          "name": "minecraft:wooden_axe",
-          "weight": 7
-        },
-        {
-          "type": "item",
-          "name": "minecraft:stone_axe",
-          "weight": 3
+          "name": "minecraft:*toolMaterial*_axe",
+          "weight": 10
         }
       ]
     }

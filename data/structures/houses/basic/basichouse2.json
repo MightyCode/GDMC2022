@@ -31,5 +31,11 @@
     "facing" : "south",
     "tier" : 1,
     "name" : "House"
+  },
+  "special" : {
+    "additionalItem": {
+      "diary0" : [3, 1, 2],
+      "diary1" : [3, 1, 2]
+    }
   }
 }

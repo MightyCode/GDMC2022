@@ -6,6 +6,7 @@ from nbt import nbt
 class Resources:
     DATA = "data/"
     STRUCTURE_PATH = DATA + "structures/"
+    NBT = DATA + "structures/"
     LOOT_TABLE_PATH = DATA + "lootTables/"
     BIOME = DATA + "biome.txt"
     BIOME_BLOCK = DATA + "biomeBlocks.json"
@@ -52,6 +53,9 @@ class Resources:
         with open(Resources.TRADES) as json_file:
             self.trades = json.load(json_file)
 
+        self.nbt = {}
+
+
     """ 
     Load and add structures from files
     path : path of nbt file
@@ -60,13 +64,15 @@ class Resources:
     """
 
     def loadStructures(self, path, infoPath, name):
-        nbt_file: nbt.NBTFile = nbt.NBTFile(Resources.STRUCTURE_PATH + path, 'rb')
-
+        self.loadNbtFiles(path, name)
         with open(Resources.STRUCTURE_PATH + infoPath) as json_file:
             info = json.load(json_file)
 
         assert (name not in self.structures.keys())
-        self.structures[name] = NbtStructures(nbt_file, info, name)
+        self.structures[name] = NbtStructures(self.nbt[name], info, name)
+
+    def loadNbtFiles(self, path, name):
+        self.nbt[name] = nbt.NBTFile(Resources.STRUCTURE_PATH + path, 'rb')
 
     """ 
     Add an hand made structure

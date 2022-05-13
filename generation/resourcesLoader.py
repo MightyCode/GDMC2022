@@ -4,8 +4,8 @@ from generation.resources import Resources
 
 
 def loadAllResources(resources: Resources) -> None:
-    print("Begin load ressources")
-    # Loads structures
+    print("Begin load resources")
+    # Load structures
     ## Load houses
     resources.loadStructures("houses/haybale/haybalehouse1.nbt", "houses/haybale/haybalehouse1.json", "haybalehouse1")
     resources.loadStructures("houses/haybale/haybalehouse2.nbt", "houses/haybale/haybalehouse2.json", "haybalehouse2")
@@ -17,13 +17,13 @@ def loadAllResources(resources: Resources) -> None:
     resources.loadStructures("houses/basic/basichouse3.nbt", "houses/basic/basichouse3.json", "basichouse3")
 
     resources.loadStructures("houses/medium/mediumhouse1.nbt", "houses/medium/mediumhouse1.json", "mediumhouse1")
-    resources.loadStructures("houses/medium/mediumhouse2.nbt", "houses/medium/mediumhouse1.json", "mediumhouse2")
+    resources.loadStructures("houses/medium/mediumhouse2.nbt", "houses/medium/mediumhouse2.json", "mediumhouse2")
     resources.loadStructures("houses/medium/mediumhouse3.nbt", "houses/medium/mediumhouse3.json", "mediumhouse3")
 
     resources.loadStructures("houses/advanced/advancedhouse1.nbt", "houses/advanced/advancedhouse1.json",
                              "advancedhouse1")
 
-    ## Load work structures : functionnals
+    ## Load work structures : functionals
 
     resources.addGeneratedStructures(GeneratedQuarry(), "functionals/quarry/basicgeneratedquarry.json",
                                      "basicgeneratedquarry")
@@ -31,8 +31,14 @@ def loadAllResources(resources: Resources) -> None:
     resources.loadStructures("functionals/lumberjackhut/basiclumberjackhut.nbt",
                              "functionals/lumberjackhut/basiclumberjackhut.json", "basiclumberjackhut")
 
+    resources.loadStructures("functionals/lumberjackhut/mediumlumberjackhut.nbt",
+                             "functionals/lumberjackhut/mediumlumberjackhut.json", "mediumlumberjackhut")
+
     resources.loadStructures("functionals/stonecutter/basicstonecutter.nbt",
                              "functionals/stonecutter/basicstonecutter.json", "basicstonecutter")
+
+    resources.loadStructures("functionals/stonecutter/mediumstonecutter.nbt",
+                             "functionals/stonecutter/mediumstonecutter.json", "mediumstonecutter")
 
     resources.loadStructures("functionals/farm/basicfarm.nbt", "functionals/farm/basicfarm.json", "basicfarm")
 
@@ -58,8 +64,14 @@ def loadAllResources(resources: Resources) -> None:
     resources.loadStructures("functionals/workshop/basicworkshop.nbt", "functionals/workshop/basicworkshop.json",
                              "basicworkshop")
 
+    resources.loadStructures("functionals/workshop/mediumworkshop.nbt", "functionals/workshop/mediumworkshop.json",
+                             "mediumworkshop")
+
     resources.loadStructures("functionals/weaverhouse/basicweaverhouse.nbt",
                              "functionals/weaverhouse/basicweaverhouse.json", "basicweaverhouse")
+
+    resources.loadStructures("functionals/weaverhouse/mediumweaverhouse.nbt",
+                             "functionals/weaverhouse/mediumweaverhouse.json", "mediumweaverhouse")
 
     resources.loadStructures("functionals/shop/basicshop.nbt",
                              "functionals/shop/basicshop.json", "basicshop")
@@ -125,7 +137,18 @@ def loadAllResources(resources: Resources) -> None:
     resources.loadStructures("decorations/statue/mediumstatue.nbt",
                              "decorations/statue/mediumstatue.json", "mediumstatue")
 
+    wall_types: list = ["line", "stairs", "door", "externcorner", "innercorner"]
+
+    for wall_type in wall_types:
+        resources.loadStructures("wall/basic/basicwall" + wall_type + ".nbt", "wall/wall.json", "basicwall" + wall_type)
+        resources.loadStructures("wall/advanced/advancedwall" + wall_type + ".nbt", "wall/wall.json", "advancedwall" + wall_type)
+        resources.loadStructures("wall/medium/mediumwall" + wall_type + ".nbt", "wall/wall.json", "mediumwall" + wall_type)
+
+
     # Load lootTable
+
+    resources.loadLootTable("emptyloottable.json", "empty")
+
     resources.loadLootTable("houses/kitchenhouse.json", "kitchenhouse")
     resources.loadLootTable("houses/bedroomhouse.json", "bedroomhouse")
 
@@ -143,7 +166,9 @@ def loadAllResources(resources: Resources) -> None:
     resources.loadLootTable("representatives/tavern.json", "tavern")
     resources.loadLootTable("representatives/barrack.json", "barrack")
     resources.loadLootTable("representatives/adventurerhouse.json", "adventurerhouse")
+    resources.loadLootTable("representatives/exchanger.json", "exchanger")
 
     resources.loadLootTable("decorations/murderercache.json", "murderercache")
 
+    print("Load partial nbt file")
     print("End load ressources")

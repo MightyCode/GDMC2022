@@ -2,7 +2,6 @@ from utils.constants import Constants
 from generation.data.settlementData import SettlementData
 import lib.interfaceUtils as Iu
 import utils.projectMath as projectMath
-import generation.road as road
 
 import random
 
@@ -13,18 +12,19 @@ class FloodFill:
         self.world_modification = world_modification
         self.set_number_of_houses(settlement_data.structure_number_goal)
         self.listHouse = []
-        #random.seed(None, 2)
-        self.startPosRange = [0.98, 0.98]
+        # random.seed(None, 2)
+        self.startPosRange = [0.75, 0.75]
 
         self.distanceFirstHouse = 40
         self.distanceFirstHouseIncrease = 3
 
         self.buildArea = settlement_data.area
         self.size = settlement_data.size
-        self.validHouseFloodFillPosition = [self.buildArea[0] + self.size[0] / 10,
-                                            self.buildArea[2] + self.size[1] / 10,
-                                            self.buildArea[3] - self.size[0] / 10,
-                                            self.buildArea[5] - self.size[1] / 10]
+        coef: int = 7
+        self.validHouseFloodFillPosition = [self.buildArea[0] + self.size[0] / coef,
+                                            self.buildArea[2] + self.size[1] / coef,
+                                            self.buildArea[3] - self.size[0] / coef,
+                                            self.buildArea[5] - self.size[1] / coef]
         self.minDistanceHouse = 4
         self.floodfillHouseSpace = 10
         self.previousStructure = -1
@@ -300,8 +300,7 @@ class FloodFill:
         # print("range of the village is : ", x_min, x_max, z_min, z_max)
         return x_min, x_max, z_min, z_max
 
-
-    def placeDecorations(self, settlement_data: SettlementData):
+    def placeDecorations(self, settlement_data: SettlementData, road, wallConstruction):
         x_min, x_max, z_min, z_max = self.decideMinMax()
         decorations_coord: list = []
 
@@ -310,46 +309,55 @@ class FloodFill:
             debug = 5
             rand = random.randint(1, 10)
             while should_place_decoration and debug > 0:
+                debug -= 1
 
                 x_rand = random.randint(x_min, x_max)
                 z_rand = random.randint(z_min, z_max)
                 height = Constants.getHeight(x_rand, z_rand)
-                if not Iu.getBlock(x_rand, height, z_rand) == 'minecraft:water':
-                    if not projectMath.isInHouse(self.listHouse, [x_rand, z_rand]):
-                        if not road.isInRoad([x_rand, z_rand]):
-                            if not road.isInLantern([x_rand, z_rand]):
-                                if not [x_rand, z_rand] in decorations_coord:
-                                    if rand == 1:
-                                        decorations_coord.append([x_rand, z_rand])
-                                        self.world_modification.setBlock(x_rand, height, z_rand,
-                                                                         "minecraft:" + settlement_data.getMaterialReplacement(
-                                                                             "woodType") + "_fence")
+                if Iu.getBlock(x_rand, height, z_rand) == 'minecraft:water':
+                    continue
 
-                                        random_bloc = random.randint(0, len(Constants.DOUBLE_BLOC) - 1)
-                                        block_to_place = Constants.DOUBLE_BLOC[random_bloc]
-                                        if block_to_place == 'minecraft:skeleton_skull' \
-                                                or block_to_place == 'minecraft:zombie_head' \
-                                                or block_to_place == 'minecraft:creeper_head':
-                                            orientation = random.randint(0, 15)
-                                            block_to_place = block_to_place + '[rotation=' + str(orientation) + ']'
+                if projectMath.isInHouse(self.listHouse, [x_rand, z_rand]):
+                    continue
 
-                                        self.world_modification.setBlock(x_rand, height + 1, z_rand, block_to_place)
+                if road.isInRoad([x_rand, z_rand]):
+                    continue
 
-                                    elif rand == 2 or rand == 3:
-                                        decorations_coord.append([x_rand, z_rand])
-                                        random_bloc = random.randint(0, len(Constants.SINGLE_BLOC) - 1)
-                                        self.world_modification.setBlock(x_rand, height, z_rand,
-                                                                         Constants.SINGLE_BLOC[random_bloc])
-                                    elif rand == 4 or rand == 5:
-                                        decorations_coord.append([x_rand, z_rand])
-                                        random_bloc = random.randint(0, len(Constants.LIGHT_BLOC) - 1)
-                                        self.world_modification.setBlock(x_rand, height, z_rand,
-                                                                         Constants.LIGHT_BLOC[random_bloc])
-                                    else:
-                                        decorations_coord.append([x_rand, z_rand])
-                                        random_bloc = random.randint(0, len(Constants.FLOWERS) - 1)
-                                        self.world_modification.setBlock(x_rand, height, z_rand,
-                                                                         'minecraft:potted_' + Constants.FLOWERS[
-                                                                             random_bloc])
+                if road.isInLantern([x_rand, z_rand]):
+                    continue
 
-                debug -= 1
+                if [x_rand, z_rand] in decorations_coord:
+                    continue
+
+                if not wallConstruction.isBlockInEnclosure(x_rand, z_rand):
+                    continue
+
+                if rand == 1:
+                    decorations_coord.append([x_rand, z_rand])
+                    self.world_modification.setBlock(x_rand, height, z_rand,
+                                                     "minecraft:" + settlement_data.getMaterialReplacement(
+                                                         "woodType") + "_fence")
+
+                    random_bloc = random.randint(0, len(Constants.DOUBLE_BLOC) - 1)
+                    block_to_place = Constants.DOUBLE_BLOC[random_bloc]
+                    if block_to_place == 'minecraft:skeleton_skull' \
+                            or block_to_place == 'minecraft:zombie_head' \
+                            or block_to_place == 'minecraft:creeper_head':
+                        orientation = random.randint(0, 15)
+                        block_to_place = block_to_place + '[rotation=' + str(orientation) + ']'
+
+                        self.world_modification.setBlock(x_rand, height + 1, z_rand, block_to_place)
+
+                    elif rand == 2 or rand == 3:
+                        decorations_coord.append([x_rand, z_rand])
+                        random_bloc = random.randint(0, len(Constants.SINGLE_BLOC) - 1)
+                        self.world_modification.setBlock(x_rand, height, z_rand, Constants.SINGLE_BLOC[random_bloc])
+                    elif rand == 4 or rand == 5:
+                        decorations_coord.append([x_rand, z_rand])
+                        random_bloc = random.randint(0, len(Constants.LIGHT_BLOC) - 1)
+                        self.world_modification.setBlock(x_rand, height, z_rand, Constants.LIGHT_BLOC[random_bloc])
+                    else:
+                        decorations_coord.append([x_rand, z_rand])
+                        random_bloc = random.randint(0, len(Constants.FLOWERS) - 1)
+                        self.world_modification.setBlock(x_rand, height, z_rand,
+                                                         'minecraft:potted_' + Constants.FLOWERS[random_bloc])

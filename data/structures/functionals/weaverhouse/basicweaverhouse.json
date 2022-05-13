@@ -5,9 +5,7 @@
   },
   "replacements" : {
     "oak" : { "type" : "woodType", "state" : 2},
-    "spruce" : { "type" : "woodType2", "state" : 2},
-    "minecraft:grass_block" : { "type" : "ground", "state" : 1 },
-    "minecraft:dirt" : { "type" : "ground2", "state" : 1 }
+    "spruce" : { "type" : "woodType2", "state" : 2}
   },
   "air" : {
     "preferredAirMode" : 2,

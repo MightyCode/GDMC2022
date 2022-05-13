@@ -365,8 +365,7 @@ class BaseStructure:
 
                 for x in range(min(block_from[0], block_to[0]), max(block_from[0], block_to[0]) + 1):
                     for z in range(min(block_from[2], block_to[2]), max(block_from[2], block_to[2]) + 1):
-                        if interfaceUtils.getBlock(x, block_to[1] + 1,
-                                                                 z) in BaseStructure.AIR_FILLING_PROBLEMATIC_BLOCS:
+                        if interfaceUtils.getBlock(x, block_to[1] + 1, z) in BaseStructure.AIR_FILLING_PROBLEMATIC_BLOCS:
                             world_modification.setBlock(x, block_to[1] + 1, z, "minecraft:stone",
                                                         place_immediately=True)
 
@@ -386,6 +385,47 @@ class BaseStructure:
                                          to_x: int, to_y: int, to_z: int, block: str):
         util.applyBlockTransformationThenFill(world_modification, from_x, from_y, from_z,
                                               to_x, to_y, to_z, block, self.block_transformation)
+
+    def checkAfterPlacing(self, x, y, z, block_name, world_position, chestGeneration,
+                          building_conditions: BuildingCondition):
+        # If structure has loot tables and chest encounter
+        if "chest" in block_name or "barrel" in block_name:
+            additional_objects: list = []
+
+            if "special" in self.info.keys():
+                if "additionalItem" in self.info["special"].keys():
+                    position: list
+                    for key in self.info["special"]["additionalItem"]:
+                        position = self.info["special"]["additionalItem"][key]
+
+                        if x == position[0] and y == position[1] and z == position[2]:
+                            if key in building_conditions.special.keys():
+                                for item in building_conditions.special[key]:
+                                    additional_objects.append(item)
+
+            if self.lootTable or len(additional_objects) > 0:
+                chosen_loot_table: str = "empty"
+                if self.lootTable:
+                    for lootTable in self.info["lootTables"]:
+                        if len(lootTable) == 1:
+                            chosen_loot_table = lootTable[0]
+                        elif projectMath.isPointInCube([x, y, z], lootTable[1]):
+                            chosen_loot_table = lootTable[0]
+
+                chestGeneration.generate(world_position[0], world_position[1], world_position[2], chosen_loot_table, building_conditions.replacements, additional_objects)
+
+        if "lectern" in block_name:
+            if "lectern" not in self.info:
+                return
+
+            for key in self.info["lectern"].keys():
+                if [x, y, z] == self.info["lectern"][key]:
+                    result = util.changeNameWithReplacements(key, building_conditions.replacements)
+                    if result[0] >= 0:
+                        util.addBookToLectern(world_position[0], world_position[1], world_position[2], result[1])
+                    else:
+                        print("Can't add a book to a lectern at pos : " + str(world_position))
+                    break
 
     """
     Get the facing of the main entry depending of the flip and rotation
@@ -476,6 +516,7 @@ class BaseStructure:
         if block_name == "minecraft:air" \
                 or block_name == "minecraft:cave_air" \
                 or block_name == "minecraft:void_air" \
+                or block_name == "minecraft:coarse_dirt" \
                 or "coal" in block_name \
                 or "cobweb" in block_name:
             return False

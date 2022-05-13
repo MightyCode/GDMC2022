@@ -37,7 +37,11 @@
   "sign" : {
     "position" : [3, 4, 1],
     "facing" : "north",
-    "tier" : 2,
+    "tier" : 3,
     "name" : "House"
+  },
+  "special" : {
+    "additionalItem": {
+    }
   }
 }

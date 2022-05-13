@@ -15,6 +15,7 @@
     ]
   },
   "lootTables" : [
+    ["exchanger"]
   ],
   "villageInfo" : {
     "villager" : 1,
@@ -29,5 +30,11 @@
     "facing" : "north",
     "tier" : 1,
     "name" : "Exchanger"
+  },
+  "special" : {
+    "additionalItem": {
+      "order" : [3, 1, 2],
+      "trade" : [3, 1, 2]
+    }
   }
 }

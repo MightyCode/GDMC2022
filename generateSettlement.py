@@ -12,20 +12,21 @@ from generation.structures.blockTransformation.burnedStructureTransformation imp
 from generation.structures.blockTransformation.abandonedStructureTransformation import AbandonedStructureTransformation
 from generation.resources import Resources
 from generation.floodFill import FloodFill
-import generation.generator as generator
+from generation.wallConstruction import WallConstruction
+from generation.terrainModification import TerrainModification
 from utils.nameGenerator import NameGenerator
 from utils.worldModification import WorldModification
 from utils.constants import Constants
+from generation.road import Road
 
+import generation.generator as generator
 import generation.resourcesLoader as resLoader
 import utils.util as util
 import utils.book as book
 import utils.projectMath as projectMath
 import utils.argumentParser as argParser
 import generation.loreMaker as loreMaker
-import generation.road as road
 import lib.interfaceUtils as interfaceUtil
-import lib.toolbox as toolbox
 import utils.checkOrCreateConfig as chock
 
 import random
@@ -80,9 +81,11 @@ if not args.remove:
     print("Generate lore of the world")
     number_of_existing_village_in_lore = 7
 
-    villages: list = loreMaker.initializedVillages(
-        loreMaker.gen_position_of_village(settlement_zones, number_of_existing_village_in_lore), name_generator)
+    villages_positions: list = loreMaker.genPositionOfVillage(settlement_zones, number_of_existing_village_in_lore)
+
+    villages: list = loreMaker.initializedVillages(villages_positions, name_generator)
     villageInteractions: list = loreMaker.createVillageRelationAndAssign(villages)
+
     loreMaker.checkForImpossibleInteractions(villages, villageInteractions)
     loreMaker.generateLoreAfterRelation(villages)
 
@@ -96,6 +99,7 @@ if not args.remove:
     current_zone_z: int = 0
 
     while current_zone_z < settlement_zones_number[1]:
+        """ First main step : init settlement information """
         current_time: int = int(round(time.time() * 1000)) - milliseconds
 
         if current_time / 1000 >= TIME_LIMIT - TIME_TO_BUILD_A_VILLAGE:
@@ -113,8 +117,9 @@ if not args.remove:
             current_zone_x = 0
 
         current_village = villages[settlement_index]
-        print("\n-----------------------\nMake village named " + current_village.name)
+        print("\nMake village named " + current_village.name)
         interfaceUtil.setBuildArea(area[0], area[1], area[2], area[3] + 1, area[4] + 1, area[5] + 1)
+
         print("Make global slice")
         interfaceUtil.makeGlobalSlice()
         print("Global slice done")
@@ -125,9 +130,11 @@ if not args.remove:
         print("Village destroyed : " + str(current_village.isDestroyed))
 
         from generation.data.villageInteraction import VillageInteraction
+
         best_relation: int = VillageInteraction.STATE_WAR
         for interactionKey in current_village.village_interactions.keys():
             interaction = current_village.village_interactions[interactionKey]
+
             if VillageInteraction.isBestRelationThen(interaction.state, best_relation):
                 best_relation = interaction.state
 
@@ -136,13 +143,17 @@ if not args.remove:
         current_village.generated = True
         block_transformation[0].age = current_village.age
 
-        """ First main step : init settlementData """
         settlement_data = generator.createSettlementData(area, current_village, resources)
         loreMaker.applyLoreToSettlementData(settlement_data)
 
         floodFill = FloodFill(world_modification, settlement_data)
 
         structureManager = StructureManager(settlement_data, resources, name_generator)
+
+        wallConstruction: WallConstruction = WallConstruction(current_village, 9)
+        wallConstruction.setConstructionZone(area)
+
+        terrain_modification: TerrainModification = TerrainModification(area, wallConstruction)
 
         """ Second main step : choose structures and their position """
         i = 0
@@ -234,11 +245,10 @@ if not args.remove:
             if random.randint(1, 3) == 1 and available:
                 # print("Generate diary of " + settlementData["villagerNames"][i])
                 villager.diary = book.createBookForVillager(settlement_data.village_model, villager)
+                villager.diary[0].setInfo(title="Diary of " + villager.name, author=villager.name,
+                                          description="Diary of " + villager.name)
 
-                villager.diary[0] = "minecraft:written_book" + toolbox.writeBook(
-                    villager.diary[0],
-                    title="Diary of " + villager.name, author=villager.name,
-                    description="Diary of " + villager.name)
+                villager.diary[0] = "minecraft:written_book" + villager.diary[0].printBook()
 
                 if villager.diary[1] != "":
                     structure.gift = villager.diary[1]
@@ -247,14 +257,17 @@ if not args.remove:
         settlement_data.setMaterialReplacement("villageLecternBook", books["villageNameBook"])
 
         settlement_data.setMaterialReplacement("villageBookItem", "minecraft:written_book" + books["villageNameBook"])
-        settlement_data.setMaterialReplacement("villagerRegistryItem", "minecraft:written_book" + books["villagerNamesBook"])
+        settlement_data.setMaterialReplacement("villagerRegistryItem",
+                                               "minecraft:written_book" + books["villagerNamesBook"])
         settlement_data.setMaterialReplacement("deadVillagerRegistryItem",
-                                              "minecraft:written_book" + books["deadVillagersBook"])
+                                               "minecraft:written_book" + books["deadVillagersBook"])
 
-        settlement_data.setMaterialReplacement("villageBookTrade", "\"minecraft:written_book\",tag:" + books["villageNameBook"])
-        settlement_data.setMaterialReplacement("villagerRegistryTrade", "\"minecraft:written_book\",tag:" + books["villagerNamesBook"])
+        settlement_data.setMaterialReplacement("villageBookTrade",
+                                               "\"minecraft:written_book\",tag:" + books["villageNameBook"])
+        settlement_data.setMaterialReplacement("villagerRegistryTrade",
+                                               "\"minecraft:written_book\",tag:" + books["villagerNamesBook"])
         settlement_data.setMaterialReplacement("deadVillagerRegistryTrade",
-                                              "\"minecraft:written_book\",tag:" + books["deadVillagersBook"])
+                                               "\"minecraft:written_book\",tag:" + books["deadVillagersBook"])
 
         for villager in current_village.villagers:
             if villager.job == Villager.DEFAULT_JOB:
@@ -263,10 +276,47 @@ if not args.remove:
             Trade.generateFromTradeTable(current_village, villager, resources.trades[villager.job],
                                          settlement_data.getMatRepDeepCopy())
 
-        """ Fourth main step : creates the roads of the village """
-        road.initRoad(floodFill.listHouse, settlement_data, world_modification)
+        """ Fourth main step : creates the roads and wall of the village """
+        print("\nInitialized road")
+        road = Road()
+        roadParts: list = road.initRoad(floodFill.listHouse, settlement_data)
+
+        for lore_structure in current_village.lore_structures:
+            wallConstruction.addRectangle([
+                lore_structure.position[0] + lore_structure.preBuildingInfo["corner"][0],
+                lore_structure.position[2] + lore_structure.preBuildingInfo["corner"][1],
+                lore_structure.position[0] + lore_structure.preBuildingInfo["corner"][2],
+                lore_structure.position[2] + lore_structure.preBuildingInfo["corner"][3]
+            ])
+
+        for roadData in roadParts:
+            for blockPath in roadData.path:
+                wallConstruction.addPoints(blockPath)
+
+        print("\nCompute wall")
+        wallConstruction.computeWall(WallConstruction.BOUNDING_CONVEX_HULL)
+        #wallConstruction.showImageRepresenting()
+        print("\nConstruct wall")
+        wallConstruction.placeWall(settlement_data, resources, world_modification, block_transformation)
+
+        # Connect entry of village in wall to rest of village paths
+        wallEntries: list = wallConstruction.returnWallEntries()
+        mayorPosition = [roadParts[0].path[0][0], roadParts[0].yEntry1, roadParts[0].path[0][1]]
+        mayorStruct: LoreStructure = roadParts[0].structure_ref_1
+        for roadData in roadParts:
+            if "townhall" in roadData.structure_ref_1.name:
+                mayorPosition = [roadData.path[0][0], roadData.yEntry1, roadData.path[0][1]]
+                mayorStruct = roadData.structure_ref_1
+                break
+
+        print(wallEntries, mayorPosition)
+        for entry in wallEntries:
+            road.addRoad(entry, mayorPosition, mayorStruct, mayorStruct)
 
         """ Five main step : places every structure and after that every decorations """
+        print("\nConstruct road")
+        road.generateRoad(world_modification, floodFill.listHouse, settlement_data, terrain_modification)
+
         i: int = 0
         current_time: int = int(round(time.time() * 1000)) - milliseconds
         while i < len(current_village.lore_structures) and current_time / 1000 < TIME_LIMIT:
@@ -286,7 +336,7 @@ if not args.remove:
 
         print("\nBuild decoration")
         if not current_village.isDestroyed:
-            floodFill.placeDecorations(settlement_data)
+            floodFill.placeDecorations(settlement_data, road, wallConstruction)
         print("Position of lectern for village", current_zone_z * settlement_zones_number[0], ":",
               [settlement_data.center[0],
                Constants.getHeight(

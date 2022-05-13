@@ -1,0 +1,31 @@
+{
+  "mainEntry": {
+    "facing" : "north",
+    "position" : [4, 0, 0]
+  },
+  "replacements" : {
+    "oak" : { "type" : "woodType", "state" : 2},
+    "spruce" : { "type" : "woodType2", "state" : 2}
+  },
+  "air" : {
+    "preferredAirMode" : 2,
+    "replacements" : [
+      [1, 0, 1, 6, 5, 7],
+      [3, 0, 0, 3, 2, 0]
+    ]
+  },
+  "villageInfo" : {
+    "villager" : 2,
+    "gameProfession" : "mason",
+    "profession" : "Weaver"
+  },
+  "ground" : {
+    "zones" : [[1, 0, 7, 7]]
+  },
+  "sign" : {
+    "position" : [2, 2, 0],
+    "facing" : "north",
+    "tier" : 2,
+    "name" : "Weaver house"
+  }
+}

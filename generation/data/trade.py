@@ -62,7 +62,7 @@ class Trade:
         return table_copy
 
     @staticmethod
-    def conditionsSatisfied(lore_village, villager, conditions: dict) -> dict:
+    def conditionsSatisfied(lore_village, villager, conditions: dict) -> bool:
         for condition in conditions.keys():
             if not Trade.checkOneConditions(lore_village, villager, conditions, condition):
                 return False
@@ -93,10 +93,9 @@ class Trade:
     def handleGeneratedTrades(lore_village, villager, trade_table: dict, material_replacements: dict):
         if villager.job == "Exchanger":
             for interactionKey in lore_village.village_interactions:
-                interaction = lore_village.village_interactions[interactionKey]
+                interaction: VillageInteraction = lore_village.village_interactions[interactionKey]
 
-                if interaction.state == VillageInteraction.STATE_LOVE or \
-                        (interaction.state == VillageInteraction.STATE_FRIENDSHIP and random.randint(1, 2) == 1):
+                if interaction.economicalRelation:
 
                     anotherVillage = interaction.village1 if (interaction.village1 != lore_village) else interaction.village2
 
@@ -104,8 +103,10 @@ class Trade:
                     trade.needing = util.returnCurrencyTrade(lore_village.name + " gem")
                     trade.offer = util.returnCurrencyTrade(anotherVillage.name + " gem")
 
-                    trade.needing_quantity = 1 if (anotherVillage.tier == lore_village.tier) else 2 if (anotherVillage.tier > lore_village.tier) else 3
-                    trade.offer_quantity = 1 if (anotherVillage.tier == lore_village.tier) else 2 if (anotherVillage.tier < lore_village.tier) else 3
+                    trade.needing_quantity = 1 if (anotherVillage.tier == lore_village.tier)\
+                        else 2 if (anotherVillage.tier > lore_village.tier) else 3
+                    trade.offer_quantity = 1 if (anotherVillage.tier == lore_village.tier) \
+                        else 2 if (anotherVillage.tier < lore_village.tier) else 3
 
                     villager.trades.append(trade)
 

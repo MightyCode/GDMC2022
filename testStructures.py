@@ -1,6 +1,6 @@
 from generation.data.village import Village
 from generation.data.villager import Villager
-from generation.data.trade import Trade
+from generation.data.villageInteraction import VillageInteraction
 
 from generation.data.loreStructure import LoreStructure
 from generation.chestGeneration import ChestGeneration
@@ -14,10 +14,10 @@ from generation.data.murdererData import MurdererData
 from generation.structures.baseStructure import BaseStructure
 from generation.data.settlementData import SettlementData
 
+from generation.wallConstruction import WallConstruction
+
 import generation.resourcesLoader as resLoader
-import utils.util as util
 import utils.argumentParser as argParser
-import generation.loreMaker as loreMaker
 import lib.interfaceUtils as interfaceUtil
 import generation.generator as generator
 import utils.checkOrCreateConfig as chock
@@ -26,8 +26,8 @@ import utils.checkOrCreateConfig as chock
 Important information
 """
 
-structure_name: str = "basichouse1"
-structure_type: str = "functionals"
+structure_name: str = "mediumhouse3"
+structure_type: str = LoreStructure.TYPE_HOUSES
 
 config: dict = chock.getOrCreateConfig()
 
@@ -49,32 +49,18 @@ if not args.remove:
     block_transformations: list = [OldStructureTransformation(), DamagedStructureTransformation(),
                                    BurnedStructureTransformation(), AbandonedStructureTransformation()]
 
-    """
-    import lib.toolbox as toolbox
-    text_adventurer_book = (
-        '\\\\s-------------------\\\\n'
-        '\\cMachine guide:\\\\n'
-        'Place §1 flint §0 and steal in the machine. Place water bucket in the machine. \\\\n'
-        '\\\\n'
-        '\\\\n'
-        '\\\\n'
-        '\\\\n'
-        '\\\\n'
-        '\\\\n'
-        '\\\\n'
-        '-------------------')
-    command = "give TamalouMax minecraft:written_book" + \
-              toolbox.writeBook(text_adventurer_book, title="Village Presentation", author="Mayor",
-                                description="Presentation of the village")
-    print(command)
-    interfaceUtil.runCommand(command)
-    exit()
-    """
-
     # Create Village
     village: Village = Village()
     village.name = "TestLand"
     village.tier = 2
+
+    otherVillage: Village = Village()
+    otherVillage.name = "TestLand 2"
+    village.village_interactions[otherVillage] = (
+        VillageInteraction(village, otherVillage)
+    )
+    # Force relation for tests
+    village.village_interactions[otherVillage].economicalRelation = True
 
     villagers: list = [Villager(village), Villager(village), Villager(village), Villager(village), Villager(village)]
     villagers[0].name = "Rodriguez 1"
@@ -90,8 +76,26 @@ if not args.remove:
     village.villagers = villagers
     village.dead_villagers = deadVillagers
     village.murderer_data = MurdererData()
-    village.murderer_data.villagerTarget = villagers[2]
-    village.murderer_data.villagerMurderer = villagers[0]
+    """village.murderer_data.villagerTarget = villagers[2]
+    village.murderer_data.villagerMurderer = villagers[0]"""
+
+    from generation.wallConstruction import WallConstruction
+
+    wallConstruction: WallConstruction = WallConstruction(village, 9)
+    wallConstruction.setConstructionZone(build_area)
+
+    wallConstruction.addRectangle([build_area[0] + 100, build_area[2] + 100, build_area[0] + 116, build_area[2] + 116])
+    wallConstruction.addRectangle([build_area[0] + size_area[0] // 2 - 10, build_area[2] + size_area[1] // 2 - 10,
+                                   build_area[0] + size_area[0] // 2 + 10, build_area[2] + size_area[1] // 2 + 10])
+    wallConstruction.addRectangle([build_area[0] - 30, build_area[2] + 50, build_area[0] + 200, build_area[2] + 200])
+    wallConstruction.computeWall(WallConstruction.BOUNDING_CONVEX_HULL)
+    wallConstruction.showImageRepresenting()
+    wallConstruction.placeWall(world_modifications)
+
+    from generation.terrainModification import TerrainModification
+    terrainModification: TerrainModification = TerrainModification(build_area, wallConstruction)
+    terrainModification.removeRecursivelyAt(world_modifications, 228, 71, -190)
+    exit()
 
     resources: Resources = Resources()
     resLoader.loadAllResources(resources)
@@ -106,32 +110,50 @@ if not args.remove:
 
     lore_structure: LoreStructure = LoreStructure()
     lore_structure.age = 1
-    lore_structure.flip = 3
-    lore_structure.rotation = 1
+    lore_structure.flip = 0
+    lore_structure.rotation = 0
     lore_structure.destroyed = True
-    #lore_structure.causeDestroy = {"burned": "burned", "abandoned": "abandoned", "damaged": "damaged"}
+    # lore_structure.causeDestroy = {"burned": "burned", "abandoned": "abandoned", "damaged": "damaged"}
 
     lore_structure.name = structure_name
-    lore_structure.villagers = [villagers[0], villagers[2]]
+    lore_structure.villagers = [villagers[0], villagers[2], villagers[2]]
     lore_structure.type = structure_type
-    lore_structure.position = [build_area[0] + size_area[0] / 2, 63, build_area[2] + size_area[1] / 2]
+    lore_structure.position = [build_area[0] + size_area[0] / 2, 66, build_area[2] + size_area[1] / 2]
     lore_structure.preBuildingInfo = structure.getNextBuildingInformation(lore_structure.flip, lore_structure.rotation)
 
-    settlementData: SettlementData = generator.createSettlementData(build_area, village, resources)
-    loreMaker.voteForColor(settlementData)
+    settlement_data: SettlementData = generator.createSettlementData(build_area, village, resources)
+
+    village.lore_structures.append(lore_structure)
+    import generation.loreMaker as loreMaker
+
+    loreMaker.generateOrders(village)
 
     structure.block_transformation = block_transformations
 
-    generator.generateStructure(lore_structure, settlementData, resources, world_modifications,
+    import utils.book as book
+
+    for i in [0, 2]:
+        villagers[i].diary = book.createBookForVillager(settlement_data.village_model, villagers[i])
+        villagers[i].diary[0].setInfo(title="Diary of " + villagers[i].name, author=villagers[i].name,
+                                      description="Diary of " + villagers[i].name)
+
+        villagers[i].diary[0] = "minecraft:written_book" + villagers[i].diary[0].printBook()
+
+    generator.generateStructure(lore_structure, settlement_data, resources, world_modifications,
                                 chestGeneration, block_transformations)
 
+    """
+    from generation.data.trade import Trade
     for villager in lore_structure.villagers:
         if villager.job == Villager.DEFAULT_JOB:
             continue
 
-        Trade.generateFromTradeTable(village, villager, resources.trades[villager.job], settlementData.getMatRepDeepCopy())
+        Trade.generateFromTradeTable(village, villager, resources.trades[villager.job], settlement_data.getMatRepDeepCopy())
 
-    util.spawnVillagerForStructure(settlementData, lore_structure, lore_structure.position)
+    util.spawnVillagerForStructure(settlement_data, lore_structure, lore_structure.position)"""
+
+    books: dict = generator.generateVillageBooks(settlement_data)
+    generator.placeBooks(settlement_data, books, world_modifications)
 
     world_modifications.saveToFile(file)
 else:

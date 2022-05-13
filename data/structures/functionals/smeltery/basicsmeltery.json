@@ -16,18 +16,23 @@
   "lootTables" : [
     ["smeltery"]
   ],
-    "villageInfo" : {
-      "villager" : 2,
-      "gameProfession" : "toolsmith",
-      "profession" : "Smelterer"
-    },
-    "ground" : {
-      "info" : "all"
-    },
-    "sign" : {
-      "position" : [4, 4, 2],
-      "facing" : "north",
-      "tier" : 1,
-      "name" : "Smeltery"
+  "villageInfo" : {
+    "villager" : 2,
+    "gameProfession" : "toolsmith",
+    "profession" : "Smelterer"
+  },
+  "ground" : {
+    "info" : "all"
+  },
+  "sign" : {
+    "position" : [4, 4, 2],
+    "facing" : "north",
+    "tier" : 1,
+    "name" : "Smeltery"
+  },
+  "special" : {
+    "additionalItem": {
+      "order" : [4, 2, 1]
     }
   }
+}

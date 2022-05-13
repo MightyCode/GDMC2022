@@ -40,4 +40,8 @@ class OldStructureTransformation:
             if random.randint(1, 5) == 1:
                 return block.replace("stone_brick", "mossy_stone_brick")
 
+        if "minecraft:grass_path" == block or "minecraft:farmland" == block:
+            if random.randint(1, 3) == 1:
+                return "minecraft:coarse_dirt"
+
         return block

@@ -30,5 +30,10 @@
     "facing" : "north",
     "tier" : 1,
     "name" : "LumberJack Hut"
+  },
+  "special" : {
+    "additionalItem": {
+      "order" : [4, 1, 2]
+    }
   }
 }

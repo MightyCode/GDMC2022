@@ -31,5 +31,10 @@
     "facing" : "north",
     "tier" : 1,
     "name" : "Farm"
+  },
+  "special" : {
+    "additionalItem": {
+      "order" : [5, 2, 10]
+    }
   }
 }

@@ -1,9 +1,154 @@
 from generation.data.villager import Villager
 from generation.data.village import Village
+from generation.data.loreStructure import LoreStructure
+from generation.data.villageInteraction import VillageInteraction
+from utils.bookWriter import BookWriter
 
 import generation.generator as generator
 
 import random as rd
+
+VILLAGER_NAME_PATH = "data/names/"
+
+MIN_SIZE = 4
+MAX_SIZE = 15
+
+
+def villageMessage(village_name: str) -> str:
+    return "-" + village_name + " settlement-"
+
+
+"""
+Return the text of the book of the village presentation
+"""
+
+
+def createTextOfPresentationVillage(village: Village) -> BookWriter:
+    book_writer: BookWriter = BookWriter()
+    book_writer.writeFirstPage("Welcome to :", village.name)
+
+    # Status of the village
+    number_structure_destroyed: int = 0
+    number_house: int = 0
+
+    for structure in village.lore_structures:
+        if structure.destroyed:
+            number_structure_destroyed += 1
+        elif structure.type == LoreStructure.TYPE_HOUSES:
+            number_house += 1
+
+    # Status of the village relationship
+
+    book_writer.fillLineWith('-')
+
+    tier: str = "basic " if village.tier == 0 else "medium " if village.tier == 1 else "advanced "
+    book_writer.writeLine(f'Welcome to the {"old " if village.age == 1 else "" + tier} village of {village.name}')
+
+    book_writer.writeLine(f'Status of {village.name} :', breakLine=False)
+    book_writer.setTextMode(BookWriter.TEXT_BOLD, True)
+    book_writer.writeLine(f'{village.status}')
+    book_writer.setTextMode(BookWriter.TEXT_BOLD, False)
+    book_writer.writeEmptyLine(1)
+
+    hadBrokeARelation: bool = False
+    book_writer.writeLine('Village relationships:')
+    book_writer.writeEmptyLine(1)
+
+    for village_key in village.village_interactions:
+        interaction: VillageInteraction = village.village_interactions[village_key]
+
+        if interaction.brokeTheirRelation:
+            hadBrokeARelation = True
+
+        if interaction.state == interaction.STATE_WAR:
+            book_writer.writeLine('In ', breakLine=False)
+            book_writer.setColor(BookWriter.COLOR_RED)
+            book_writer.writeLine('war', breakLine=False)
+            book_writer.setColor(BookWriter.COLOR_BLACK)
+            book_writer.writeLine(' with ', breakLine=False)
+        elif interaction.state == interaction.STATE_TENSION:
+            book_writer.writeLine('Got ', breakLine=False)
+            book_writer.setColor(BookWriter.COLOR_GOLD)
+            book_writer.writeLine('tension', breakLine=False)
+            book_writer.setColor(BookWriter.COLOR_BLACK)
+            book_writer.writeLine(' with ', breakLine=False)
+        elif interaction.state == interaction.STATE_FRIENDSHIP:
+            book_writer.setColor(BookWriter.COLOR_BLUE)
+            book_writer.writeLine('Friendship relation', breakLine=False)
+            book_writer.setColor(BookWriter.COLOR_BLACK)
+            book_writer.writeLine(' with ', breakLine=False)
+        elif interaction.state == interaction.STATE_LOVE:
+            book_writer.setColor(BookWriter.COLOR_GREEN)
+            book_writer.writeLine('Very close relation', breakLine=False)
+            book_writer.setColor(BookWriter.COLOR_BLACK)
+            book_writer.writeLine(' with ', breakLine=False)
+
+        if interaction.state != interaction.STATE_NEUTRAL:
+            book_writer.writeLine(f'{village_key.name}.')
+
+    if hadBrokeARelation:
+        book_writer.writeLine(f'Due to the war, {village.name} had broke their relation with ', breakLine=False)
+        for village_key in village.village_interactions:
+            interaction: VillageInteraction = village.village_interactions[village_key]
+
+            if interaction.brokeTheirRelation:
+                book_writer.writeLine(village_key.name + ' ', breakLine=False)
+
+    book_writer.writeLine("")
+    book_writer.fillLineWith('-')
+    book_writer.breakPage()
+
+    # Stats on the village
+    book_writer.fillLineWith('-')
+
+    book_writer.writeLine(f'There are {len(village.lore_structures)} structures.')
+    book_writer.writeLine('The population of the village is composed of ', breakLine=False)
+
+    book_writer.setColor(BookWriter.COLOR_GREEN)
+    book_writer.writeLine(f'{len(village.villagers)}', breakLine=False)
+    book_writer.setColor(BookWriter.COLOR_BLACK)
+    book_writer.writeLine(' villagers.')
+
+    book_writer.writeLine(f'They are living on {number_house} houses.')
+
+    book_writer.setColor(BookWriter.COLOR_RED)
+    book_writer.writeLine(f'{len(village.dead_villagers)}', breakLine=False)
+    book_writer.setColor(BookWriter.COLOR_BLACK)
+    book_writer.writeLine(f' villagers have died since their arrival.')
+    book_writer.writeLine(f'{number_structure_destroyed} structures are destroyed.')
+    book_writer.fillLineWith('-')
+    book_writer.breakPage()
+
+    book_writer.writeLine('List of structures :')
+    for structure in village.lore_structures:
+        book_writer.writeLine('-', breakLine=False)
+        if structure.age == 1:
+            book_writer.writeLine(' Old', breakLine=False)
+
+        if structure.destroyed == 1:
+            book_writer.writeLine(' Destroyed', breakLine=False)
+
+        book_writer.writeLine(f' {structure.group}.')
+
+    return book_writer
+
+
+"""
+Return the text of the book of the villagers names and professions
+"""
+
+
+def createTextForVillagersNames(village_name: str, villagers: list):
+    book_writer: BookWriter = BookWriter()
+    book_writer.writeFirstPage(villageMessage(village_name), "Registry of living villagers.")
+
+    villager_text: str
+    for villager in villagers:
+        villager_text = villager.name + " : " + villager.job
+
+        book_writer.writeLine(f'-{villager_text}.')
+
+    return book_writer
 
 REASON_OF_DEATHS = ["murdered", "died because of old age", "died of creeper attack", "died of skeleton attack",
                     "died of spider attack (he did not became Spider-Man)",
@@ -14,230 +159,111 @@ DIARY_TEXTS_WITHOUT_TARGETS = [" I really like the color of the village. ", " I 
                                " I hate the color of the village.",
                                " I am afraid of spiders. ", " I am afraid of creppers. ", " I am afraid of zombies. ",
                                " I am afraid of skeletons. ",
-                               " I don't like the facade of my house. ", " I don't like the flower of the village. ",
+                               " I don\\'t like the facade of my house. ", " I don\\'t like the flower of the village. ",
                                " I really like the flower of the village. ", " I really like the mayor. ",
                                " I hate the flower of the village. ", " I hate the mayor. ",
                                " I would like to have a better house. ",
-                               " I hope he finds the gift I left him under his door. ",
                                " I really like pigs. ", " I really like cows. ", " I am interested about sheeps.  ",
                                " I am interested about chickens. "]
 DIARY_TEXTS_WITH_TARGETS = [" I am sad since the death of ", " I am happy since the death of ", " I used to hate ",
                             " I once hit "]
-
-VILLAGER_NAME_PATH = "data/names/"
-
-MIN_SIZE = 4
-MAX_SIZE = 15
-
-"""
-Return the text of the book of the village presentation
-"""
-
-
-def createTextOfPresentationVillage(villageName: str, structuresNumber: int, structures: list, deadVillagersNumber: int,
-                                    villages: list):
-    textVillagePresentationBook = (
-        '\\\\s--------------\\\\n'
-        '                      \\\\n'
-        '                      \\\\n'
-        '   Welcome to      \\\\n'
-        f' {villageName} \\\\n'
-        '                      \\\\n'
-        '                      \\\\n'
-        '                      \\\\n'
-        '                      \\\\n'
-        '                      \\\\n'
-        '                      \\\\n'
-        '                      \\\\n'
-        '--------------')
-    textVillagePresentationBook += '\f\\\\s---------------\\\\n'
-
-    numberOfHouse = 0
-    for structure in structures:
-        if "house" in structure.name:
-            numberOfHouse += 1
-
-    textVillagePresentationBook += (f'{len(villages)} villagers arrived in '
-                                    f'{numberOfHouse} houses \\\\n')
-    textVillagePresentationBook += f'{deadVillagersNumber} villagers have died since their arrival. \\\\n'
-    textVillagePresentationBook += (''
-                                    'There are '
-                                    f'{structuresNumber} structures. \\\\n')
-    textVillagePresentationBook += '---------------\\\\n\f'
-
-    i: int = 0
-    for structure in structures:
-        if i % 3 == 0 and i != 0:
-            textVillagePresentationBook += '\f'
-        else:
-            textVillagePresentationBook += ('Villagers built the '
-                                            f'{structure.name} \\\\n')
-
-        i += 1
-    return textVillagePresentationBook
-
-
-"""
-Return the text of the book of the villagers names and professions
-"""
-
-
-def createTextForVillagersNames(villagers: list):
-    textVillagerNames = 'Registry of living villagers \\\\n'
-
-    villageStr: str
-    i = 0
-    for villager in villagers:
-        villageStr = villager.name + " : " + villager.job
-
-        if i <= 3:
-            textVillagerNames += ('-'
-                                  f'{villageStr}       \\\\n')
-        if i % 4 == 0 and i != 0:
-            textVillagerNames += '\f'
-        if i >= 4:
-            textVillagerNames += ('-'
-                                  f'{villageStr}       \\\\n')
-
-        i += 1
-
-    textVillagerNames += '\f'
-
-    return textVillagerNames
-
 
 """
 Return the text of the book of the dead villagers names and professions
 """
 
 
-def createTextForDeadVillagers(villagers: list, deadVillagers: list):
-    numberOfDead = len(deadVillagers)
-
+def createTextForDeadVillagers(village_name: str, villagers: list, deadVillagers: list):
     names = []
     for villager in villagers:
         names.append(villager.name)
 
-    textDeadVillagers = 'Registry of dead villagers \\\\n'
+    book_writer: BookWriter = BookWriter()
+    book_writer.writeFirstPage(villageMessage(village_name), "Registry of dead villagers.")
 
-    i = 0
     for deadVillager in deadVillagers:
-        randomDeath = rd.randint(0, len(REASON_OF_DEATHS) - 1)
-        if deadVillager.name in names:
-            textDeadVillagers += ('-'
-                                  f'{deadVillager.name} Senior : '
-                                  f'{REASON_OF_DEATHS[randomDeath]} \\\\n')
-        if i <= 2:
-            if i == 2:
-                textDeadVillagers += ('-'
-                                      f'{deadVillager.name} : '
-                                      f'{REASON_OF_DEATHS[0]} \\\\n')
-            else:
-                textDeadVillagers += ('-'
-                                      f'{deadVillager.name} : '
-                                      f'{REASON_OF_DEATHS[randomDeath]} \\\\n')
-        if i % 3 == 0 and i != 0:
-            textDeadVillagers += '\f'
-        if i >= 3:
-            textDeadVillagers += ('-'
-                                  f'{deadVillager.name} : '
-                                  f'{REASON_OF_DEATHS[randomDeath]} \\\\n')
+        random_death = rd.randint(0, len(REASON_OF_DEATHS) - 1)
+        book_writer.writeLine(f'-{deadVillager.name} {"Senior" if deadVillager.name in names else ""} : {REASON_OF_DEATHS[random_death]}.')
 
-        i += 1
-    textDeadVillagers += '\f'
-
-    return [textDeadVillagers, numberOfDead]
+    return book_writer
 
 
 def createBookForVillager(village_model: Village, villager: Villager) -> list:
-    villagerName: str = villager.name
+    villager_name: str = villager.name
     gift: str = ""
 
     # 1 / 2 chance to a gift
-    randomGift = rd.randint(1, 4)
-    if randomGift == 1:
+    random_gift = rd.randint(1, 4)
+    if random_gift == 1:
         gift = "minecraft:gold_block"
-    elif randomGift == 2:
+    elif random_gift == 2:
         gift = "minecraft:tnt"
 
-    giftPlace = rd.randint(1, 3)
+    gift_place = rd.randint(1, 3)
 
-    textDiaryVillager = (
-        '\\\\s--------------\\\\n'
-        '                      \\\\n'
-        '                      \\\\n'
-        f'{villagerName} diary  \\\\n'
-        '                      \\\\n'
-        '                      \\\\n'
-        '                      \\\\n'
-        '                      \\\\n'
-        '                      \\\\n'
-        '                      \\\\n'
-        '                      \\\\n'
-        '--------------')
-    textDiaryVillager += '     \f'
+    book_writer: BookWriter = BookWriter()
+    book_writer.writeFirstPage(villager_name + " diary", "")
 
-    newDiaryTextWithoutTarget = DIARY_TEXTS_WITHOUT_TARGETS.copy()
-    newDiaryTextWithTarget = DIARY_TEXTS_WITH_TARGETS.copy()
-    targetTextDone = False
-    murdererSuspicious = False
+    new_diary_text_without_target = DIARY_TEXTS_WITHOUT_TARGETS.copy()
+    new_diary_text_with_target = DIARY_TEXTS_WITH_TARGETS.copy()
+    target_text_done = False
+    murderer_suspicious = False
 
-    numberPhrase = rd.randint(3, 7)
-    for i in range(numberPhrase):
+    number_phrase = rd.randint(3, 7)
+    for i in range(number_phrase):
         # Spaces
-        if rd.randint(1, 2) == 1:
-            textDiaryVillager += '                      \\\\n'
-            if rd.randint(1, 2) == 1:
-                textDiaryVillager += '                      \\\\n'
+        book_writer.writeEmptyLine(rd.randint(0, 1))
 
-        availableIndices: list = generator.returnVillagerAvailableForGift(village_model, [villager])
+        available_indices: list = generator.returnVillagerAvailableForGift(village_model, [villager])
 
         # Gift phrase
-        if i == giftPlace and len(availableIndices) >= 1:
-            targetedVillager: Villager = availableIndices[rd.randint(0, len(availableIndices) - 1)]
+        if i == gift_place and len(available_indices) >= 1:
+            targeted_villager: Villager = available_indices[rd.randint(0, len(available_indices) - 1)]
 
-            if randomGift == 1:
+            if random_gift == 1:
                 if rd.randint(1, 2) == 1:
-                    textDiaryVillager += f'I love {targetedVillager.name}\\\\n'
+                    book_writer.writeLine(f'I love {targeted_villager.name}', breakLine=False)
                 else:
-                    textDiaryVillager += f'{targetedVillager.name} is my best friend\\\\n'
-
-                if rd.randint(1, 2) == 1:
-                    textDiaryVillager += ', I left a surprise under the door.\\\\n'
-                else:
-                    textDiaryVillager += ', I hope my lover will finds the gift I left him under the door.\\\\n'
-
-            elif randomGift == 2:
-                if rd.randint(1, 2) == 1:
-                    textDiaryVillager += f'I hate {targetedVillager.name}\\\\n'
-                else:
-                    textDiaryVillager += f'{targetedVillager.name} is a jerk\\\\n'
+                    book_writer.writeLine(f'{targeted_villager.name} is my best friend', breakLine=False)
 
                 if rd.randint(1, 2) == 1:
-                    textDiaryVillager += ', I placed a tnt under the door.\\\\n'
+                    book_writer.writeLine(', I left a surprise under the door.')
                 else:
-                    textDiaryVillager += ', I put a deadly trap under the door.\\\\n'
+                    book_writer.writeLine(', I hope my lover will finds the gift I left him under the door.')
+
+            elif random_gift == 2:
+                if rd.randint(1, 2) == 1:
+                    book_writer.writeLine(f'I hate {targeted_villager.name}', breakLine=False)
+                else:
+                    book_writer.writeLine(f'{targeted_villager.name} is a jerk.', breakLine=False)
+
+                if rd.randint(1, 2) == 1:
+                    book_writer.writeLine(', I placed a tnt under the door.')
+                else:
+                    book_writer.writeLine(', I put a deadly trap under the door.')
             continue
 
         # Murderer suspicion
         murdererData = village_model.murderer_data
-        if rd.randint(1, 5) == 1 and not murdererSuspicious and murdererData.villagerMurderer is not None:
-            textDiaryVillager += f'I think that {murdererData.villagerMurderer.name} is really strange. \\\\n'
-            murdererSuspicious = True
+        if rd.randint(1, 5) == 1 and not murderer_suspicious and murdererData.villagerMurderer is not None:
+            book_writer.writeLine(f'I think that {murdererData.villagerMurderer.name} is really strange.')
+            murderer_suspicious = True
             continue
 
         # Other phrase    
         random = rd.randint(1, 5)
         if random == 1:
             randomProfession = rd.randint(0, len(Villager.VILLAGE_PROFESSION_LIST) - 1)
-            textDiaryVillager += f'I hate all {Villager.VILLAGE_PROFESSION_LIST[randomProfession]} \\\\n'
+            book_writer.writeLine(f'I hate all {Villager.VILLAGE_PROFESSION_LIST[randomProfession]}.')
+
             if rd.randint(1, 5) == 1:
                 secondRandomProfession = rd.randint(0,
                                                     len(Villager.VILLAGE_PROFESSION_LIST) - 1)
                 if secondRandomProfession != randomProfession:
-                    textDiaryVillager += f'I would like to work as a {Villager.VILLAGE_PROFESSION_LIST[secondRandomProfession]}.\\\\n'
-        elif random == 2 and not targetTextDone:
-            randomDiaryTextWithTarget = rd.randint(0, len(newDiaryTextWithTarget) - 1)
+                    book_writer.writeLine(f'I would like to work as a {Villager.VILLAGE_PROFESSION_LIST[secondRandomProfession]}.')
+
+        elif random == 2 and not target_text_done:
+            randomDiaryTextWithTarget = rd.randint(0, len(new_diary_text_with_target) - 1)
 
             targeted = -1
 
@@ -247,38 +273,28 @@ def createBookForVillager(village_model: Village, villager: Villager) -> list:
                 targeted = village_model.dead_villagers[rd.randint(0, len(village_model.dead_villagers) - 1)].name
 
             if targeted != -1:
-                textDiaryVillager += (f'{newDiaryTextWithTarget[randomDiaryTextWithTarget]}'
-                                      f'{targeted}.  \\\\n')
+                book_writer.writeLine(f'{new_diary_text_with_target[randomDiaryTextWithTarget]} {targeted}.')
 
-            newDiaryTextWithTarget.remove(newDiaryTextWithTarget[randomDiaryTextWithTarget])
-            targetTextDone = True
+            new_diary_text_with_target.remove(new_diary_text_with_target[randomDiaryTextWithTarget])
+            target_text_done = True
         else:
-            randomDiaryTextWithoutTarget = rd.randint(0, len(newDiaryTextWithoutTarget) - 1)
-            textDiaryVillager += f'{newDiaryTextWithoutTarget[randomDiaryTextWithoutTarget]}   \\\\n'
-            newDiaryTextWithoutTarget.remove(newDiaryTextWithoutTarget[randomDiaryTextWithoutTarget])
+            randomDiaryTextWithoutTarget = rd.randint(0, len(new_diary_text_without_target) - 1)
+            book_writer.writeLine(f'{new_diary_text_without_target[randomDiaryTextWithoutTarget]}')
+            new_diary_text_without_target.remove(new_diary_text_without_target[randomDiaryTextWithoutTarget])
 
-        if i % 4 == 0:
-            textDiaryVillager += ' \f'
-
-    return [textDiaryVillager, gift]
+    return [book_writer, gift]
 
 
-def createBookForAdventurerHouse(flip):
-    flint_place = "right" if flip > 0 else "left"
-    bucket_place = "left " if flip > 0 else "right"
+def createBookForAdventurerHouse(village_name: str, flip: int):
+    flint_place = "right" if 0 < flip < 3 else "left"
+    bucket_place = "left " if 0 < flip < 3 else "right"
 
-    text_adventurer_book = (
-        '\\\\s-------------------\\\\n'
-        'Machine guide:  \\\\n'
-        f'Place flint and steal {flint_place} in the machine. Place water bucket in the {bucket_place} machine. \\\\n'
-        '                      \\\\n'
-        '                      \\\\n'
-        '                      \\\\n'
-        '                      \\\\n'
-        '                      \\\\n'
-        '                      \\\\n'
-        '                      \\\\n'
-        '-------------------')
-    text_adventurer_book += '\f'
+    book_writer: BookWriter = BookWriter()
+    book_writer.writeFirstPage(villageMessage(village_name), "Machine guide.")
+    book_writer.fillLineWith('-')
+    book_writer.writeLine('Instructions:')
+    book_writer.writeLine(f'1. Place flint and steal in the {flint_place} machine.')
+    book_writer.writeLine(f'2. Place water bucket in the {bucket_place} machine.')
+    book_writer.fillLineWith('-')
 
-    return text_adventurer_book
+    return book_writer

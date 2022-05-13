@@ -6,7 +6,6 @@ from generation.buildingCondition import BuildingCondition
 from generation.data.village import Village
 from generation.data.loreStructure import LoreStructure
 from utils.constants import Constants
-from utils.nameGenerator import NameGenerator
 from utils.worldModification import WorldModification
 
 import generation.loreMaker as loreMaker
@@ -30,8 +29,8 @@ def createSettlementData(area: list, village_model: Village, resources: Resource
     # Per default, chosen color is white
     loreMaker.fillSettlementDataWithColor(settlement_data, "white")
 
-    # settlement_data.structure_number_goal = 12
-    settlement_data.structure_number_goal = random.randint(25, 55)
+    settlement_data.structure_number_goal = 8
+    #settlement_data.structure_number_goal = random.randint(25, 55)
 
     return settlement_data
 
@@ -40,29 +39,25 @@ def generateVillageBooks(settlement_data: SettlementData) -> dict:
     village_model: Village = settlement_data.village_model
 
     # Create books for the village
+    writer_village_presentation_book = book.createTextOfPresentationVillage(village_model)
+    writer_village_presentation_book.setInfo(title="Village Presentation", author="Mayor",
+                                             description="Presentation of the village")
 
-    text_villagers_names = book.createTextForVillagersNames(village_model.villagers)
-    text_dead_villagers = book.createTextForDeadVillagers(village_model.villagers, village_model.dead_villagers)
+    writer_villagers_names = book.createTextForVillagersNames(village_model.name, village_model.villagers)
+    writer_villagers_names.setInfo(title="List of all villagers", author="Mayor",
+                                   description="List of all villagers")
 
-    text_village_presentation_book = book.createTextOfPresentationVillage(village_model.name,
-                                                                          settlement_data.structure_number_goal,
-                                                                          village_model.lore_structures,
-                                                                          text_dead_villagers[1],
-                                                                          village_model.villagers)
+    writer_dead_villagers = book.createTextForDeadVillagers(village_model.name, village_model.villagers,
+                                                            village_model.dead_villagers)
+    writer_dead_villagers.setInfo(title="List of all dead villagers",
+                                  author="Mayor",
+                                  description="List of all dead villagers")
 
-    settlement_data.textOfBooks = [text_villagers_names, text_dead_villagers]
-
-    books: dict = {
-        "villageNameBook": toolbox.writeBook(text_village_presentation_book, title="Village Presentation",
-                                             author="Mayor",
-                                             description="Presentation of the village"),
-        "villagerNamesBook": toolbox.writeBook(text_villagers_names, title="List of all villagers", author="Mayor",
-                                               description="List of all villagers"),
-        "deadVillagersBook": toolbox.writeBook(text_dead_villagers[0], title="List of all dead villagers",
-                                               author="Mayor",
-                                               description="List of all dead villagers")}
-
-    return books
+    return {
+        "villageNameBook": writer_village_presentation_book.printBook(),
+        "villagerNamesBook": writer_villagers_names.printBook(),
+        "deadVillagersBook": writer_dead_villagers.printBook()
+    }
 
 
 def initNumberHouse(x_size: int, z_size: int) -> tuple:
@@ -79,13 +74,12 @@ def placeBooks(settlement_data: SettlementData, books: dict, world_modification:
         items += [["minecraft:written_book" + books[key], 1]]
 
     # Set a chest for the books and place the books in the chest
-    world_modification.setBlock(settlement_data.center[0],
-                                Constants.getHeight(settlement_data.center[0], settlement_data.center[2]),
+    height: int = Constants.getHeight(settlement_data.center[0], settlement_data.center[2])
+
+    world_modification.setBlock(settlement_data.center[0], height,
                                 settlement_data.center[2], "minecraft:chest[facing=east]", place_immediately=True)
 
-    util.addItemChest(settlement_data.center[0],
-                      Constants.getHeight(settlement_data.center[0], settlement_data.center[2]),
-                      settlement_data.center[2], items)
+    util.addItemChest(settlement_data.center[0], height, settlement_data.center[2], items)
 
     # Set a lectern for the book of village presentation
     toolbox.placeLectern(
@@ -147,6 +141,97 @@ def generateStructure(lore_structure: LoreStructure, settlement_data: Settlement
         world_modification.setBlock(position[0], position[1], position[2], lore_structure.gift)
 
 
+def modifyBuildingConditionDependingOnStructure(building_conditions: BuildingCondition, settlement_data: SettlementData,
+                                                structure: LoreStructure):
+    if structure.name == "basicgraveyard":
+        number = 8
+
+        building_conditions.special = {"sign": []}
+
+        list_of_dead = settlement_data.village_model.dead_villagers.copy()
+        i = 0
+        while i < number:
+            building_conditions.special["sign"].append("")
+            building_conditions.special["sign"].append("")
+            building_conditions.special["sign"].append("")
+            building_conditions.special["sign"].append("")
+
+            if len(list_of_dead) > 0:
+                index = random.randint(0, len(list_of_dead) - 1)
+                name = list_of_dead[index].name
+                util.parseVillagerNameInLines([name], building_conditions.special["sign"], i * 4)
+
+                del list_of_dead[index]
+
+            i += 1
+
+    elif structure.name == "murderercache":
+        murderer_data = settlement_data.village_model.murderer_data
+
+        building_conditions.special = {"sign": ["Next target :", "", "", ""]}
+        name = murderer_data.villagerTarget.name
+        util.parseVillagerNameInLines([name], building_conditions.special["sign"], 1)
+
+    elif structure.name == "adventurerhouse":
+        writer = book.createBookForAdventurerHouse(settlement_data.village_model.name, building_conditions.flip)
+        writer.setInfo(title="Portal Manual", author="Mayor",
+                       description="Contains useful instruction")
+        building_conditions.special["adventurerhouse"] = ["minecraft:written_book" + writer.printBook() ]
+
+    elif "exchanger" in structure.name:
+        building_conditions.special["trade"] = []
+
+        for villageKey in settlement_data.village_model.village_interactions:
+            interaction = settlement_data.village_model.village_interactions[villageKey]
+
+            if interaction.economicalRelation:
+                building_conditions.special["trade"].append(
+                    'minecraft:paper{'
+                        'display:{Name:\'{\"text\":\"Commercial alliance pact\"}\''
+                        ',Lore:[\'{\"text\":\"' + villageKey.name + ' currency exchange permit.\"}\']'
+                        '}, Enchantments:[{}]'
+                    '}'
+                )
+    elif structure.name == "mediumstatue":
+        building_conditions.special = {"sign": ["", "", "", "", "", "", "", ""]}
+        index: int = 0
+        if len(settlement_data.village_model.dead_villagers) > 1:
+            index = random.randint(0, len(settlement_data.village_model.dead_villagers) - 1)
+
+        name = settlement_data.village_model.dead_villagers[index].name
+        util.parseVillagerNameInLines([
+            "In tribute to " + name + ", hero who died in the war"
+        ], building_conditions.special["sign"])
+
+        if building_conditions.special["sign"][4] == "":
+            building_conditions.special["sign"] = building_conditions.special["sign"][0:4]
+
+    if structure.type == LoreStructure.TYPE_HOUSES:
+        i: int = 0
+        for villager in structure.villagers:
+            if len(villager.diary) > 0:
+                name: str = f'diary{i}'
+
+                if name not in building_conditions.special:
+                    building_conditions.special[name] = []
+
+                building_conditions.special[name].append(villager.diary[0])
+
+            i += 1
+
+    if len(structure.orders) > 0:
+        building_conditions.special["order"] = []
+
+    for order in structure.orders:
+        building_conditions.special["order"].append(
+            'minecraft:paper{'
+                'display:{Name:\'{\"text\":\"' + order.villager_ordering.name + '\\\'s order\"}\''
+                 #',Lore:[\'{\"text\":\" currency exchange permit.\"}\']'
+                '}, Enchantments:[{}]'
+            '}'
+        )
+
+
 def buildMurdererCache(lore_structure: LoreStructure, settlement_data: SettlementData, resources: Resources,
                        world_modification: WorldModification, chest_generation: ChestGeneration,
                        block_transformation: list,
@@ -182,70 +267,12 @@ def buildMurdererCache(lore_structure: LoreStructure, settlement_data: Settlemen
     facing = structure_murderer.getFacingMainEntry(building_conditions.flip, building_conditions.rotation)
 
     # Generate murderer trap
-    world_modification.setBlock(building_conditions.position[0], building_conditions.position[1] + 2,
-                                building_conditions.position[2], "minecraft:ladder[facing=" + facing + "]")
     world_modification.setBlock(building_conditions.position[0], building_conditions.position[1] + 3,
                                 building_conditions.position[2],
                                 "minecraft:" + building_conditions.replacements[
                                     "woodType"] + "_trapdoor[half=bottom,facing=" + facing + "]")
-
-
-def modifyBuildingConditionDependingOnStructure(building_conditions: BuildingCondition, settlement_data: SettlementData,
-                                                structure: LoreStructure):
-    if structure.name == "basicgraveyard":
-        number = 8
-
-        building_conditions.special = {"sign": []}
-
-        list_of_dead = settlement_data.village_model.dead_villagers.copy()
-        i = 0
-        while i < number:
-            building_conditions.special["sign"].append("")
-            building_conditions.special["sign"].append("")
-            building_conditions.special["sign"].append("")
-            building_conditions.special["sign"].append("")
-
-            if len(list_of_dead) > 0:
-                index = random.randint(0, len(list_of_dead) - 1)
-                name = list_of_dead[index].name
-                util.parseVillagerNameInLines([name], building_conditions.special["sign"], i * 4)
-
-                del list_of_dead[index]
-
-            i += 1
-
-    elif structure.name == "murderercache":
-        murderer_data = settlement_data.village_model.murderer_data
-
-        building_conditions.special = {"sign": ["Next target :", "", "", ""]}
-        name = murderer_data.villagerTarget.name
-        util.parseVillagerNameInLines([name], building_conditions.special["sign"], 1)
-
-    elif structure.name == "adventurerhouse":
-        building_conditions.special["adventurerhouse"] = [book.createBookForAdventurerHouse(building_conditions.flip)]
-    elif structure.name == "mediumstatue":
-        building_conditions.special = {"sign": ["", "", "", "", "", "", "", ""]}
-        index: int = 0
-        if len(settlement_data.village_model.dead_villagers) > 1:
-            index = random.randint(0, len(settlement_data.village_model.dead_villagers) - 1)
-
-        name = settlement_data.village_model.dead_villagers[index].name
-        util.parseVillagerNameInLines([
-            "In tribute to " + name + ", hero who died in the war"
-        ], building_conditions.special["sign"])
-
-        if building_conditions.special["sign"][4] == "":
-            building_conditions.special["sign"] = building_conditions.special["sign"][0:4]
-
-    if structure.type == LoreStructure.TYPE_HOUSES:
-        for villager in structure.villagers:
-            if len(villager.diary) > 0:
-                if "bedroomhouse" not in building_conditions.special:
-                    building_conditions.special["bedroomhouse"] = []
-
-                building_conditions.special["bedroomhouse"].append(villager.diary[0])
-
-                # print(len(building_conditions.special["bedroomhouse"]))
+    world_modification.setBlock(building_conditions.position[0], building_conditions.position[1] + 2,
+                                building_conditions.position[2], "minecraft:ladder[facing=" + facing + "]")
 
 
 def returnVillagerAvailableForGift(village_model: Village, villagers_excepted: list) -> list:

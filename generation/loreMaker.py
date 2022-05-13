@@ -1,4 +1,5 @@
 import random
+import copy
 
 import utils.util as util
 from generation.data.village import Village
@@ -7,7 +8,7 @@ from generation.data.village import VillageInteraction
 from generation.data.loreStructure import LoreStructure
 
 
-def gen_position_of_village(existing_areas: list, goal_number: int) -> list:
+def genPositionOfVillage(existing_areas: list, goal_number: int) -> list:
     positions: list = []
 
     for area in existing_areas:
@@ -18,8 +19,12 @@ def gen_position_of_village(existing_areas: list, goal_number: int) -> list:
 
     for i in range(goal_number - remaining_index_start):
         random_index: int = random.randint(0, len(positions) - 1)
-        positions.append([positions[random_index][0] - 500, positions[random_index][0] + 500,
-                          positions[random_index][1] - 500, positions[random_index][1] + 500])
+
+        reference: list = copy.copy(positions[random_index])
+        reference[0] += random.randint(400, 900) if random.randint(1, 2) == 1 else random.randint(-900, 400)
+        reference[1] += random.randint(400, 900) if random.randint(1, 2) == 1 else random.randint(-900, 400)
+
+        positions.append(reference)
 
     return positions
 
@@ -32,8 +37,6 @@ def initializedVillages(positions_of_villages: list, name_generator) -> list:
         villages[i].position = positions_of_villages[i]
         villages[i].generateVillageInformation(name_generator)
         villages[i].generateVillageLore()
-
-        voteForColor(villages[i])
 
     return villages
 
@@ -80,14 +83,10 @@ def checkForImpossibleInteractions(villages: list, interactions: list):
                 continue
 
             if random.randint(0, 1) == 1:
-                interaction1.state = VillageInteraction.STATE_NEUTRAL
-                interaction1.brokeTheirRelation = True
-                interaction1.reason = VillageInteraction.REASON_TWO_FRIENDS_WENT_IN_WAR
+                interaction1.brokeRelation()
                 # print("Relation between " + interaction1.village1.name + " " + interaction1.village2.name + " broken")
             else:
-                interaction2.state = VillageInteraction.STATE_NEUTRAL
-                interaction2.brokeTheirRelation = True
-                interaction2.reason = VillageInteraction.REASON_TWO_FRIENDS_WENT_IN_WAR
+                interaction2.brokeRelation()
                 # print("Relation between " + interaction2.village1.name + " " + interaction2.village2.name + " broken")
 
 
@@ -114,7 +113,7 @@ def generateLoreAfterRelation(villages: list):
 def alterSettlementDataWithNewStructures(settlement_data, lore_structure: LoreStructure):
     result: dict = isDestroyStructure(settlement_data.village_model, lore_structure)
     if result != {}:
-        #print("DESTRUCTED STRUCTURE")
+        # print("DESTRUCTED STRUCTURE")
         lore_structure.destroyed = True
         lore_structure.causeDestroy = result
         applyStructureDestroy(settlement_data.village_model, lore_structure)
@@ -122,13 +121,6 @@ def alterSettlementDataWithNewStructures(settlement_data, lore_structure: LoreSt
 
 def applyLoreToSettlementData(settlement_data):
     fillSettlementDataWithColor(settlement_data, settlement_data.village_model.color)
-
-
-def voteForColor(village):
-    colors = ["white", "orange", "magenta", "light_blue", "yellow", "lime", "pink", "gray", "light_gray", "cyan",
-              "purple", "blue", "brown", "green", "red", "black"]
-
-    village.color = colors[random.randint(0, len(colors) - 1)]
 
 
 def fillSettlementDataWithColor(settlement_data, color):
@@ -152,6 +144,7 @@ def generateLoreAfterAllStructure(village: Village, name_generator):
     createListOfDeadVillager(village, name_generator)
     handleVillageDestroy(village)
     handleMurderer(village)
+    generateOrders(village)
 
 
 # Minimum of 10 deaths
@@ -275,3 +268,28 @@ def handleMurderer(village: Village):
     for structureData in village.lore_structures:
         if village.murderer_data.villagerTarget in structureData.villagers:
             structureData.gift = "minecraft:tnt"
+
+
+def generateOrders(village: Village):
+    for structure in village.lore_structures:
+        if structure.type != LoreStructure.TYPE_FUNCTIONALS:
+            return
+
+        orders: list = []
+        # Between (0, 1); (0, 2) or (0, 3)
+        number: int = random.randint(0, village.tier + 1)
+
+        size: int = len(village.villagers)
+        # Order for
+        for j in range(min(number, size)):
+
+            villager: Villager = village.villagers[
+                random.choice(
+                    [i for i in range(size) if
+                     village.villagers[i] not in structure.villagers and village.villagers[i] not in orders])]
+
+            orders.append(villager)
+
+        for ordering in orders:
+            print(ordering.name)
+            structure.addOrder(ordering, "uninitialized", 0)
