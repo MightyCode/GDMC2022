@@ -192,8 +192,7 @@ class WallConstruction:
         to_visit: list = []
 
         def add_border_cell(x_real, z_real):
-            if x_real < 0 or x_real >= self.detection_grid_size[0] or z_real < 0 or z_real >= self.detection_grid_size[
-                1]:
+            if x_real < 0 or x_real >= self.detection_grid_size[0] or z_real < 0 or z_real >= self.detection_grid_size[1]:
                 return
 
             if z_real - extended_offset[1] < 0 or z_real - extended_offset[1] >= extended_size[1] or \
@@ -274,6 +273,25 @@ class WallConstruction:
                 remaining.append([x + x_offset, z + z_offset])
 
         # Complete diagonal border
+        for z in range(self.detection_grid_size[1]):
+            for x in range(self.detection_grid_size[0]):
+                if not getValue(x, z):
+                    continue
+
+                if getValue_extended(x - extended_offset[0], z - extended_offset[1] - 1):
+                    if getValue_extended(x - extended_offset[0] - 1, z - extended_offset[1]):
+                        add_border_cell(x - 1, z - 1)
+
+                    if getValue_extended(x - extended_offset[0] + 1, z - extended_offset[1]):
+                        add_border_cell(x + 1, z - 1)
+
+                if getValue_extended(x - extended_offset[0], z - extended_offset[1] + 1):
+                    if getValue_extended(x - extended_offset[0] - 1, z - extended_offset[1]):
+                        add_border_cell(x - 1, z + 1)
+
+                    if getValue_extended(x - extended_offset[0] + 1, z - extended_offset[1]):
+                        add_border_cell(x + 1, z + 1)
+        """    
         for cell in to_visit:
             # Diagonal left up to right down
             # Or Diagonal right up to left down
@@ -293,12 +311,13 @@ class WallConstruction:
                 # If down is interior of border, should up left as border
                 elif getValue(cell[0], cell[1] + 1):
                     add_border_cell(cell[0], cell[1] - 1)
+        """
 
         # Display status of border
         for y in range(extended_size[1]):
             print("")
             for x in range(extended_size[0]):
-                print("1" if extended_matrix[y * extended_size[0] + x] else "0", end="")
+                print("1" if getValue_extended(x, y) else "2" if getValue(x + extended_offset[0], y + extended_offset[1]) else "0", end="")
 
         info_ajustment: list = [
             [[-1, 1, -1,

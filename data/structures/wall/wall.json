@@ -4,13 +4,15 @@
       "position" : [4, 0, 4]
     },
     "replacements" : {
+      "oak" : { "type" : "woodType", "state" : 2 },
+      "spruce" : { "type" : "woodType2", "state" : 2 },
+      "acacia" : { "type" : "woodType3", "state" : 2 },
+      "minecraft:white_banner" : { "type" : "banner", "state" : 1 }
     },
     "air" : {
       "preferredAirMode" : 1
     },
     "ground" : {
-      "zones" : [
-        [0, 0, 9, 9]
-      ]
+      "info" : "all"
     }
 }
