@@ -3,6 +3,7 @@ import random
 from generation.data.settlementData import SettlementData
 from generation.data.loreStructure import LoreStructure
 from generation.structures.blockTransformation.oldStructureTransformation import OldStructureTransformation
+from utils import util
 from utils.worldModification import WorldModification
 from generation.data.roadData import RoadData
 from utils.constants import Constants
@@ -21,7 +22,8 @@ class Road:
         "east": [0, 0, 1, 0]
     }
 
-    def __init__(self):
+    def __init__(self, area: tuple):
+        self.area = area
         self.roads: list = []
         self.lanterns: list = []
         self.square_list: list = []
@@ -205,68 +207,52 @@ class Road:
         old_transformation.setLoreStructure(lore_structure)
 
         for roadData in self.roadParts:
-            yTemp = roadData.yEntry1
             for block in roadData.path:
-                y = yTemp
+                y = util.getHighestNonAirBlock(block[0], block[1], block[0] - self.area[0], block[1] - self.area[2])
                 material = 'minecraft:grass_path'
-                while not (Constants.is_air(block[0], y + 1, block[1])) or Constants.is_air(block[0], y, block[1]):
-                    if Constants.is_air(block[0], y, block[1]):
-                        y -= 1
-                    if not (Constants.is_air(block[0], y + 1, block[1])):
-                        y += 1
-
-                while iu.getBlock(block[0], y, block[1]) == 'minecraft:water':
-                    y = y + 1
-                    material = "minecraft:" + settlement_data.getMaterialReplacement("woodType") + "_planks"
-                while iu.getBlock(block[0], y, block[1]) == 'minecraft:lava':
-                    y = y + 1
-                    material = "minecraft:nether_bricks"
-
                 # Here, we need to check if there is a tree above the path, and if yes, we want to remove it
                 terrain_modification.removeRecursivelyAt(world_modification, block[0], y, block[1])
                 terrain_modification.removeRecursivelyAt(world_modification, block[0], y + 1, block[1])
                 terrain_modification.removeRecursivelyAt(world_modification, block[0], y + 2, block[1])
 
-                world_modification.setBlock(block[0], y - 1, block[1],
-                                            old_transformation.replaceBlock(material))
-                yTemp = y
+                if iu.getBlock(block[0], y - 1, block[1]) == 'minecraft:water':
+                    material = "minecraft:" + settlement_data.getMaterialReplacement("woodType") + "_planks"
+                elif iu.getBlock(block[0], y - 1, block[1]) == 'minecraft:lava':
+                    material = "minecraft:nether_bricks"
 
-        temp = 1
+                world_modification.setBlock(block[0], y - 1, block[1], old_transformation.replaceBlock(material))
+
         for roadData in self.roadParts:
-            yTemp = roadData.yEntry1
+            counter = 1
             for block in roadData.path:
-                y = yTemp
-                while not (Constants.is_air(block[0], y + 1, block[1])) or Constants.is_air(block[0], y, block[1]):
-                    if Constants.is_air(block[0], y, block[1]):
-                        y -= 1
+                y = util.getHighestNonAirBlock(block[0], block[1], block[0] - self.area[0], block[1] - self.area[2])
 
-                    if not (Constants.is_air(block[0], y + 1, block[1])):
-                        y += 1
+                if (3 + counter) % 12 != 0 or counter >= len(roadData.path) - 3:
+                    counter += 1
+                    continue
 
-                while iu.getBlock(block[0], y, block[1]) == 'minecraft:water' or iu.getBlock(block[0], y,
-                                                                                             block[
-                                                                                                 1]) == 'minecraft:lava':
-                    y = y + 1
+                diffX: list = [-1, 0, 1, 0]
+                diffZ: list = [0, -1, 0, 1]
+                order: list = [0, 1, 2, 3]
+                random.shuffle(order)
 
-                if (3 + temp) % 12 == 0 and temp < len(roadData.path) - 3:
-                    diffX: list = [-1, 0, 1, 0]
-                    diffZ: list = [0, -1, 0, 1]
-                    order: list = [0, 1, 2, 3]
-                    random.shuffle(order)
+                for i in order:
+                    position = [block[0] + diffX[i], block[1] + diffZ[i]]
+                    if position in roadData.path \
+                        or projectMath.isInHouse(list_house, position) \
+                        or self.isInRoad(position):
 
-                    for i in order:
-                        position = [block[0] + diffX[i], block[1] + diffZ[i]]
-                        if position not in roadData.path and not projectMath.isInHouse(list_house,
-                                                                                       position) and not self.isInRoad(
-                            position):
-                            self.lanterns.append([position[0], position[1]])
+                        continue
 
-                            world_modification.setBlock(position[0], y - 1, position[1], 'minecraft:cobblestone')
-                            world_modification.setBlock(position[0], y, position[1], 'minecraft:cobblestone_wall')
+                    print("add torch")
+                    self.lanterns.append([position[0], position[1]])
 
-                            if not settlement_data.village_model.isDestroyed:
-                                world_modification.setBlock(position[0], y + 1, position[1], 'minecraft:torch')
-                            break
+                    world_modification.setBlock(position[0], y - 1, position[1], 'minecraft:cobblestone')
+                    world_modification.setBlock(position[0], y, position[1], 'minecraft:cobblestone_wall')
 
-                yTemp = y
-                temp += 1
+                    if not settlement_data.village_model.isDestroyed:
+                        world_modification.setBlock(position[0], y + 1, position[1], 'minecraft:torch')
+
+                    break
+
+                counter += 1

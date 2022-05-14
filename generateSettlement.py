@@ -39,9 +39,6 @@ TIME_LIMIT: int = 600
 TIME_TO_BUILD_A_VILLAGE: int = 30
 
 file: str = "temp.txt"
-interface: interfaceUtil.Interface = interfaceUtil.Interface()
-interface.setCaching(True)
-interface.setBuffering(True)
 interfaceUtil.setCaching(True)
 interfaceUtil.setBuffering(True)
 
@@ -122,6 +119,11 @@ if not args.remove:
 
         print("Make global slice")
         interfaceUtil.makeGlobalSlice()
+        """print(interfaceUtil.globalWorldSlice.heightmaps["MOTION_BLOCKING_NO_LEAVES"][128, 128])
+        print(util.getHighestNonAirBlock(area[0] + 128, area[2] + 128, 128, 128))
+        print(area[0] + 128, area[2] + 128)
+        exit()"""
+
         print("Global slice done")
         print("Tier : " + str(current_village.tier) + ", Age : " + str(
             current_village.age) + ", Status : " + current_village.status)
@@ -278,7 +280,7 @@ if not args.remove:
 
         """ Fourth main step : creates the roads and wall of the village """
         print("\nInitialized road")
-        road = Road()
+        road = Road(area)
         roadParts: list = road.initRoad(floodFill.listHouse, settlement_data)
 
         for lore_structure in current_village.lore_structures:

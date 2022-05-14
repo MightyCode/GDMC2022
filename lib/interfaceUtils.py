@@ -348,7 +348,7 @@ def makeGlobalSlice():
     """**Instantiate a global WorldSlice and refresh building area**."""
     global globalWorldSlice
     x1, y1, z1, x2, y2, z2 = requestBuildArea()
-    globalWorldSlice = WorldSlice(x1, z1, x2, z2)
+    globalWorldSlice = WorldSlice(x1, z1, x2, z2, heightmapTypes=["MOTION_BLOCKING_NO_LEAVES"])
     resetGlobalDecay()
 
 

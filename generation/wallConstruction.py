@@ -1,6 +1,9 @@
+import random
+
 from generation.data.loreStructure import LoreStructure
 from generation.data.settlementData import SettlementData
 from generation.resources import Resources
+from utils import util
 from utils.constants import Constants
 import generation.generator as generator
 
@@ -257,8 +260,7 @@ class WallConstruction:
             founded.append([x, z])
             del remaining[0]
 
-            if 0 <= x + extended_offset[0] < self.detection_grid_size[0] and 0 <= z + extended_offset[1] < \
-                    self.detection_grid_size[1]:
+            if 0 <= x + extended_offset[0] < self.detection_grid_size[0] and 0 <= z + extended_offset[1] < self.detection_grid_size[1]:
                 self.matrix[(z + extended_offset[1]) * self.detection_grid_size[0] + (x + extended_offset[0])] = True
 
             for x_offset, z_offset in [[-1, 0], [1, 0], [0, -1], [0, 1]]:
@@ -291,33 +293,13 @@ class WallConstruction:
 
                     if getValue_extended(x - extended_offset[0] + 1, z - extended_offset[1]):
                         add_border_cell(x + 1, z + 1)
-        """    
-        for cell in to_visit:
-            # Diagonal left up to right down
-            # Or Diagonal right up to left down
-            if getValue_extended(cell[0] - extended_offset[0] - 1, cell[1] - extended_offset[1] - 1) \
-                    or getValue_extended(cell[0] - extended_offset[0] + 1, cell[1] - extended_offset[1] + 1) \
-                    or getValue_extended(cell[0] - extended_offset[0] + 1, cell[1] - extended_offset[1] - 1) \
-                    or getValue_extended(cell[0] - extended_offset[0] - 1, cell[1] - extended_offset[1] + 1):
-                # If left is interior of border, should add right as border
-                if getValue(cell[0] - 1, cell[1]):
-                    add_border_cell(cell[0] + 1, cell[1])
-                # If right is interior of border, should add left as border
-                elif getValue(cell[0] + 1, cell[1]):
-                    add_border_cell(cell[0] - 1, cell[1])
-                # If up is interior of border, should add down as border
-                if getValue(cell[0], cell[1] - 1):
-                    add_border_cell(cell[0], cell[1] + 1)
-                # If down is interior of border, should up left as border
-                elif getValue(cell[0], cell[1] + 1):
-                    add_border_cell(cell[0], cell[1] - 1)
-        """
 
         # Display status of border
         for y in range(extended_size[1]):
             print("")
             for x in range(extended_size[0]):
-                print("1" if getValue_extended(x, y) else "2" if getValue(x + extended_offset[0], y + extended_offset[1]) else "0", end="")
+                print("1" if getValue_extended(x, y) else "2" if getValue(x + extended_offset[0],
+                                                                          y + extended_offset[1]) else "0", end="")
 
         info_ajustment: list = [
             [[-1, 1, -1,
@@ -391,10 +373,20 @@ class WallConstruction:
                     i += 1
 
     def placeWall(self, settlement_data: SettlementData, resources: Resources,
-                      world_modification: WorldModification, block_transformations: list):
+                  world_modification: WorldModification, block_transformations: list):
+        # Choose door
+        door_candidate: list = []
+        for wallCell in self.wall_list:
+            if wallCell["type"] == self.MODEL_LINE:
+                door_candidate.append(wallCell)
+
+        for i in range(random.randint(1, 3)):
+            index: int = random.randint(0, len(door_candidate) - 1)
+            door_candidate[index]["type"] = self.MODEL_DOOR
+            del door_candidate[index]
+
         x: int
         z: int
-        y = 64
 
         for wallCell in self.wall_list:
             x, z = wallCell["position"]
@@ -406,6 +398,10 @@ class WallConstruction:
                     and self.area[2] <= z_real and z_real + self.zone_size <= self.area[5]):
                 continue
 
+            y = util.getHighestNonAirBlock(x_real, z_real, x_real - self.area[0], z_real - self.area[2])
+
+            wallCell["height"] = y
+
             tier: str = "basic" if self.village.tier == 0 else "medium" if self.village.tier == 1 else "advanced"
 
             lore_structure: LoreStructure = LoreStructure()
@@ -413,20 +409,46 @@ class WallConstruction:
             lore_structure.position = [x_real, y - 1, z_real]
             lore_structure.flip = wallCell["flip"]
             lore_structure.rotation = wallCell["rotation"]
+            lore_structure.age = settlement_data.village_model.age
+
+            if settlement_data.village_model.isDestroyed:
+                lore_structure.destroyed = True
+                for one_cause in util.selectNWithChanceForOther(["burned", "damaged", "abandoned"], [0.4, 0.3, 0.3], 1):
+                    lore_structure.causeDestroy[one_cause] = settlement_data.village_model.destroyCause
 
             lore_structure.preBuildingInfo = resources.structures[lore_structure.name].getNextBuildingInformation(
                 lore_structure.flip, lore_structure.rotation
             )
 
-            while (not Constants.is_air(x_real, y + 1, z_real) or Constants.is_air(x_real, y,
-                                                                                   z_real)) and 0 <= y <= 255:
-                if Constants.is_air(x_real, y, z_real):
-                    y -= 1
-                if not Constants.is_air(x_real, y + 1, z_real):
-                    y += 1
-
             generator.generateStructure(lore_structure, settlement_data, resources, world_modification, None,
                                         block_transformations)
+
+    def returnWallEntries(self) -> list:
+        result: list = []
+
+        for wallCell in self.wall_list:
+            if wallCell["type"] != self.MODEL_DOOR:
+                continue
+
+            half: int = self.zone_size // 2 + 1
+
+            position: list = [
+                self.area[0] + wallCell["position"][0] * self.zone_size + half,
+                self.area[2] + wallCell["position"][1] * self.zone_size + half
+            ]
+
+            if wallCell["rotation"] == 0:
+                position[1] += half
+            elif wallCell["rotation"] == 1:
+                position[0] -= half
+            elif wallCell["rotation"] == 2:
+                position[1] -= half
+            elif wallCell["rotation"] == 3:
+                position[0] += half
+
+            result.append([position[0], wallCell["height"], position[1]])
+
+        return result
 
     def appendWallCell(self, x: int, z: int, wallType: int, flip: int, rotation: int) -> None:
         for wall in self.wall_list:
@@ -441,7 +463,8 @@ class WallConstruction:
             "position": [x, z],
             "type": wallType,
             "flip": flip,
-            "rotation": rotation
+            "rotation": rotation,
+            "height": -1
         })
 
     def isBlockInEnclosure(self, x, z) -> bool:
