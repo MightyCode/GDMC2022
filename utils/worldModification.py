@@ -3,6 +3,9 @@ import lib.interfaceUtils as interfaceUtils
 
 
 # Class which serve to save all modification, do undo actions
+from utils.checkOrCreateConfig import Config
+
+
 class WorldModification:
     DEBUG_MODE = False
 
@@ -10,13 +13,11 @@ class WorldModification:
     BLOCK_SEPARATOR = "$"
     PARTS_SEPARATOR = "°"
 
-    def __init__(self, config: dict):
+    def __init__(self):
         self.before_modification: list = []
         self.after_modification: list = []
 
-        self.config: dict = config
-        if "debugMode" in self.config.keys():
-            WorldModification.DEBUG_MODE = config["debugMode"]
+        WorldModification.DEBUG_MODE = Config.LOADED_CONFIG["debugMode"]
 
     def setBlock(self, x, y, z, block, compare_block_state=False, place_immediately=False):
         if WorldModification.DEBUG_MODE:

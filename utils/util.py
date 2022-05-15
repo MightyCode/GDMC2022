@@ -168,7 +168,7 @@ def spawnVillager(x: int, y: int, z: int, villager: Villager, villagerType: str)
                + villagerType + "},CustomName:""\"\\" + '"' + str(villager.name) + "\\" + '""' \
                + createOffer(villager) + "}"
 
-    #print(command)
+    # print(command)
 
     interfaceUtils.runCommand(command)
 
@@ -202,26 +202,20 @@ def addItemChest(x, y, z, items):
                                                                v[1])
         interfaceUtils.runCommand(command)
 
+IGNORED_BLOCKS: list = ['minecraft:oak_leaves', 'minecraft:leaves', 'minecraft:birch_leaves', 'minecraft:spruce_leaves',
+                      'minecraft:dark_oak_leaves'
+                      'minecraft:oak_log', 'minecraft:spruce_log', 'minecraft:birch_log', 'minecraft:jungle_log',
+                      'minecraft:acacia_log', 'minecraft:dark_oak_log']
+IGNORED_BLOCKS.extend(lookup.PLANTS)
 
-def getHighestNonAirBlock(cx, cy, cz):
-    cy = 255
-    IGNORED_BLOCKS = [
-        'minecraft:air', 'minecraft:cave_air', 'minecraft:water', 'minecraft:lava',
-        'minecraft:oak_leaves', 'minecraft:leaves', 'minecraft:birch_leaves', 'minecraft:spruce_leaves',
-        'minecraft:dark_oak_leaves'
-        'minecraft:oak_log', 'minecraft:spruce_log', 'minecraft:birch_log', 'minecraft:jungle_log',
-        'minecraft:acacia_log', 'minecraft:dark_oak_log',
-        'minecraft:grass', 'minecraft:snow', 'minecraft:poppy', 'minecraft:pissenlit', 'minecraft:seagrass',
-        'minecraft:dandelion', 'minecraft:blue_orchid',
-        'minecraft:allium', 'minecraft:azure_bluet', 'minecraft:red_tulip', 'minecraft:orange_tulip',
-        'minecraft:white_tulip', 'minecraft:pink_tulip',
-        'minecraft:oxeye_daisy', 'minecraft:cornflower', 'minecraft:lily_of_the_valley', 'minecraft:brown_mushroom',
-        'minecraft:red_mushroom',
-        'minecraft:sunflower', 'minecraft:peony', 'minecraft:dead_bush', "minecraft:cactus", "minecraft:sugar_cane",
-        'minecraft:fern']
+
+def getHighestNonAirBlock(cx, cz, local_x, local_z):
+    cy = interfaceUtils.globalWorldSlice.heightmaps["MOTION_BLOCKING_NO_LEAVES"][local_x, local_z]
+
     ## Find highest non-air block
     while interfaceUtils.getBlock(cx, cy, cz) in IGNORED_BLOCKS:
         cy -= 1
+
     return cy
 
 

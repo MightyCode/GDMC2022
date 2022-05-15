@@ -1,3 +1,4 @@
+from utils.checkOrCreateConfig import Config
 from utils.nameGenerator import NameGenerator
 
 import random
@@ -62,6 +63,9 @@ class Village:
         elif self.tier == 2:
             if random.uniform(0, 1) <= Village.CHANCE_TIER_3_OLD:
                 self.age = 1
+
+        self.tier = Config.getValueOrDefault("villageTier", self.tier)
+        self.age = Config.getValueOrDefault("villageTier", self.age)
         # print("Tier : " + str(self.tier) + ", Age : " + str(self.age))
 
     def generateVillageLore(self):
