@@ -316,25 +316,25 @@ class WallConstruction:
               -1, -1, -1], self.MODEL_LINE, 2, 2],  # Down 3
             [[-1, -1, -1,
               -1, -1, 1,
-              -1, 1, 2], self.MODEL_CORNER, 3, 0],  # Left Up corner 4
+              -1, 1, 2], self.MODEL_CORNER, 0, 2],  # Left Up corner 4
             [[-1, 1, -1,
               1, -1, 2,
               -1, 2, -1], self.MODEL_CORNER_INTERIOR, 3, 0],  # Left Up interior corner 5
             [[-1, -1, -1,
               1, -1, -1,
-              2, 1, -1], self.MODEL_CORNER, 3, 1],  # Right Up corner 6
+              2, 1, -1], self.MODEL_CORNER, 0, 3],  # Right Up corner 6
             [[-1, 1, -1,
               2, -1, 1,
               -1, 2, -1], self.MODEL_CORNER_INTERIOR, 3, 1],  # Right Up interior corner 7
             [[2, 1, -1,
               1, -1, -1,
-              -1, -1, -1], self.MODEL_CORNER, 3, 2],  # Right Down corner 8
+              -1, -1, -1], self.MODEL_CORNER, 0, 0],  # Right Down corner 8
             [[-1, 2, -1,
               2, -1, 1,
               -1, 1, -1], self.MODEL_CORNER_INTERIOR, 3, 2],  # Right Down interior corner 9
             [[-1, 1, 2,
               -1, -1, 1,
-              -1, -1, -1], self.MODEL_CORNER, 3, 3],  # Left Down corner 10
+              -1, -1, -1], self.MODEL_CORNER, 0, 1],  # Left Down corner 10
             [[-1, 2, -1,
               1, -1, 2,
               -1, 1, -1], self.MODEL_CORNER_INTERIOR, 3, 3]  # Left Down interior corner 11

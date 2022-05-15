@@ -1,27 +1,52 @@
 import os
 import json
 
-CONFIG_PATH: str = "config/config.json"
 
+class Config:
+    CONFIG_PATH: str = "config/config.json"
 
-def createConfig() -> dict:
-    return {
-        "debugMode": True
-    }
+    @staticmethod
+    def createConfig() -> dict:
+        return {
+            "debugMode": True,
+            "villageTier": {
+                "state": False,
+                "value": 0
+            },
+            "villageAge": {
+                "state": False,
+                "value": 0
+            },
+            "villageDestroyed": {
+                "state": False,
+                "value": True
+            }
+        }
 
-def createConfigFile() -> dict:
-    config: dict = createConfig()
+    LOADED_CONFIG: dict = createConfig()
 
-    os.mkdir("config")
-    with open(CONFIG_PATH, "w") as f:
-        f.write(json.dumps(config))
+    @staticmethod
+    def createConfigFile() -> dict:
+        config: dict = Config.createConfig()
 
-    return config
+        os.mkdir("config")
+        with open(Config.CONFIG_PATH, "w") as f:
+            f.write(json.dumps(config))
 
+        return config
 
-def getOrCreateConfig() -> dict:
-    if os.path.exists(CONFIG_PATH):
-        with open(CONFIG_PATH) as f:
-            return json.load(f)
-    else:
-        return createConfigFile()
+    @staticmethod
+    def getOrCreateConfig():
+        if os.path.exists(Config.CONFIG_PATH):
+            with open(Config.CONFIG_PATH) as f:
+                Config.LOADED_CONFIG = json.load(f)
+        else:
+            Config.LOADED_CONFIG = Config.createConfigFile()
+
+    @staticmethod
+    def getValueOrDefault(valueName: str, defaultValue):
+        if valueName in Config.LOADED_CONFIG.keys():
+            if Config.LOADED_CONFIG[valueName]["state"]:
+                return Config.LOADED_CONFIG[valueName]["value"]
+
+        return defaultValue

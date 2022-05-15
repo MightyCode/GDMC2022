@@ -18,6 +18,7 @@ from utils.nameGenerator import NameGenerator
 from utils.worldModification import WorldModification
 from utils.constants import Constants
 from generation.road import Road
+from utils.checkOrCreateConfig import Config
 
 import generation.generator as generator
 import generation.resourcesLoader as resLoader
@@ -27,11 +28,10 @@ import utils.projectMath as projectMath
 import utils.argumentParser as argParser
 import generation.loreMaker as loreMaker
 import lib.interfaceUtils as interfaceUtil
-import utils.checkOrCreateConfig as chock
 
 import random
 
-config: dict = chock.getOrCreateConfig()
+config: dict = Config.getOrCreateConfig()
 
 milliseconds: int = int(round(time.time() * 1000))
 
@@ -42,7 +42,7 @@ file: str = "temp.txt"
 interfaceUtil.setCaching(True)
 interfaceUtil.setBuffering(True)
 
-world_modification: WorldModification = WorldModification(config)
+world_modification: WorldModification = WorldModification()
 args, parser = argParser.giveArgsAndParser()
 build_area = argParser.getBuildArea(args)
 
