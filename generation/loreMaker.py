@@ -6,6 +6,7 @@ from generation.data.village import Village
 from generation.data.villager import Villager
 from generation.data.village import VillageInteraction
 from generation.data.loreStructure import LoreStructure
+from utils.checkOrCreateConfig import Config
 
 
 def genPositionOfVillage(existing_areas: list, goal_number: int) -> list:
@@ -108,6 +109,9 @@ def generateLoreAfterRelation(villages: list):
                 village.isDestroyed = random.randint(1, 3) == 1
             elif chance == 0.6:
                 village.isDestroyed = random.randint(1, 4) != 4
+
+        village.isDestroyed = Config.getValueOrDefault("villageDestroyed", village.isDestroyed)
+        village.destroyCause = Config.getValueOrDefault("villageDestroyedCause", village.destroyCause)
 
 
 def alterSettlementDataWithNewStructures(settlement_data, lore_structure: LoreStructure):

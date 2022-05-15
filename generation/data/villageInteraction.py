@@ -2,6 +2,7 @@ from generation.data.village import Village
 
 import random
 import utils.projectMath as projectMath
+from utils.checkOrCreateConfig import Config
 
 
 class VillageInteraction:
@@ -62,9 +63,9 @@ class VillageInteraction:
         for category in temp:
             result -= category[0]
             if result <= 0:
-                return category[1]
+                return Config.getValueOrDefault("villageRelationShip", category[1])
 
-        return VillageInteraction.STATE_NEUTRAL
+        return Config.getValueOrDefault("villageRelationShip", VillageInteraction.STATE_NEUTRAL)
 
     def brokeRelation(self):
         self.brokeTheirRelation = True
