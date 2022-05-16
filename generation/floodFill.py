@@ -315,21 +315,27 @@ class FloodFill:
                 z_rand = random.randint(z_min, z_max)
                 height = Constants.getHeight(x_rand, z_rand)
                 if Iu.getBlock(x_rand, height, z_rand) == 'minecraft:water':
+                    #print("Exit water")
                     continue
 
                 if projectMath.isInHouse(self.listHouse, [x_rand, z_rand]):
+                    #print("Exit house")
                     continue
 
                 if road.isInRoad([x_rand, z_rand]):
+                    #print("Exit In road")
                     continue
 
                 if road.isInLantern([x_rand, z_rand]):
+                    #print("Exit In lantern")
                     continue
 
                 if [x_rand, z_rand] in decorations_coord:
+                    #print("Exit In decoration")
                     continue
 
                 if not wallConstruction.isBlockInEnclosure(x_rand, z_rand):
+                    #print("Exit outside walls")
                     continue
 
                 if rand == 1:

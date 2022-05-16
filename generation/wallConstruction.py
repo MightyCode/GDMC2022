@@ -475,10 +475,11 @@ class WallConstruction:
                    self.wall_simplification[3] * self.zone_size
 
         if self.bounding_type == self.BOUNDING_CONVEX_HULL:
-            pos_x: int = x - self.area[0] // self.zone_size
-            pos_z: int = z - self.area[2] // self.zone_size
+            pos_x: int = (x - self.area[0]) // self.zone_size
+            pos_z: int = (z - self.area[2]) // self.zone_size
 
-            if x < 0 or x >= self.detection_grid_size[0] or z < 0 or z >= self.detection_grid_size[1]:
+            if pos_x < 0 or pos_x >= self.detection_grid_size[0] or pos_z < 0 or pos_z >= self.detection_grid_size[1]:
+                #print("Out side", pos_x, pos_z)
                 return False
 
             return self.matrix[pos_z * self.detection_grid_size[0] + pos_x]
