@@ -67,7 +67,6 @@ class Config:
     @staticmethod
     def getValueOrDefault(valueName: str, defaultValue):
         if Config.LOADED_CONFIG[valueName]["state"]:
-            print("Force Return", valueName, Config.LOADED_CONFIG[valueName]["value"])
             return Config.LOADED_CONFIG[valueName]["value"]
 
         return defaultValue

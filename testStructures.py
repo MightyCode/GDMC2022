@@ -24,7 +24,7 @@ import generation.generator as generator
 Important information
 """
 
-structure_name: str = "basicweaverhouse"
+structure_name: str = "basictownhall"
 structure_type: str = LoreStructure.TYPE_HOUSES
 
 Config.getOrCreateConfig()

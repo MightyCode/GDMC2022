@@ -111,6 +111,7 @@ class Road:
                         open_list.append(node)
 
             closed_list.append(current)
+
         raise ValueError('No Path Found')
 
     def computeXEntry(self, xLocalPosition: int, facingStruct, cornerStruct):
@@ -244,7 +245,6 @@ class Road:
 
                         continue
 
-                    print("add torch")
                     self.lanterns.append([position[0], position[1]])
 
                     world_modification.setBlock(position[0], y - 1, position[1], 'minecraft:cobblestone')
