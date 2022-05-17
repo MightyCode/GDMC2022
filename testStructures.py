@@ -13,28 +13,26 @@ from utils.worldModification import WorldModification
 from generation.data.murdererData import MurdererData
 from generation.structures.baseStructure import BaseStructure
 from generation.data.settlementData import SettlementData
-
-from generation.wallConstruction import WallConstruction
+from utils.checkOrCreateConfig import Config
 
 import generation.resourcesLoader as resLoader
 import utils.argumentParser as argParser
 import lib.interfaceUtils as interfaceUtil
 import generation.generator as generator
-import utils.checkOrCreateConfig as chock
 
 """
 Important information
 """
 
-structure_name: str = "mediumhouse3"
+structure_name: str = "basicweaverhouse"
 structure_type: str = LoreStructure.TYPE_HOUSES
 
-config: dict = chock.getOrCreateConfig()
+Config.getOrCreateConfig()
 
 file: str = "temp.txt"
 interfaceUtil.setCaching(True)
 interfaceUtil.setBuffering(True)
-world_modifications: WorldModification = WorldModification(config)
+world_modifications: WorldModification = WorldModification()
 args, parser = argParser.giveArgsAndParser()
 build_area = argParser.getBuildArea(args)
 
@@ -53,6 +51,7 @@ if not args.remove:
     village: Village = Village()
     village.name = "TestLand"
     village.tier = 2
+    village.color = "red"
 
     otherVillage: Village = Village()
     otherVillage.name = "TestLand 2"
@@ -78,24 +77,6 @@ if not args.remove:
     village.murderer_data = MurdererData()
     """village.murderer_data.villagerTarget = villagers[2]
     village.murderer_data.villagerMurderer = villagers[0]"""
-
-    from generation.wallConstruction import WallConstruction
-
-    wallConstruction: WallConstruction = WallConstruction(village, 9)
-    wallConstruction.setConstructionZone(build_area)
-
-    wallConstruction.addRectangle([build_area[0] + 100, build_area[2] + 100, build_area[0] + 116, build_area[2] + 116])
-    wallConstruction.addRectangle([build_area[0] + size_area[0] // 2 - 10, build_area[2] + size_area[1] // 2 - 10,
-                                   build_area[0] + size_area[0] // 2 + 10, build_area[2] + size_area[1] // 2 + 10])
-    wallConstruction.addRectangle([build_area[0] - 30, build_area[2] + 50, build_area[0] + 200, build_area[2] + 200])
-    wallConstruction.computeWall(WallConstruction.BOUNDING_CONVEX_HULL)
-    wallConstruction.showImageRepresenting()
-    wallConstruction.placeWall(world_modifications)
-
-    from generation.terrainModification import TerrainModification
-    terrainModification: TerrainModification = TerrainModification(build_area, wallConstruction)
-    terrainModification.removeRecursivelyAt(world_modifications, 228, 71, -190)
-    exit()
 
     resources: Resources = Resources()
     resLoader.loadAllResources(resources)
@@ -127,6 +108,7 @@ if not args.remove:
     import generation.loreMaker as loreMaker
 
     loreMaker.generateOrders(village)
+    loreMaker.applyLoreToSettlementData(settlement_data)
 
     structure.block_transformation = block_transformations
 

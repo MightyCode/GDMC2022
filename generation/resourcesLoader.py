@@ -96,6 +96,8 @@ def loadAllResources(resources: Resources) -> None:
 
     resources.loadStructures("representatives/tavern/basictavern.nbt", "representatives/tavern/basictavern.json",
                              "basictavern")
+    resources.loadStructures("representatives/tavern/mediumtavern.nbt", "representatives/tavern/mediumtavern.json",
+                             "mediumtavern")
 
     resources.loadStructures("representatives/barrack/basicbarrack.nbt", "representatives/barrack/basicbarrack.json",
                              "basicbarrack")
