@@ -25,7 +25,8 @@ Return the text of the book of the village presentation
 
 def createTextOfPresentationVillage(village: Village) -> BookWriter:
     book_writer: BookWriter = BookWriter()
-    book_writer.writeFirstPage("Welcome to :", village.name)
+    book_writer.writeFirstPage("Welcome to :",
+                               "The " + ("old " if village.age == 1 else "") + "village of " + village.name)
 
     # Status of the village
     number_structure_destroyed: int = 0
@@ -150,6 +151,7 @@ def createTextForVillagersNames(village_name: str, villagers: list):
 
     return book_writer
 
+
 REASON_OF_DEATHS = ["murdered", "died because of old age", "died of creeper attack", "died of skeleton attack",
                     "died of spider attack (he did not became Spider-Man)",
                     "died of zombie attack", "died of witch attack", "died suffocating from sand falling",
@@ -157,13 +159,14 @@ REASON_OF_DEATHS = ["murdered", "died because of old age", "died of creeper atta
                     "died suffocating from gravel falling"]
 DIARY_TEXTS_WITHOUT_TARGETS = [" I really like the color of the village. ", " I really like the name of the village. ",
                                " I hate the color of the village.",
-                               " I am afraid of spiders. ", " I am afraid of creppers. ", " I am afraid of zombies. ",
+                               " I am afraid of spiders. ", " I am afraid of creepers. ", " I am afraid of zombies. ",
                                " I am afraid of skeletons. ",
-                               " I don\\'t like the facade of my house. ", " I don\\'t like the flower of the village. ",
+                               " I don\\'t like the facade of my house. ",
+                               " I don\\'t like the flower of the village. ",
                                " I really like the flower of the village. ", " I really like the mayor. ",
                                " I hate the flower of the village. ", " I hate the mayor. ",
                                " I would like to have a better house. ",
-                               " I really like pigs. ", " I really like cows. ", " I am interested about sheeps.  ",
+                               " I really like pigs. ", " I really like cows. ", " I am interested about sheep.  ",
                                " I am interested about chickens. "]
 DIARY_TEXTS_WITH_TARGETS = [" I am sad since the death of ", " I am happy since the death of ", " I used to hate ",
                             " I once hit "]
@@ -183,7 +186,8 @@ def createTextForDeadVillagers(village_name: str, villagers: list, deadVillagers
 
     for deadVillager in deadVillagers:
         random_death = rd.randint(0, len(REASON_OF_DEATHS) - 1)
-        book_writer.writeLine(f'-{deadVillager.name} {"Senior" if deadVillager.name in names else ""} : {REASON_OF_DEATHS[random_death]}.')
+        book_writer.writeLine(
+            f'-{deadVillager.name} {"Senior" if deadVillager.name in names else ""} : {REASON_OF_DEATHS[random_death]}.')
 
     return book_writer
 
@@ -260,7 +264,8 @@ def createBookForVillager(village_model: Village, villager: Villager) -> list:
                 secondRandomProfession = rd.randint(0,
                                                     len(Villager.VILLAGE_PROFESSION_LIST) - 1)
                 if secondRandomProfession != randomProfession:
-                    book_writer.writeLine(f'I would like to work as a {Villager.VILLAGE_PROFESSION_LIST[secondRandomProfession]}.')
+                    book_writer.writeLine(
+                        f'I would like to work as a {Villager.VILLAGE_PROFESSION_LIST[secondRandomProfession]}.')
 
         elif random == 2 and not target_text_done:
             randomDiaryTextWithTarget = rd.randint(0, len(new_diary_text_with_target) - 1)
