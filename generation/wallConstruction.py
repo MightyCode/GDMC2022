@@ -16,6 +16,21 @@ import matplotlib.pyplot as plt
 import utils.projectMath as pmath
 from utils.worldModification import WorldModification
 
+class WallPart:
+    def __init__(self):
+        self.position: list = [0, 0]
+        self.wall_type: int = 0
+        self.flip: int = 0
+        self.rotation: int = 0
+        self.height: int = 0
+        self.sided_wall_1 = None
+        self.sided_wall_2 = None
+
+    def setInfo(self, x: int, z: int, wallType: int, flip: int, rotation: int):
+        self.position = [x, z]
+        self.wall_type = wallType
+        self.flip = flip
+        self.rotation = rotation
 
 class WallConstruction:
     BOUNDING_RECTANGULAR: int = 0
@@ -209,7 +224,7 @@ class WallConstruction:
 
         self.matrix: list = [False] * (self.detection_grid_size[0] * self.detection_grid_size[1])
 
-        # Mark border on a extended matrix
+        # Mark border on an extended matrix
         for index in range(len(self.hull)):
             point1 = self.hull[index]
             point2 = self.hull[(index + 1) % len(self.hull)]
@@ -237,13 +252,6 @@ class WallConstruction:
 
             return self.matrix[z_pos * self.detection_grid_size[0] + x_pos]
 
-        def isInStack(list_blok, ref):
-            for block in list_blok:
-                if pmath.is2DPointEqual(block, ref):
-                    return True
-
-            return False
-
         remaining: list = []
         founded: list = []
 
@@ -257,6 +265,7 @@ class WallConstruction:
         # Make the recursion
         while len(remaining) != 0:
             x, z = remaining[0]
+            print(remaining)
             founded.append([x, z])
             del remaining[0]
 
@@ -267,11 +276,12 @@ class WallConstruction:
                 if getValue_extended(x + x_offset, z + z_offset):
                     continue
 
-                if isInStack(remaining, [x + x_offset, z + z_offset]):
+                if [x + x_offset, z + z_offset] in remaining:
                     continue
 
-                if isInStack(founded, [x + x_offset, z + z_offset]):
+                if [x + x_offset, z + z_offset] in founded:
                     continue
+
                 remaining.append([x + x_offset, z + z_offset])
 
         # Complete diagonal border
@@ -301,7 +311,7 @@ class WallConstruction:
                 print("1" if getValue_extended(x, y) else "2" if getValue(x + extended_offset[0],
                                                                           y + extended_offset[1]) else "0", end="")
 
-        info_ajustment: list = [
+        info_adjustment: list = [
             [[-1, 1, -1,
               -1, -1, 2,
               -1, 1, -1], self.MODEL_LINE, 2, 3],  # Left 0
@@ -363,33 +373,60 @@ class WallConstruction:
 
         for cell in to_visit:
             i: int = 0
-            while i < len(info_ajustment):
-                info: list = info_ajustment[i]
+            while i < len(info_adjustment):
+                info: list = info_adjustment[i]
 
                 if doesTheMatrixIsRecognize(cell, info):
                     self.appendWallCell(cell[0], cell[1], info[1], info[2], info[3])
-                    i = len(info_ajustment)
+                    i = len(info_adjustment)
                 else:
                     i += 1
 
     def placeWall(self, settlement_data: SettlementData, resources: Resources,
                   world_modification: WorldModification, block_transformations: list):
+
+        # Connect wall cell
+        wall = self.wall_list[0]
+        while wall != None:
+            next = None
+            print("")
+            for wall_sub in self.wall_list:
+                if wall_sub == wall:
+                    continue
+
+                if (wall.position[0] - 1 == wall_sub.position[0] and wall.position[1] == wall_sub.position[1]) \
+                        or (wall.position[0] + 1 == wall_sub.position[0] and wall.position[1] == wall_sub.position[1]) \
+                        or (wall.position[0] == wall_sub.position[0] and wall.position[1] - 1 == wall_sub.position[1]) \
+                        or (wall.position[0] == wall_sub.position[0] and wall.position[1] + 1 == wall_sub.position[1]):
+
+                    print(wall, wall_sub)
+
+                    if wall.sided_wall_1 == None and wall_sub != wall.sided_wall_2:
+                        wall.sided_wall_1 = wall_sub
+                        wall_sub.sided_wall_2 = wall
+                        next = wall_sub
+                    elif wall.sided_wall_2 == None and wall_sub != wall.sided_wall_1:
+                        wall.sided_wall_2 = wall_sub
+                        wall_sub.sided_wall_1 = wall
+
+            wall = next
+
         # Choose door
         door_candidate: list = []
         for wallCell in self.wall_list:
-            if wallCell["type"] == self.MODEL_LINE:
+            if wallCell.wall_type == self.MODEL_LINE:
                 door_candidate.append(wallCell)
 
         for i in range(random.randint(1, 3)):
             index: int = random.randint(0, len(door_candidate) - 1)
-            door_candidate[index]["type"] = self.MODEL_DOOR
+            door_candidate[index].wall_type = self.MODEL_DOOR
             del door_candidate[index]
 
         x: int
         z: int
 
         for wallCell in self.wall_list:
-            x, z = wallCell["position"]
+            x, z = wallCell.position
             # Centered on zone
             x_real: int = x * self.zone_size + self.area[0] + self.zone_size // 2 + 1
             z_real: int = z * self.zone_size + self.area[2] + self.zone_size // 2 + 1
@@ -400,15 +437,15 @@ class WallConstruction:
 
             y = util.getHighestNonAirBlock(x_real, z_real, x_real - self.area[0], z_real - self.area[2])
 
-            wallCell["height"] = y
+            wallCell.height = y
 
             tier: str = "basic" if self.village.tier == 0 else "medium" if self.village.tier == 1 else "advanced"
 
             lore_structure: LoreStructure = LoreStructure()
-            lore_structure.name = tier + "wall" + self.WALL_PARTS[wallCell["type"]]
+            lore_structure.name = tier + "wall" + self.WALL_PARTS[wallCell.wall_type]
             lore_structure.position = [x_real, y - 1, z_real]
-            lore_structure.flip = wallCell["flip"]
-            lore_structure.rotation = wallCell["rotation"]
+            lore_structure.flip = wallCell.flip
+            lore_structure.rotation = wallCell.rotation
             lore_structure.age = settlement_data.village_model.age
 
             if settlement_data.village_model.isDestroyed:
@@ -427,45 +464,42 @@ class WallConstruction:
         result: list = []
 
         for wallCell in self.wall_list:
-            if wallCell["type"] != self.MODEL_DOOR:
+            if wallCell.wall_type != self.MODEL_DOOR:
                 continue
 
             half: int = self.zone_size // 2 + 1
 
             position: list = [
-                self.area[0] + wallCell["position"][0] * self.zone_size + half,
-                self.area[2] + wallCell["position"][1] * self.zone_size + half
+                self.area[0] + wallCell.position[0] * self.zone_size + half,
+                self.area[2] + wallCell.position[1] * self.zone_size + half
             ]
 
-            if wallCell["rotation"] == 0:
+            if wallCell.rotation == 0:
                 position[1] += half
-            elif wallCell["rotation"] == 1:
+            elif wallCell.rotation == 1:
                 position[0] -= half
-            elif wallCell["rotation"] == 2:
+            elif wallCell.rotation == 2:
                 position[1] -= half
-            elif wallCell["rotation"] == 3:
+            elif wallCell.rotation == 3:
                 position[0] += half
 
-            result.append([position[0], wallCell["height"], position[1]])
+            result.append([position[0], wallCell.height, position[1]])
 
         return result
 
     def appendWallCell(self, x: int, z: int, wallType: int, flip: int, rotation: int) -> None:
         for wall in self.wall_list:
-            if pmath.is2DPointEqual([x, z], wall["position"]):
-                wall["type"] = wallType
-                wall["flip"] = flip
-                wall["rotation"] = rotation
+            if pmath.is2DPointEqual([x, z], wall.position):
+                wall.type = wallType
+                wall.flip = flip
+                wall.rotation = rotation
 
                 return
 
-        self.wall_list.append({
-            "position": [x, z],
-            "type": wallType,
-            "flip": flip,
-            "rotation": rotation,
-            "height": -1
-        })
+        current: WallPart = WallPart()
+        current.setInfo(x, z, wallType, flip, rotation)
+
+        self.wall_list.append(current)
 
     def isBlockInEnclosure(self, x, z) -> bool:
         if self.bounding_type == self.BOUNDING_RECTANGULAR:

@@ -230,7 +230,7 @@
                 "mediumtownhall", "mediumtownhall2"
             ],
             "2": [
-                "basictownhall"
+                "mediumtownhall", "mediumtownhall2"
             ]
         },
         "type" : "representatives",

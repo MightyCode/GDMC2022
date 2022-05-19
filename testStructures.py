@@ -44,6 +44,9 @@ build_area: tuple = (
 size_area: list = [build_area[3] - build_area[0] + 1, build_area[5] - build_area[2] + 1]
 
 if not args.remove:
+
+    interfaceUtil.makeGlobalSlice()
+
     block_transformations: list = [OldStructureTransformation(), DamagedStructureTransformation(),
                                    BurnedStructureTransformation(), AbandonedStructureTransformation()]
 
@@ -120,6 +123,20 @@ if not args.remove:
                                       description="Diary of " + villagers[i].name)
 
         villagers[i].diary[0] = "minecraft:written_book" + villagers[i].diary[0].printBook()
+
+    from generation.wallConstruction import WallConstruction
+
+    wallConstruction: WallConstruction = WallConstruction(village, 9)
+    wallConstruction.setConstructionZone(build_area)
+
+    wallConstruction.addRectangle([build_area[0] + 100, build_area[2] + 100, build_area[0] + 116, build_area[2] + 116])
+    wallConstruction.addRectangle([build_area[0] + size_area[0] // 2 - 10, build_area[2] + size_area[1] // 2 - 10,
+                                   build_area[0] + size_area[0] // 2 + 10, build_area[2] + size_area[1] // 2 + 10])
+    # wallConstruction.addRectangle([build_area[0] - 30, build_area[2] + 50, build_area[0] + 200, build_area[2] + 200])
+    wallConstruction.computeWall(WallConstruction.BOUNDING_CONVEX_HULL)
+    wallConstruction.showImageRepresenting()
+    wallConstruction.placeWall(settlement_data, resources, world_modifications, block_transformations)
+    exit()
 
     generator.generateStructure(lore_structure, settlement_data, resources, world_modifications,
                                 chestGeneration, block_transformations)
