@@ -152,11 +152,6 @@ def createTextForVillagersNames(village_name: str, villagers: list):
     return book_writer
 
 
-REASON_OF_DEATHS = ["murdered", "died because of old age", "died of creeper attack", "died of skeleton attack",
-                    "died of spider attack (he did not became Spider-Man)",
-                    "died of zombie attack", "died of witch attack", "died suffocating from sand falling",
-                    "died eating too much cake", "died crushing by a rock",
-                    "died suffocating from gravel falling"]
 DIARY_TEXTS_WITHOUT_TARGETS = [" I really like the color of the village. ", " I really like the name of the village. ",
                                " I hate the color of the village.",
                                " I am afraid of spiders. ", " I am afraid of creepers. ", " I am afraid of zombies. ",
@@ -168,14 +163,13 @@ DIARY_TEXTS_WITHOUT_TARGETS = [" I really like the color of the village. ", " I 
                                " I would like to have a better house. ",
                                " I really like pigs. ", " I really like cows. ", " I am interested about sheep.  ",
                                " I am interested about chickens. "]
+
 DIARY_TEXTS_WITH_TARGETS = [" I am sad since the death of ", " I am happy since the death of ", " I used to hate ",
                             " I once hit "]
 
 """
 Return the text of the book of the dead villagers names and professions
 """
-
-
 def createTextForDeadVillagers(village_name: str, villagers: list, deadVillagers: list):
     names = []
     for villager in villagers:
@@ -185,9 +179,8 @@ def createTextForDeadVillagers(village_name: str, villagers: list, deadVillagers
     book_writer.writeFirstPage(villageMessage(village_name), "Registry of dead villagers.")
 
     for deadVillager in deadVillagers:
-        random_death = rd.randint(0, len(REASON_OF_DEATHS) - 1)
         book_writer.writeLine(
-            f'-{deadVillager.name} {"Senior" if deadVillager.name in names else ""} : {REASON_OF_DEATHS[random_death]}.')
+            f'-{deadVillager.name} {"Senior" if deadVillager.name in names else ""} : {deadVillager.reason_death}.')
 
     return book_writer
 

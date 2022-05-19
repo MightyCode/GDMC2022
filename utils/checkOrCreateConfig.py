@@ -1,7 +1,6 @@
 import os
 import json
 
-
 class Config:
     CONFIG_PATH: str = "config/config.json"
 
@@ -40,16 +39,20 @@ class Config:
             "villageColor": {
                 "state": False,
                 "value": "blue"
+            },
+            "numberStructures": {
+                "state": False,
+                "value": 10
             }
         }
 
-    LOADED_CONFIG: dict = createConfig()
+    LOADED_CONFIG: dict = {}
 
     @staticmethod
     def createConfigFile() -> dict:
         config: dict = Config.createConfig()
 
-        os.mkdir("config")
+        print(os.mkdir("config"))
         with open(Config.CONFIG_PATH, "w") as f:
             f.write(json.dumps(config, indent=4, sort_keys=True))
 
