@@ -22,7 +22,10 @@ class WallPart:
         self.wall_type: int = 0
         self.flip: int = 0
         self.rotation: int = 0
+
         self.height: int = 0
+        self.augmented_height: int = 0
+
         self.sided_wall_1 = None
         self.sided_wall_2 = None
 
@@ -265,7 +268,6 @@ class WallConstruction:
         # Make the recursion
         while len(remaining) != 0:
             x, z = remaining[0]
-            print(remaining)
             founded.append([x, z])
             del remaining[0]
 
@@ -389,7 +391,6 @@ class WallConstruction:
         wall = self.wall_list[0]
         while wall != None:
             next = None
-            print("")
             for wall_sub in self.wall_list:
                 if wall_sub == wall:
                     continue
@@ -398,8 +399,6 @@ class WallConstruction:
                         or (wall.position[0] + 1 == wall_sub.position[0] and wall.position[1] == wall_sub.position[1]) \
                         or (wall.position[0] == wall_sub.position[0] and wall.position[1] - 1 == wall_sub.position[1]) \
                         or (wall.position[0] == wall_sub.position[0] and wall.position[1] + 1 == wall_sub.position[1]):
-
-                    print(wall, wall_sub)
 
                     if wall.sided_wall_1 == None and wall_sub != wall.sided_wall_2:
                         wall.sided_wall_1 = wall_sub
@@ -410,6 +409,59 @@ class WallConstruction:
                         wall_sub.sided_wall_1 = wall
 
             wall = next
+
+        local_maximum: list = []
+
+        # Compute height for
+        for wallCell in self.wall_list:
+            x, z = wallCell.position
+            # Centered on zone
+            x_real: int = x * self.zone_size + self.area[0] + self.zone_size // 2 + 1
+            z_real: int = z * self.zone_size + self.area[2] + self.zone_size // 2 + 1
+
+            if not (self.area[0] <= x_real and x_real + self.zone_size <= self.area[3]
+                    and self.area[2] <= z_real and z_real + self.zone_size <= self.area[5]):
+                continue
+
+            wallCell.height = util.getHighestNonAirBlock(x_real, z_real, x_real - self.area[0], z_real - self.area[2])
+            wallCell.augmented_height = wallCell.height
+
+        for wallCell in self.wall_list:
+            if (wallCell.sided_wall_1.height < wallCell.height - 1 and wallCell.sided_wall_1.height - 1 <= wallCell.height) \
+                or (wallCell.sided_wall_2.height < wallCell.height - 1 and wallCell.sided_wall_2.height - 1 <= wallCell.height):
+                local_maximum.append(wallCell)
+
+        for wall in local_maximum:
+
+            old = wall
+            side_1 = wall.sided_wall_1
+            while side_1 not in local_maximum:
+                if side_1.augmented_height < old.augmented_height - 3:
+                    if side_1.wall_type == WallConstruction.MODEL_LINE:
+                        side_1.augmented_height = old.augmented_height - 3
+                        side_1.wall_type = WallConstruction.MODEL_STAIRS
+                    else:
+                        side_1.augmented_height = old.augmented_height
+
+                    old = side_1
+                    side_1 = old.sided_wall_1
+                else:
+                    break
+
+            old = wall
+            side_2 = wall.sided_wall_2
+            while side_2 not in local_maximum:
+                if side_2.augmented_height < old.augmented_height - 3:
+                    if side_1.wall_type == WallConstruction.MODEL_LINE:
+                        side_2.augmented_height = old.augmented_height - 3
+                        side_2.wall_type = WallConstruction.MODEL_STAIRS
+                    else:
+                        side_2.augmented_height = old.augmented_height
+
+                    old = side_2
+                    side_2 = old.sided_wall_2
+                else:
+                    break
 
         # Choose door
         door_candidate: list = []
@@ -435,9 +487,7 @@ class WallConstruction:
                     and self.area[2] <= z_real and z_real + self.zone_size <= self.area[5]):
                 continue
 
-            y = util.getHighestNonAirBlock(x_real, z_real, x_real - self.area[0], z_real - self.area[2])
-
-            wallCell.height = y
+            y = wallCell.augmented_height
 
             tier: str = "basic" if self.village.tier == 0 else "medium" if self.village.tier == 1 else "advanced"
 

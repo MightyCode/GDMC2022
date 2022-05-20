@@ -202,8 +202,8 @@ def addItemChest(x, y, z, items):
                                                                v[1])
         interfaceUtils.runCommand(command)
 
-IGNORED_BLOCKS: list = ['minecraft:oak_leaves', 'minecraft:leaves', 'minecraft:birch_leaves', 'minecraft:spruce_leaves',
-                      'minecraft:dark_oak_leaves'
+IGNORED_BLOCKS: list = ['minecraft:oak_leaves', 'minecraft:birch_leaves', 'minecraft:spruce_leaves',
+                      'minecraft:dark_oak_leaves', 'minecraft:jungle_leaves', 'minecraft:acacia_leaves'
                       'minecraft:oak_log', 'minecraft:spruce_log', 'minecraft:birch_log', 'minecraft:jungle_log',
                       'minecraft:acacia_log', 'minecraft:dark_oak_log']
 IGNORED_BLOCKS.extend(lookup.PLANTS)
@@ -217,7 +217,6 @@ def getHighestNonAirBlock(cx, cz, local_x, local_z):
         cy -= 1
 
     return cy
-
 
 # Create a book item from a text
 def makeBookItem(text, title="", author="", desc=""):

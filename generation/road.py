@@ -112,7 +112,7 @@ class Road:
 
             closed_list.append(current)
 
-        raise ValueError('No Path Found')
+        print("Warning : No path found")
 
     def computeXEntry(self, xLocalPosition: int, facingStruct, cornerStruct):
         x: int = xLocalPosition
