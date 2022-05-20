@@ -91,6 +91,19 @@ def placeBooks(settlement_data: SettlementData, books: dict, world_modification:
         settlement_data.center[2] + 1, books["villageNameBook"], world_modification, 'east')
 
 
+def makeAirZone(lore_structure: LoreStructure, settlement_data: SettlementData, resources: Resources,
+                      world_modification: WorldModification, terrainModification):
+    structure = resources.structures[lore_structure.name]
+
+    building_conditions: BuildingCondition = BaseStructure.createBuildingCondition()
+    building_conditions.setLoreStructure(lore_structure)
+
+    building_conditions.replaceAirMethod = BuildingCondition.FILE_PREFERENCE_AIR_PLACEMENT
+    building_conditions.replacements = settlement_data.getMatRepDeepCopy()
+
+    structure.placeAirZones(world_modification, building_conditions, terrainModification)
+
+
 def generateStructure(lore_structure: LoreStructure, settlement_data: SettlementData, resources: Resources,
                       world_modification: WorldModification, chest_generation: ChestGeneration,
                       block_transformations: list) -> None:

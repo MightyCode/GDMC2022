@@ -22,7 +22,7 @@ class Road:
         "east": [0, 0, 1, 0]
     }
 
-    def __init__(self, area: tuple):
+    def __init__(self, area: list):
         self.area = area
         self.roads: list = []
         self.lanterns: list = []

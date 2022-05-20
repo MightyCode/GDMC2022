@@ -195,7 +195,7 @@ class NbtStructures(BaseStructure):
         self.placeSupportUnderStructure(world_modification, building_conditions)
 
         # Air zone
-        self.placeAirZones(world_modification, building_conditions)
+        #self.placeAirZones(world_modification, building_conditions)
 
         for x in range(self.size[0]):
             for y in range(self.size[1]):
@@ -233,7 +233,8 @@ class NbtStructures(BaseStructure):
         block_name = self.convertNbtBlockToStr(block_palette, should_take_original_block)
         # Check for block air replacement
         for air_block in NbtStructures.AIR_BLOCKS:
-            if air_block in block_name and building_conditions.replaceAirMethod != BuildingCondition.ALL_AIR_PLACEMENT:
+            """and building_conditions.replaceAirMethod != BuildingCondition.ALL_AIR_PLACEMENT"""
+            if air_block in block_name:
                 return
 
         # Compute position of block from local space to world space

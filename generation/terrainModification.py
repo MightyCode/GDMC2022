@@ -15,7 +15,6 @@ class TerrainModification:
             remaining.append([x, y, z])
 
         while len(remaining) > 0:
-
             x, y, z = remaining[0]
             world_modification.setBlock(x, y, z, "minecraft:air")
 

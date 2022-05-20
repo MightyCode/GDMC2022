@@ -52,6 +52,9 @@ class BaseStructure:
     def createBuildingCondition() -> BuildingCondition:
         return BuildingCondition()
 
+    def prepareAirZone(self):
+        pass
+
     """
     Return a position in the world 
     localPoint : position of the block inside the local space, [0, 0, 0]
@@ -348,9 +351,11 @@ class BaseStructure:
     buildingCondition : condition used to build a structures
     """
 
-    def placeAirZones(self, world_modification, building_conditions: BuildingCondition):
+    def placeAirZones(self, world_modification, building_conditions: BuildingCondition, terrainModification):
         if building_conditions.replaceAirMethod == BuildingCondition.FILE_PREFERENCE_AIR_PLACEMENT:
             building_conditions.replaceAirMethod = self.info["air"]["preferredAirMode"]
+
+        zone_to_remove: list = []
 
         if building_conditions.replaceAirMethod == BuildingCondition.CHOSEN_AIR_PLACEMENT:
             for zones in self.info["air"]["replacements"]:
@@ -363,15 +368,32 @@ class BaseStructure:
                                                     building_conditions.referencePoint,
                                                     building_conditions.position)
 
-                for x in range(min(block_from[0], block_to[0]), max(block_from[0], block_to[0]) + 1):
-                    for z in range(min(block_from[2], block_to[2]), max(block_from[2], block_to[2]) + 1):
-                        if interfaceUtils.getBlock(x, block_to[1] + 1, z) in BaseStructure.AIR_FILLING_PROBLEMATIC_BLOCS:
-                            world_modification.setBlock(x, block_to[1] + 1, z, "minecraft:stone",
-                                                        place_immediately=True)
+                zone_to_remove.append([block_from, block_to])
+        elif building_conditions.replaceAirMethod == BuildingCondition.ALL_AIR_PLACEMENT:
+            zone_to_remove.append([
+                self.returnWorldPosition([0, 1, 0],
+                                         building_conditions.flip, building_conditions.rotation,
+                                         building_conditions.referencePoint,
+                                         building_conditions.position),
 
-                world_modification.fillBlocks(block_from[0], block_from[1], block_from[2], block_to[0], block_to[1],
-                                              block_to[2],
-                                              BaseStructure.AIR_BLOCKS[0])
+                self.returnWorldPosition([self.info["size"][0], self.info["size"][1] + 1, self.info["size"][2]],
+                                         building_conditions.flip, building_conditions.rotation,
+                                         building_conditions.referencePoint,
+                                         building_conditions.position)
+            ])
+
+        for zone in zone_to_remove:
+            for x in range(min(zone[0][0], zone[1][0]), max(zone[0][0], zone[1][0]) + 1):
+                for z in range(min(zone[0][2], zone[1][2]), max(zone[0][2], zone[1][2]) + 1):
+                    for y in range(zone[0][1], zone[1][1] + 1):
+                        terrainModification.removeRecursivelyAt(world_modification, x, y, z)
+
+                    if interfaceUtils.getBlock(x, zone[1][1] + 1, z) in BaseStructure.AIR_FILLING_PROBLEMATIC_BLOCS:
+                        world_modification.setBlock(x, zone[1][1] + 1, z, "minecraft:stone", place_immediately=True)
+
+            """world_modification.fillBlocks(zone[0][0], zone[0][1], zone[0][2], zone[1][0], zone[1][1],
+                                          zone[1][2],
+                                          BaseStructure.AIR_BLOCKS[0])"""
 
     def applyBlockTransformation(self, block: str):
         return util.applyBlockTransformation(block, self.block_transformation)
@@ -412,7 +434,8 @@ class BaseStructure:
                         elif projectMath.isPointInCube([x, y, z], lootTable[1]):
                             chosen_loot_table = lootTable[0]
 
-                chestGeneration.generate(world_position[0], world_position[1], world_position[2], chosen_loot_table, building_conditions.replacements, additional_objects)
+                chestGeneration.generate(world_position[0], world_position[1], world_position[2], chosen_loot_table,
+                                         building_conditions.replacements, additional_objects)
 
         if "lectern" in block_name:
             if "lectern" not in self.info:
