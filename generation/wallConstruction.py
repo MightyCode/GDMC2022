@@ -384,9 +384,7 @@ class WallConstruction:
                 else:
                     i += 1
 
-    def placeWall(self, settlement_data: SettlementData, resources: Resources,
-                  world_modification: WorldModification, block_transformations: list):
-
+    def computeWallHeight(self):
         # Connect wall cell
         wall = self.wall_list[0]
         while wall != None:
@@ -427,8 +425,10 @@ class WallConstruction:
             wallCell.augmented_height = wallCell.height
 
         for wallCell in self.wall_list:
-            if (wallCell.sided_wall_1.height < wallCell.height - 1 and wallCell.sided_wall_1.height - 1 <= wallCell.height) \
-                or (wallCell.sided_wall_2.height < wallCell.height - 1 and wallCell.sided_wall_2.height - 1 <= wallCell.height):
+            if (
+                    wallCell.sided_wall_1.height < wallCell.height - 1 and wallCell.sided_wall_1.height - 1 <= wallCell.height) \
+                    or (
+                    wallCell.sided_wall_2.height < wallCell.height - 1 and wallCell.sided_wall_2.height - 1 <= wallCell.height):
                 local_maximum.append(wallCell)
 
         for wall in local_maximum:
@@ -463,6 +463,11 @@ class WallConstruction:
                 else:
                     break
 
+    def placeAirZone(self, settlement_data: SettlementData, resources: Resources, world_modification: WorldModification):
+
+
+    def placeWall(self, settlement_data: SettlementData, resources: Resources,
+                  world_modification: WorldModification, block_transformations: list):
         # Choose door
         door_candidate: list = []
         for wallCell in self.wall_list:

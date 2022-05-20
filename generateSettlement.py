@@ -297,8 +297,20 @@ if not args.remove:
 
         print("\nCompute wall")
         wallConstruction.computeWall(WallConstruction.BOUNDING_CONVEX_HULL)
+        wallConstruction.computeWallHeight()
+
         wallConstruction.showImageRepresenting()
+
+        i: int = 0
+        print("Generate air zone")
+        while i < len(current_village.lore_structures):
+            generator.makeAirZone(current_village.lore_structures[i], settlement_data, resources,
+                                  world_modification, terrain_modification)
+            i += 1
+        wallConstruction.placeAirZone(settlement_data, resources, world_modification)
+
         print("\nConstruct wall")
+
         wallConstruction.placeWall(settlement_data, resources, world_modification, block_transformation)
 
         # Connect entry of village in wall to rest of village paths
@@ -318,13 +330,6 @@ if not args.remove:
         """ Five main step : places every structure and after that every decorations """
         print("\nConstruct road")
         road.generateRoad(world_modification, floodFill.listHouse, settlement_data, terrain_modification)
-
-        i: int = 0
-        print("Generate air zone")
-        while i < len(current_village.lore_structures):
-            generator.makeAirZone(current_village.lore_structures[i], settlement_data, resources,
-                                  world_modification, terrain_modification)
-            i += 1
 
         i = 0
         current_time: int = int(round(time.time() * 1000)) - milliseconds
