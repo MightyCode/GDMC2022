@@ -3,8 +3,8 @@ import random
 from generation.data.loreStructure import LoreStructure
 from generation.data.settlementData import SettlementData
 from generation.resources import Resources
+from utils.worldModification import WorldModification
 from utils import util
-from utils.constants import Constants
 import generation.generator as generator
 
 import copy
@@ -14,7 +14,7 @@ from PIL import Image
 
 import matplotlib.pyplot as plt
 import utils.projectMath as pmath
-from utils.worldModification import WorldModification
+
 
 class WallPart:
     def __init__(self):
@@ -35,17 +35,20 @@ class WallPart:
         self.flip = flip
         self.rotation = rotation
 
+
 class WallConstruction:
     BOUNDING_RECTANGULAR: int = 0
     BOUNDING_CONVEX_HULL: int = 1
 
     MODEL_LINE: int = 0
-    MODEL_CORNER: int = 1
-    MODEL_CORNER_INTERIOR: int = 2
+    MODEL_EXTERN_CORNER: int = 1
+    MODEL_INNER_CORNER: int = 2
     MODEL_DOOR = 3
     MODEL_STAIRS = 4
+    MODEL_INNER_CORNER_STAIRS = 5
+    MODEL_EXTERN_CORNER_STAIRS = 6
 
-    WALL_PARTS = ["line", "externcorner", "innercorner", "door", "stairs"]
+    WALL_PARTS = ["line", "externcorner", "innercorner", "door", "stairs", "externcornerstairs", "innercornerstairs"]
 
     def __init__(self, village, zone_size=15):
         self.village = village
@@ -166,16 +169,16 @@ class WallConstruction:
             self.appendWallCell(xMax, z, self.MODEL_LINE, 1, 0)
 
         # Left Up Corner
-        self.appendWallCell(self.wall_simplification[0] - 1, self.wall_simplification[1] - 1, self.MODEL_CORNER, 0, 0)
+        self.appendWallCell(self.wall_simplification[0] - 1, self.wall_simplification[1] - 1, self.MODEL_EXTERN_CORNER, 0, 0)
 
         # Right Up Corner
-        self.appendWallCell(self.wall_simplification[2] + 1, self.wall_simplification[1] - 1, self.MODEL_CORNER, 0, 3)
+        self.appendWallCell(self.wall_simplification[2] + 1, self.wall_simplification[1] - 1, self.MODEL_EXTERN_CORNER, 0, 3)
 
         # Right Down Corner
-        self.appendWallCell(self.wall_simplification[2] + 1, self.wall_simplification[3] + 1, self.MODEL_CORNER, 0, 2)
+        self.appendWallCell(self.wall_simplification[2] + 1, self.wall_simplification[3] + 1, self.MODEL_EXTERN_CORNER, 0, 2)
 
         # Left Down Corner
-        self.appendWallCell(self.wall_simplification[0] - 1, self.wall_simplification[3] + 1, self.MODEL_CORNER, 0, 1)
+        self.appendWallCell(self.wall_simplification[0] - 1, self.wall_simplification[3] + 1, self.MODEL_EXTERN_CORNER, 0, 1)
 
     def computeConvexFull(self):
         # Compute Convex full bounding
@@ -330,28 +333,28 @@ class WallConstruction:
               -1, -1, -1], self.MODEL_LINE, 2, 2],  # Down 3
             [[-1, -1, -1,
               -1, -1, 1,
-              -1, 1, 2], self.MODEL_CORNER, 0, 2],  # Left Up corner 4
+              -1, 1, 2], self.MODEL_EXTERN_CORNER, 0, 2],  # Left Up corner 4
             [[-1, 1, -1,
               1, -1, 2,
-              -1, 2, -1], self.MODEL_CORNER_INTERIOR, 3, 0],  # Left Up interior corner 5
+              -1, 2, -1], self.MODEL_INNER_CORNER, 3, 0],  # Left Up interior corner 5
             [[-1, -1, -1,
               1, -1, -1,
-              2, 1, -1], self.MODEL_CORNER, 0, 3],  # Right Up corner 6
+              2, 1, -1], self.MODEL_EXTERN_CORNER, 0, 3],  # Right Up corner 6
             [[-1, 1, -1,
               2, -1, 1,
-              -1, 2, -1], self.MODEL_CORNER_INTERIOR, 3, 1],  # Right Up interior corner 7
+              -1, 2, -1], self.MODEL_INNER_CORNER, 3, 1],  # Right Up interior corner 7
             [[2, 1, -1,
               1, -1, -1,
-              -1, -1, -1], self.MODEL_CORNER, 0, 0],  # Right Down corner 8
+              -1, -1, -1], self.MODEL_EXTERN_CORNER, 0, 0],  # Right Down corner 8
             [[-1, 2, -1,
               2, -1, 1,
-              -1, 1, -1], self.MODEL_CORNER_INTERIOR, 3, 2],  # Right Down interior corner 9
+              -1, 1, -1], self.MODEL_INNER_CORNER, 3, 2],  # Right Down interior corner 9
             [[-1, 1, 2,
               -1, -1, 1,
-              -1, -1, -1], self.MODEL_CORNER, 0, 1],  # Left Down corner 10
+              -1, -1, -1], self.MODEL_EXTERN_CORNER, 0, 1],  # Left Down corner 10
             [[-1, 2, -1,
               1, -1, 2,
-              -1, 1, -1], self.MODEL_CORNER_INTERIOR, 3, 3]  # Left Down interior corner 11
+              -1, 1, -1], self.MODEL_INNER_CORNER, 3, 3]  # Left Down interior corner 11
         ]
 
         def doesTheMatrixIsRecognize(cell, info):
@@ -410,7 +413,8 @@ class WallConstruction:
 
             wall = next
 
-        local_maximum: list = []
+        max_height: int = 0
+        maximum = None
 
         # Compute height for
         for wallCell in self.wall_list:
@@ -425,45 +429,85 @@ class WallConstruction:
 
             wallCell.height = util.getHighestNonAirBlock(x_real, z_real, x_real - self.area[0], z_real - self.area[2])
             wallCell.augmented_height = wallCell.height
+            if wallCell.height > max_height:
+                max_height = wallCell.height
+                maximum = wallCell
+
+        step: int = 2
+        extremum: list = [maximum]
+
+        def find_interval_from(wall):
+            height = wall.augmented_height - step
+
+            if wall.sided_wall_1.height > height:
+                return wall
+
+            next = wall.sided_wall_1
+
+            while next != wall:
+                if next.sided_wall_1.height > height or next.sided_wall_1 in extremum:
+                    break
+
+                next = next.sided_wall_1
+
+            return next
+
+        def change_type_to_stairs(to_change, side):
+            if to_change.wall_type == WallConstruction.MODEL_LINE:
+                to_change.wall_type = WallConstruction.MODEL_STAIRS
+                if side:
+                    to_change.flip = (to_change.flip + 1) % 4
+
+            elif to_change.wall_type == WallConstruction.MODEL_INNER_CORNER:
+                to_change.wall_type = WallConstruction.MODEL_INNER_CORNER_STAIRS
+                to_change.rotation = (to_change.rotation + 2) % 4
+                if side:
+                    to_change.rotation = (to.rotation + 3) % 4
+                    to_change.flip = (to.flip + 3) % 4
+
+            elif to_change.wall_type == WallConstruction.MODEL_EXTERN_CORNER:
+                to_change.wall_type = WallConstruction.MODEL_EXTERN_CORNER_STAIRS
+                to_change.rotation = (to_change.rotation + 2) % 4
+
+                if side:
+                    to_change.rotation = (to.rotation + 3) % 4
+                    to_change.flip = (to.flip + 1) % 4
 
         for wallCell in self.wall_list:
-            if (
-                    wallCell.sided_wall_1.height < wallCell.height - 1 and wallCell.sided_wall_1.height - 1 <= wallCell.height) \
-                    or (
-                    wallCell.sided_wall_2.height < wallCell.height - 1 and wallCell.sided_wall_2.height - 1 <= wallCell.height):
-                local_maximum.append(wallCell)
+            wallCell.augmented_height = max_height
 
-        for wall in local_maximum:
+        height: int = max_height
+        made_changes = True
 
-            old = wall
-            side_1 = wall.sided_wall_1
-            while side_1 not in local_maximum:
-                if side_1.augmented_height < old.augmented_height - 3:
-                    if side_1.wall_type == WallConstruction.MODEL_LINE:
-                        side_1.augmented_height = old.augmented_height - 3
-                        side_1.wall_type = WallConstruction.MODEL_STAIRS
+        while made_changes:
+            made_changes = False
+
+            start = maximum
+            next = maximum.sided_wall_1
+
+            while next != start:
+                if next.augmented_height == height and next.sided_wall_1.augmented_height == height and next.sided_wall_2.augmented_height == height\
+                   and next.augmented_height - step > next.height:
+                    to = find_interval_from(next)
+
+                    if next != to:
+                        made_changes = True
+                        extremum.append(next)
+                        extremum.append(to)
+                        change_type_to_stairs(next, False)
+                        change_type_to_stairs(to, True)
+
+                        while next != to:
+                            next.augmented_height -= step
+                            next = next.sided_wall_1
+
+                        to.augmented_height -= step
                     else:
-                        side_1.augmented_height = old.augmented_height
-
-                    old = side_1
-                    side_1 = old.sided_wall_1
+                        next = next.sided_wall_1
                 else:
-                    break
+                    next = next.sided_wall_1
 
-            old = wall
-            side_2 = wall.sided_wall_2
-            while side_2 not in local_maximum:
-                if side_2.augmented_height < old.augmented_height - 3:
-                    if side_1.wall_type == WallConstruction.MODEL_LINE:
-                        side_2.augmented_height = old.augmented_height - 3
-                        side_2.wall_type = WallConstruction.MODEL_STAIRS
-                    else:
-                        side_2.augmented_height = old.augmented_height
-
-                    old = side_2
-                    side_2 = old.sided_wall_2
-                else:
-                    break
+            height -= step
 
     def createWallLoreStructure(self, wallCell, x_real, y, z_real, settlement_data):
         tier: str = "basic" if self.village.tier == 0 else "medium" if self.village.tier == 1 else "advanced"
@@ -498,16 +542,18 @@ class WallConstruction:
 
     def placeWall(self, settlement_data: SettlementData, resources: Resources,
                   world_modification: WorldModification, block_transformations: list):
+
         # Choose door
         door_candidate: list = []
         for wallCell in self.wall_list:
             if wallCell.wall_type == self.MODEL_LINE:
                 door_candidate.append(wallCell)
 
-        for i in range(random.randint(1, 3)):
-            index: int = random.randint(0, len(door_candidate) - 1)
-            door_candidate[index].wall_type = self.MODEL_DOOR
-            del door_candidate[index]
+        if len(door_candidate) > 0:
+            for i in range(random.randint(1, min(3, len(door_candidate)))):
+                index: int = random.randint(0, len(door_candidate) - 1)
+                door_candidate[index].wall_type = self.MODEL_DOOR
+                del door_candidate[index]
 
         x: int
         z: int

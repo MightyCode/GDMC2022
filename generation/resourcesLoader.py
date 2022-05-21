@@ -148,7 +148,7 @@ def loadAllResources(resources: Resources) -> None:
     resources.loadStructures("decorations/statue/mediumstatue.nbt",
                              "decorations/statue/mediumstatue.json", "mediumstatue")
 
-    wall_types: list = ["line", "stairs", "door", "externcorner", "innercorner"]
+    wall_types: list = ["line", "stairs", "door", "externcorner", "innercorner", "externcornerstairs", "innercornerstairs"]
 
     for wall_type in wall_types:
         resources.loadStructures("wall/basic/basicwall" + wall_type + ".nbt", "wall/wall.json", "basicwall" + wall_type)

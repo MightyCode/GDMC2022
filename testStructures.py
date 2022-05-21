@@ -141,9 +141,9 @@ if not args.remove:
     from generation.terrainModification import TerrainModification
     terrainModification = TerrainModification(build_area, wallConstruction)
 
-    """wallConstruction.placeAirZone(settlement_data, resources, world_modifications, terrainModification)
+    wallConstruction.placeAirZone(settlement_data, resources, world_modifications, terrainModification)
     wallConstruction.placeWall(settlement_data, resources, world_modifications, block_transformations)
-    exit()"""
+    exit()
 
     generator.makeAirZone(lore_structure, settlement_data, resources, world_modifications, terrainModification)
     generator.generateStructure(lore_structure, settlement_data, resources, world_modifications,
