@@ -24,7 +24,7 @@ import generation.generator as generator
 Important information
 """
 
-structure_name: str = "basictownhall"
+structure_name: str = "basicgeneratedquarry"
 structure_type: str = LoreStructure.TYPE_HOUSES
 
 Config.getOrCreateConfig()
@@ -89,8 +89,9 @@ if not args.remove:
     """reference_structure: BaseStructure = resources.structures[structure_name]
     
     from generation.structures.generated.structureInConstruction import StructureInConstruction
-    structure: BaseStructure = StructureInConstruction(reference_structure)
-    print(structure.setupInfoAndGetCorners())"""
+    structure: BaseStructure = StructureInConstruction(reference_structure)"""
+
+    structure.setupInfoAndGetCorners()
 
     lore_structure: LoreStructure = LoreStructure()
     lore_structure.age = 1
@@ -102,7 +103,8 @@ if not args.remove:
     lore_structure.name = structure_name
     lore_structure.villagers = [villagers[0], villagers[2], villagers[2]]
     lore_structure.type = structure_type
-    lore_structure.position = [build_area[0] + size_area[0] / 2, 66, build_area[2] + size_area[1] / 2]
+    lore_structure.position = [build_area[0] + size_area[0] / 2, 63, build_area[2] + size_area[1] / 2]
+
     lore_structure.preBuildingInfo = structure.getNextBuildingInformation(lore_structure.flip, lore_structure.rotation)
 
     settlement_data: SettlementData = generator.createSettlementData(build_area, village, resources)
@@ -134,10 +136,16 @@ if not args.remove:
                                    build_area[0] + size_area[0] // 2 + 10, build_area[2] + size_area[1] // 2 + 10])
     # wallConstruction.addRectangle([build_area[0] - 30, build_area[2] + 50, build_area[0] + 200, build_area[2] + 200])
     wallConstruction.computeWall(WallConstruction.BOUNDING_CONVEX_HULL)
-    wallConstruction.showImageRepresenting()
-    wallConstruction.placeWall(settlement_data, resources, world_modifications, block_transformations)
-    exit()
+    # wallConstruction.showImageRepresenting()
 
+    from generation.terrainModification import TerrainModification
+    terrainModification = TerrainModification(build_area, wallConstruction)
+
+    """wallConstruction.placeAirZone(settlement_data, resources, world_modifications, terrainModification)
+    wallConstruction.placeWall(settlement_data, resources, world_modifications, block_transformations)
+    exit()"""
+
+    generator.makeAirZone(lore_structure, settlement_data, resources, world_modifications, terrainModification)
     generator.generateStructure(lore_structure, settlement_data, resources, world_modifications,
                                 chestGeneration, block_transformations)
 

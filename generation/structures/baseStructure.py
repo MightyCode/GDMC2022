@@ -377,7 +377,7 @@ class BaseStructure:
                                          building_conditions.referencePoint,
                                          building_conditions.position),
 
-                self.returnWorldPosition([self.size[0], self.size[1] + 1, self.size[2]],
+                self.returnWorldPosition([self.size[0] - 1, self.size[1] + 1, self.size[2] - 1],
                                          building_conditions.flip, building_conditions.rotation,
                                          building_conditions.referencePoint,
                                          building_conditions.position)

@@ -531,6 +531,7 @@ class WallConstruction:
                 for one_cause in util.selectNWithChanceForOther(["burned", "damaged", "abandoned"], [0.4, 0.3, 0.3], 1):
                     lore_structure.causeDestroy[one_cause] = settlement_data.village_model.destroyCause
 
+            resources.structures[lore_structure.name].setupInfoAndGetCorners()
             lore_structure.preBuildingInfo = resources.structures[lore_structure.name].getNextBuildingInformation(
                 lore_structure.flip, lore_structure.rotation
             )
