@@ -30,7 +30,7 @@ def createSettlementData(area: list, village_model: Village, resources: Resource
     # Per default, chosen color is white
     loreMaker.fillSettlementDataWithColor(settlement_data, "white")
 
-    #settlement_data.structure_number_goal = Config.getValueOrDefault("numberStructures", 8)
+    # settlement_data.structure_number_goal = Config.getValueOrDefault("numberStructures", 8)
     settlement_data.structure_number_goal = Config.getValueOrDefault("numberStructures", random.randint(25, 55))
 
     print(settlement_data.structure_number_goal)
@@ -92,10 +92,10 @@ def placeBooks(settlement_data: SettlementData, books: dict, world_modification:
 
 
 def makeAirZone(lore_structure: LoreStructure, settlement_data: SettlementData, resources: Resources,
-                      world_modification: WorldModification, terrainModification):
+                world_modification: WorldModification, terrainModification):
     structure = resources.structures[lore_structure.name]
 
-    building_conditions: BuildingCondition = BaseStructure.createBuildingCondition()
+    building_conditions: BuildingCondition = structure.createBuildingCondition()
     building_conditions.setLoreStructure(lore_structure)
 
     building_conditions.replaceAirMethod = BuildingCondition.FILE_PREFERENCE_AIR_PLACEMENT
@@ -113,18 +113,17 @@ def generateStructure(lore_structure: LoreStructure, settlement_data: Settlement
         block_transformation.setLoreStructure(lore_structure)
 
     structure = resources.structures[lore_structure.name]
-    info: dict = structure.info
     current_village: Village = settlement_data.village_model
 
     build_murderer_cache: bool = False
 
-    building_conditions: BuildingCondition = BaseStructure.createBuildingCondition()
+    building_conditions: BuildingCondition = structure.createBuildingCondition()
     building_conditions.setLoreStructure(lore_structure)
     murderer_data = current_village.murderer_data
 
     for villager in lore_structure.villagers:
         if villager == murderer_data.villagerMurderer:
-            if "murdererTrap" in info["villageInfo"].keys():
+            if "murdererTrap" in structure.info["villageInfo"].keys():
                 build_murderer_cache = True
 
     building_conditions.replaceAirMethod = BuildingCondition.FILE_PREFERENCE_AIR_PLACEMENT
@@ -192,7 +191,7 @@ def modifyBuildingConditionDependingOnStructure(building_conditions: BuildingCon
         writer = book.createBookForAdventurerHouse(settlement_data.village_model.name, building_conditions.flip)
         writer.setInfo(title="Portal Manual", author="Mayor",
                        description="Contains useful instruction")
-        building_conditions.special["adventurerhouse"] = ["minecraft:written_book" + writer.printBook() ]
+        building_conditions.special["adventurerhouse"] = ["minecraft:written_book" + writer.printBook()]
 
     elif "exchanger" in structure.name:
         building_conditions.special["trade"] = []
@@ -203,10 +202,10 @@ def modifyBuildingConditionDependingOnStructure(building_conditions: BuildingCon
             if interaction.economicalRelation:
                 building_conditions.special["trade"].append(
                     'minecraft:paper{'
-                        'display:{Name:\'{\"text\":\"Commercial alliance pact\"}\''
-                        ',Lore:[\'{\"text\":\"' + villageKey.name + ' currency exchange permit.\"}\']'
-                        '}, Enchantments:[{}]'
-                    '}'
+                    'display:{Name:\'{\"text\":\"Commercial alliance pact\"}\''
+                    ',Lore:[\'{\"text\":\"' + villageKey.name + ' currency exchange permit.\"}\']'
+                                                                '}, Enchantments:[{}]'
+                                                                '}'
                 )
     elif structure.name == "mediumstatue":
         building_conditions.special = {"sign": ["", "", "", "", "", "", "", ""]}
@@ -241,10 +240,10 @@ def modifyBuildingConditionDependingOnStructure(building_conditions: BuildingCon
     for order in structure.orders:
         building_conditions.special["order"].append(
             'minecraft:paper{'
-                'display:{Name:\'{\"text\":\"' + order.villager_ordering.name + '\\\'s order\"}\''
-                 #',Lore:[\'{\"text\":\" currency exchange permit.\"}\']'
-                '}, Enchantments:[{}]'
-            '}'
+            'display:{Name:\'{\"text\":\"' + order.villager_ordering.name + '\\\'s order\"}\''
+            # ',Lore:[\'{\"text\":\" currency exchange permit.\"}\']'
+                                                                            '}, Enchantments:[{}]'
+                                                                            '}'
         )
 
 

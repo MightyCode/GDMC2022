@@ -213,6 +213,7 @@ class Road:
                 material = 'minecraft:grass_path'
                 # Here, we need to check if there is a tree above the path, and if yes, we want to remove it
                 terrain_modification.removeRecursivelyAt(world_modification, block[0], y, block[1])
+                world_modification.setBlock(block[0], y, block[1], "minecraft:air")
                 terrain_modification.removeRecursivelyAt(world_modification, block[0], y + 1, block[1])
                 terrain_modification.removeRecursivelyAt(world_modification, block[0], y + 2, block[1])
 

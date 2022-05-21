@@ -297,7 +297,6 @@ if not args.remove:
 
         print("\nCompute wall")
         wallConstruction.computeWall(WallConstruction.BOUNDING_CONVEX_HULL)
-        wallConstruction.computeWallHeight()
 
         wallConstruction.showImageRepresenting()
 
@@ -307,8 +306,10 @@ if not args.remove:
             generator.makeAirZone(current_village.lore_structures[i], settlement_data, resources,
                                   world_modification, terrain_modification)
             i += 1
-        wallConstruction.placeAirZone(settlement_data, resources, world_modification)
 
+        wallConstruction.placeAirZone(settlement_data, resources, world_modification, terrain_modification)
+
+        """ Five main step : places every structure and after that every decorations """
         print("\nConstruct wall")
 
         wallConstruction.placeWall(settlement_data, resources, world_modification, block_transformation)
@@ -323,11 +324,9 @@ if not args.remove:
                 mayorStruct = roadData.structure_ref_1
                 break
 
-        print(wallEntries, mayorPosition)
         for entry in wallEntries:
             road.addRoad(entry, mayorPosition, mayorStruct, mayorStruct)
 
-        """ Five main step : places every structure and after that every decorations """
         print("\nConstruct road")
         road.generateRoad(world_modification, floodFill.listHouse, settlement_data, terrain_modification)
 

@@ -125,6 +125,8 @@ class WallConstruction:
         elif self.bounding_type == self.BOUNDING_CONVEX_HULL:
             self.computeConvexFull()
 
+        self.computeWallHeight()
+
     def computeRectangular(self):
         self.wall_simplification = [self.detection_grid_size[0], self.detection_grid_size[1], -1, -1]
 
@@ -463,8 +465,36 @@ class WallConstruction:
                 else:
                     break
 
-    def placeAirZone(self, settlement_data: SettlementData, resources: Resources, world_modification: WorldModification):
+    def createWallLoreStructure(self, wallCell, x_real, y, z_real, settlement_data):
+        tier: str = "basic" if self.village.tier == 0 else "medium" if self.village.tier == 1 else "advanced"
 
+        lore_structure: LoreStructure = LoreStructure()
+        lore_structure.name = tier + "wall" + self.WALL_PARTS[wallCell.wall_type]
+        lore_structure.position = [x_real, y - 1, z_real]
+        lore_structure.flip = wallCell.flip
+        lore_structure.rotation = wallCell.rotation
+        lore_structure.age = settlement_data.village_model.age
+
+        return lore_structure
+
+    def placeAirZone(self, settlement_data: SettlementData, resources: Resources, world_modification: WorldModification, terrain_modification):
+        for wallCell in self.wall_list:
+            x, z = wallCell.position
+            # Centered on zone
+            x_real: int = x * self.zone_size + self.area[0] + self.zone_size // 2 + 1
+            z_real: int = z * self.zone_size + self.area[2] + self.zone_size // 2 + 1
+
+            if not (self.area[0] <= x_real and x_real + self.zone_size <= self.area[3]
+                    and self.area[2] <= z_real and z_real + self.zone_size <= self.area[5]):
+                continue
+
+            y = wallCell.augmented_height
+
+            lore_structure = self.createWallLoreStructure(wallCell, x_real, y, z_real, settlement_data)
+            lore_structure.preBuildingInfo = resources.structures[lore_structure.name].getNextBuildingInformation(
+                lore_structure.flip, lore_structure.rotation
+            )
+            generator.makeAirZone(lore_structure, settlement_data, resources, world_modification, terrain_modification)
 
     def placeWall(self, settlement_data: SettlementData, resources: Resources,
                   world_modification: WorldModification, block_transformations: list):
@@ -494,14 +524,7 @@ class WallConstruction:
 
             y = wallCell.augmented_height
 
-            tier: str = "basic" if self.village.tier == 0 else "medium" if self.village.tier == 1 else "advanced"
-
-            lore_structure: LoreStructure = LoreStructure()
-            lore_structure.name = tier + "wall" + self.WALL_PARTS[wallCell.wall_type]
-            lore_structure.position = [x_real, y - 1, z_real]
-            lore_structure.flip = wallCell.flip
-            lore_structure.rotation = wallCell.rotation
-            lore_structure.age = settlement_data.village_model.age
+            lore_structure = self.createWallLoreStructure(wallCell, x_real, y, z_real, settlement_data)
 
             if settlement_data.village_model.isDestroyed:
                 lore_structure.destroyed = True

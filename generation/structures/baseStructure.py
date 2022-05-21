@@ -52,9 +52,6 @@ class BaseStructure:
     def createBuildingCondition() -> BuildingCondition:
         return BuildingCondition()
 
-    def prepareAirZone(self):
-        pass
-
     """
     Return a position in the world 
     localPoint : position of the block inside the local space, [0, 0, 0]
@@ -180,16 +177,12 @@ class BaseStructure:
                     )
 
                     world_modification.setBlock(
-                        sign_position[0],
-                        sign_position[1] + 1,
-                        sign_position[2],
+                        sign_position[0], sign_position[1] + 1, sign_position[2],
                         "minecraft:" + building_conditions.replacements["woodType"]
                         + "_wall_sign[facing=" + self.computed_orientation[sign["orientation"]] + "]",
-                        False,
-                        True)
+                        False, True)
 
-                    if building_conditions.special["sign"][i * 4] == "" and building_conditions.special["sign"][
-                        i * 4 + 1] == "":
+                    if building_conditions.special["sign"][i * 4] == "" and building_conditions.special["sign"][i * 4 + 1] == "":
                         if building_conditions.special["sign"][i * 4 + 2] == "" and \
                                 building_conditions.special["sign"][i * 4 + 3] == "":
                             continue
@@ -352,6 +345,14 @@ class BaseStructure:
     """
 
     def placeAirZones(self, world_modification, building_conditions: BuildingCondition, terrainModification):
+        building_conditions.referencePoint = building_conditions.referencePoint.copy()
+        self.computeOrientation(building_conditions.rotation, building_conditions.flip)
+
+        if building_conditions.flip == 1 or building_conditions.flip == 3:
+            building_conditions.referencePoint[0] = self.size[0] - 1 - building_conditions.referencePoint[0]
+        if building_conditions.flip == 2 or building_conditions.flip == 3:
+            building_conditions.referencePoint[2] = self.size[2] - 1 - building_conditions.referencePoint[2]
+
         if building_conditions.replaceAirMethod == BuildingCondition.FILE_PREFERENCE_AIR_PLACEMENT:
             building_conditions.replaceAirMethod = self.info["air"]["preferredAirMode"]
 
@@ -376,7 +377,7 @@ class BaseStructure:
                                          building_conditions.referencePoint,
                                          building_conditions.position),
 
-                self.returnWorldPosition([self.info["size"][0], self.info["size"][1] + 1, self.info["size"][2]],
+                self.returnWorldPosition([self.size[0], self.size[1] + 1, self.size[2]],
                                          building_conditions.flip, building_conditions.rotation,
                                          building_conditions.referencePoint,
                                          building_conditions.position)
@@ -391,9 +392,9 @@ class BaseStructure:
                     if interfaceUtils.getBlock(x, zone[1][1] + 1, z) in BaseStructure.AIR_FILLING_PROBLEMATIC_BLOCS:
                         world_modification.setBlock(x, zone[1][1] + 1, z, "minecraft:stone", place_immediately=True)
 
-            """world_modification.fillBlocks(zone[0][0], zone[0][1], zone[0][2], zone[1][0], zone[1][1],
+            world_modification.fillBlocks(zone[0][0], zone[0][1], zone[0][2], zone[1][0], zone[1][1],
                                           zone[1][2],
-                                          BaseStructure.AIR_BLOCKS[0])"""
+                                          BaseStructure.AIR_BLOCKS[0])
 
     def applyBlockTransformation(self, block: str):
         return util.applyBlockTransformation(block, self.block_transformation)
