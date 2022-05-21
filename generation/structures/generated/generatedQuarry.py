@@ -37,6 +37,11 @@ class GeneratedQuarry(BaseStructure):
 
     def setupInfoAndGetCorners(self):
         self.setSize([random.randint(7, 14), random.randint(9, 21), random.randint(7, 14)])
+        self.info["air"] = {
+            "preferredAirMode": 2,
+            "replacements":
+            [[0, self.size[1] - 5, 0, self.size[0] - 1, self.size[1], self.size[2] - 1]]
+        }
 
         self.info["mainEntry"]["position"] = [int(self.size[0] / 2), self.size[1] - 5, 0]
 

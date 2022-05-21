@@ -5,7 +5,8 @@
   },
   "replacements" : {
     "oak" : { "type" : "woodType", "state" : 2},
-    "spruce" : { "type" : "woodType2", "state" : 2}
+    "spruce" : { "type" : "woodType2", "state" : 2},
+    "minecraft:white_wool" : { "type" : "wool", "state" : 1, "excluded": [[0, 0, 0, 10, 10, 4]] }
   },
   "air" : {
     "preferredAirMode" : 2,

@@ -51,7 +51,7 @@ class Village:
         self.color: str = "white"
 
     def generateVillageInformation(self, name_generator: NameGenerator):
-        self.name = name_generator.generateVillageName(True)
+        self.name = Config.getValueOrDefault("villageName", name_generator.generateVillageName(True))
 
     def defineTierAndAge(self):
         self.tier = random.randint(0, 2)
@@ -65,7 +65,7 @@ class Village:
                 self.age = 1
 
         self.tier = Config.getValueOrDefault("villageTier", self.tier)
-        self.age = Config.getValueOrDefault("villageTier", self.age)
+        self.age = Config.getValueOrDefault("villageAge", self.age)
         # print("Tier : " + str(self.tier) + ", Age : " + str(self.age))
 
     def generateVillageLore(self):
@@ -73,7 +73,7 @@ class Village:
         colors = ["white", "orange", "magenta", "light_blue", "yellow", "lime", "pink", "gray", "light_gray", "cyan",
                   "purple", "blue", "brown", "green", "red", "black"]
 
-        self.color = colors[random.randint(0, len(colors) - 1)]
+        self.color = Config.getValueOrDefault("villageColor", colors[random.randint(0, len(colors) - 1)])
 
     def makeRelations(self, otherVillages: list):
         for village in otherVillages:
@@ -93,6 +93,8 @@ class Village:
 
             if interaction.state == VillageInteraction.STATE_WAR:
                 self.status = Village.STATE_WAR
+
+        self.status = Config.getValueOrDefault("villageStatus", self.status)
 
 
 from generation.data.murdererData import MurdererData

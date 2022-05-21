@@ -29,5 +29,7 @@ class Villager:
 
         self.trades: list = []
 
+        self.reason_death: str = ""
+
     def hasNoTrade(self) -> bool:
         return len(self.trades) <= 0

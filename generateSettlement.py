@@ -72,7 +72,7 @@ if not args.remove:
     if settlement_zones_number[1] == 0:
         settlement_zones_number[1] = 1
 
-    settlement_zones = projectMath.computeSquaredZoneWitNumber(settlement_zones_number, build_area)
+    settlement_zones = projectMath.computeSquaredZoneWitNumber(settlement_zones_number, list(build_area))
 
     """Generate village involving on our generation"""
     print("Generate lore of the world")
@@ -297,8 +297,21 @@ if not args.remove:
 
         print("\nCompute wall")
         wallConstruction.computeWall(WallConstruction.BOUNDING_CONVEX_HULL)
-        #wallConstruction.showImageRepresenting()
+
+        wallConstruction.showImageRepresenting()
+
+        i: int = 0
+        print("Generate air zone")
+        while i < len(current_village.lore_structures):
+            generator.makeAirZone(current_village.lore_structures[i], settlement_data, resources,
+                                  world_modification, terrain_modification)
+            i += 1
+
+        wallConstruction.placeAirZone(settlement_data, resources, world_modification, terrain_modification)
+
+        """ Five main step : places every structure and after that every decorations """
         print("\nConstruct wall")
+
         wallConstruction.placeWall(settlement_data, resources, world_modification, block_transformation)
 
         # Connect entry of village in wall to rest of village paths
@@ -311,15 +324,13 @@ if not args.remove:
                 mayorStruct = roadData.structure_ref_1
                 break
 
-        print(wallEntries, mayorPosition)
         for entry in wallEntries:
             road.addRoad(entry, mayorPosition, mayorStruct, mayorStruct)
 
-        """ Five main step : places every structure and after that every decorations """
         print("\nConstruct road")
         road.generateRoad(world_modification, floodFill.listHouse, settlement_data, terrain_modification)
 
-        i: int = 0
+        i = 0
         current_time: int = int(round(time.time() * 1000)) - milliseconds
         while i < len(current_village.lore_structures) and current_time / 1000 < TIME_LIMIT:
             print("Build structure " + str(i + 1) + "/" + str(settlement_data.structure_number_goal) + "  ", end="\r")

@@ -1,0 +1,43 @@
+{
+    "mainEntry": {
+      "facing" : "north",
+      "position" : [9, 0, 0]
+    },
+    "replacements" : {
+      "minecraft:green_carpet" : { "type" : "carpet", "state" : 1 },
+      "minecraft:white_wall_banner" : { "type" : "wall_banner", "state" : 1 },
+      "minecraft:white_banner" : { "type" : "banner", "state" : 1 },
+      "oak" : { "type" : "woodType", "state" : 2 },
+      "spruce" : { "type" : "woodType2", "state" : 2 }
+    },
+    "air" : {
+      "preferredAirMode" : 1,
+      "replacements" : [
+      ]
+    },
+    "lootTables" : [
+      ["townhall"]    
+    ],
+    "lectern" : {
+      "*villageLecternBook*" : [10, 1, 10]
+    },
+    "villageInfo" : {
+      "villager" : 1,
+      "gameProfession" : "librarian",
+      "profession" : "Mayor"
+    },
+    "ground" : {
+      "zones" : [
+        [2, 2, 5, 11],
+        [8, 0, 10, 4],
+        [6, 5, 13, 11],
+        [13, 2, 16, 11]
+      ]
+    },
+    "sign" : {
+      "position" : [3, 1, 1],
+      "facing" : "north",
+      "tier" : 2,
+      "name" : "Townhall"
+    }
+  }

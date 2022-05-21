@@ -20,6 +20,11 @@ class GeneratedWell(BaseStructure):
     def setupInfoAndGetCorners(self):
         self.setSize([6, 9, 6])
         self.info["mainEntry"]["position"] = [int(self.size[0] / 2), self.size[1] - 5, 0]
+        self.info["air"] = {
+            "preferredAirMode": 2,
+            "replacements":
+            [[0, 2, 0, 5, 10, 5]]
+        }
 
         return self.getCornersLocalPositionsAllFlipRotation(self.info["mainEntry"]["position"])
 

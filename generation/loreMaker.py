@@ -6,6 +6,7 @@ from generation.data.village import Village
 from generation.data.villager import Villager
 from generation.data.village import VillageInteraction
 from generation.data.loreStructure import LoreStructure
+from utils.checkOrCreateConfig import Config
 
 
 def genPositionOfVillage(existing_areas: list, goal_number: int) -> list:
@@ -75,6 +76,7 @@ def checkForImpossibleInteractions(villages: list, interactions: list):
 
             interaction1 = village.village_interactions[interaction.village1]
             interaction2 = village.village_interactions[interaction.village2]
+            interaction2 = village.village_interactions[interaction.village2]
 
             if (interaction1.state != VillageInteraction.STATE_LOVE
                 and interaction1.state != VillageInteraction.STATE_FRIENDSHIP) or \
@@ -108,6 +110,9 @@ def generateLoreAfterRelation(villages: list):
                 village.isDestroyed = random.randint(1, 3) == 1
             elif chance == 0.6:
                 village.isDestroyed = random.randint(1, 4) != 4
+
+        village.isDestroyed = Config.getValueOrDefault("villageDestroyed", village.isDestroyed)
+        village.destroyCause = Config.getValueOrDefault("villageDestroyedCause", village.destroyCause)
 
 
 def alterSettlementDataWithNewStructures(settlement_data, lore_structure: LoreStructure):
@@ -147,6 +152,13 @@ def generateLoreAfterAllStructure(village: Village, name_generator):
     generateOrders(village)
 
 
+REASON_OF_DEATHS = ["died because of old age", "died of creeper attack", "died of skeleton attack",
+                    "died of spider attack (he did not became Spider-Man)",
+                    "died of zombie attack", "died of witch attack", "died suffocating from sand falling",
+                    "died eating too much cake", "died crushing by a rock",
+                    "died suffocating from gravel falling",
+                    "disappeared for reasons still unclear"]
+
 # Minimum of 10 deaths
 def createListOfDeadVillager(village: Village, name_generator):
     random_dead_villagers = random.randint(10, max(len(village.villagers) - 1, 10))
@@ -156,6 +168,11 @@ def createListOfDeadVillager(village: Village, name_generator):
         dead_villager.name = name_generator.generateVillagerName(True)
         village.dead_villagers.append(dead_villager)
 
+        if village.status == "war" and random.randint(1, 3):
+            village.dead_villagers[-1].reason_death = "died in war."
+        else:
+            random_death = random.randint(0, len(REASON_OF_DEATHS) - 1)
+            village.dead_villagers[-1].reason_death = REASON_OF_DEATHS[random_death]
 
 def isDestroyStructure(current_village: Village, lore_structure: LoreStructure):
     if current_village.isDestroyed:

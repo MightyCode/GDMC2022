@@ -187,10 +187,10 @@
                 "basicgraveyard"
             ],
             "1": [
-                "basicgraveyard"
+                "mediumgraveyard"
             ],
             "2": [
-                "basicgraveyard"
+                "mediumgraveyard"
             ]
         },
         "type" : "representatives",
@@ -227,10 +227,10 @@
                 "basictownhall"
             ],
             "1": [
-                "basictownhall"
+                "mediumtownhall", "mediumtownhall2"
             ],
             "2": [
-                "basictownhall"
+                "mediumtownhall", "mediumtownhall2"
             ]
         },
         "type" : "representatives",
@@ -288,10 +288,10 @@
                 "basictavern"
             ],
             "1": [
-                "basictavern"
+                "mediumtavern"
             ],
             "2": [
-                "basictavern"
+                "mediumtavern"
             ]
         },
         "type" : "representatives",

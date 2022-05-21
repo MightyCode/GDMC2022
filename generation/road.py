@@ -22,7 +22,7 @@ class Road:
         "east": [0, 0, 1, 0]
     }
 
-    def __init__(self, area: tuple):
+    def __init__(self, area: list):
         self.area = area
         self.roads: list = []
         self.lanterns: list = []
@@ -111,7 +111,8 @@ class Road:
                         open_list.append(node)
 
             closed_list.append(current)
-        raise ValueError('No Path Found')
+
+        print("Warning : No path found")
 
     def computeXEntry(self, xLocalPosition: int, facingStruct, cornerStruct):
         x: int = xLocalPosition
@@ -212,6 +213,7 @@ class Road:
                 material = 'minecraft:grass_path'
                 # Here, we need to check if there is a tree above the path, and if yes, we want to remove it
                 terrain_modification.removeRecursivelyAt(world_modification, block[0], y, block[1])
+                world_modification.setBlock(block[0], y, block[1], "minecraft:air")
                 terrain_modification.removeRecursivelyAt(world_modification, block[0], y + 1, block[1])
                 terrain_modification.removeRecursivelyAt(world_modification, block[0], y + 2, block[1])
 
@@ -244,7 +246,6 @@ class Road:
 
                         continue
 
-                    print("add torch")
                     self.lanterns.append([position[0], position[1]])
 
                     world_modification.setBlock(position[0], y - 1, position[1], 'minecraft:cobblestone')

@@ -90,12 +90,23 @@ def loadAllResources(resources: Resources) -> None:
     resources.loadStructures("representatives/townhall/basictownhall.nbt",
                              "representatives/townhall/basictownhall.json", "basictownhall")
 
+    resources.loadStructures("representatives/townhall/mediumtownhall.nbt",
+                             "representatives/townhall/mediumtownhall.json", "mediumtownhall")
+
+    resources.loadStructures("representatives/townhall/mediumtownhall2.nbt",
+                             "representatives/townhall/mediumtownhall.json", "mediumtownhall2")
+
     resources.loadStructures("representatives/jail/basicjail.nbt", "representatives/jail/basicjail.json", "basicjail")
+
     resources.loadStructures("representatives/graveyard/basicgraveyard.nbt",
                              "representatives/graveyard/basicgraveyard.json", "basicgraveyard")
+    resources.loadStructures("representatives/graveyard/mediumgraveyard.nbt",
+                             "representatives/graveyard/mediumgraveyard.json", "mediumgraveyard")
 
     resources.loadStructures("representatives/tavern/basictavern.nbt", "representatives/tavern/basictavern.json",
                              "basictavern")
+    resources.loadStructures("representatives/tavern/mediumtavern.nbt", "representatives/tavern/mediumtavern.json",
+                             "mediumtavern")
 
     resources.loadStructures("representatives/barrack/basicbarrack.nbt", "representatives/barrack/basicbarrack.json",
                              "basicbarrack")
@@ -137,7 +148,7 @@ def loadAllResources(resources: Resources) -> None:
     resources.loadStructures("decorations/statue/mediumstatue.nbt",
                              "decorations/statue/mediumstatue.json", "mediumstatue")
 
-    wall_types: list = ["line", "stairs", "door", "externcorner", "innercorner"]
+    wall_types: list = ["line", "stairs", "door", "externcorner", "innercorner", "externcornerstairs", "innercornerstairs"]
 
     for wall_type in wall_types:
         resources.loadStructures("wall/basic/basicwall" + wall_type + ".nbt", "wall/wall.json", "basicwall" + wall_type)

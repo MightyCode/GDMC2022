@@ -17,7 +17,7 @@ class WorldModification:
         self.before_modification: list = []
         self.after_modification: list = []
 
-        WorldModification.DEBUG_MODE = Config.LOADED_CONFIG["debugMode"]
+        WorldModification.DEBUG_MODE = Config.LOADED_CONFIG["saveConstructionInFile"]
 
     def setBlock(self, x, y, z, block, compare_block_state=False, place_immediately=False):
         if WorldModification.DEBUG_MODE:

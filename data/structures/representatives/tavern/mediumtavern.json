@@ -1,0 +1,34 @@
+{
+    "mainEntry": {
+      "facing" : "north",
+      "position" : [4, 0, 0]
+    },
+    "replacements" : {
+      "oak" : { "type" : "woodType", "state" : 2 },
+      "spruce" : { "type" : "woodType2", "state" : 2 },
+      "acacia" : { "type" : "woodType3", "state" : 2 },
+      "minecraft:white_wool" : { "type" : "wool", "state" : 1}
+    },
+    "air" : {
+      "preferredAirMode" : 1,
+      "replacements" : [
+      ]
+    },
+    "lootTables" : [
+      ["tavern"]
+    ],
+    "villageInfo" : {
+      "villager" : 1,
+      "gameProfession" : "butcher",
+      "profession" : "Tavern keeper"
+    },
+    "ground" : {
+      "info": "all"
+    },
+    "sign" : {
+      "position" : [0, 2, 0],
+      "facing" : "north",
+      "tier" : 2,
+      "name" : "Tavern"
+    }
+  }

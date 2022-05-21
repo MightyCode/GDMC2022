@@ -13,28 +13,26 @@ from utils.worldModification import WorldModification
 from generation.data.murdererData import MurdererData
 from generation.structures.baseStructure import BaseStructure
 from generation.data.settlementData import SettlementData
-
-from generation.wallConstruction import WallConstruction
+from utils.checkOrCreateConfig import Config
 
 import generation.resourcesLoader as resLoader
 import utils.argumentParser as argParser
 import lib.interfaceUtils as interfaceUtil
 import generation.generator as generator
-import utils.checkOrCreateConfig as chock
 
 """
 Important information
 """
 
-structure_name: str = "mediumhouse3"
+structure_name: str = "basicgeneratedquarry"
 structure_type: str = LoreStructure.TYPE_HOUSES
 
-config: dict = chock.getOrCreateConfig()
+Config.getOrCreateConfig()
 
 file: str = "temp.txt"
 interfaceUtil.setCaching(True)
 interfaceUtil.setBuffering(True)
-world_modifications: WorldModification = WorldModification(config)
+world_modifications: WorldModification = WorldModification()
 args, parser = argParser.giveArgsAndParser()
 build_area = argParser.getBuildArea(args)
 
@@ -46,6 +44,9 @@ build_area: tuple = (
 size_area: list = [build_area[3] - build_area[0] + 1, build_area[5] - build_area[2] + 1]
 
 if not args.remove:
+
+    interfaceUtil.makeGlobalSlice()
+
     block_transformations: list = [OldStructureTransformation(), DamagedStructureTransformation(),
                                    BurnedStructureTransformation(), AbandonedStructureTransformation()]
 
@@ -53,6 +54,7 @@ if not args.remove:
     village: Village = Village()
     village.name = "TestLand"
     village.tier = 2
+    village.color = "red"
 
     otherVillage: Village = Village()
     otherVillage.name = "TestLand 2"
@@ -79,24 +81,6 @@ if not args.remove:
     """village.murderer_data.villagerTarget = villagers[2]
     village.murderer_data.villagerMurderer = villagers[0]"""
 
-    from generation.wallConstruction import WallConstruction
-
-    wallConstruction: WallConstruction = WallConstruction(village, 9)
-    wallConstruction.setConstructionZone(build_area)
-
-    wallConstruction.addRectangle([build_area[0] + 100, build_area[2] + 100, build_area[0] + 116, build_area[2] + 116])
-    wallConstruction.addRectangle([build_area[0] + size_area[0] // 2 - 10, build_area[2] + size_area[1] // 2 - 10,
-                                   build_area[0] + size_area[0] // 2 + 10, build_area[2] + size_area[1] // 2 + 10])
-    wallConstruction.addRectangle([build_area[0] - 30, build_area[2] + 50, build_area[0] + 200, build_area[2] + 200])
-    wallConstruction.computeWall(WallConstruction.BOUNDING_CONVEX_HULL)
-    wallConstruction.showImageRepresenting()
-    wallConstruction.placeWall(world_modifications)
-
-    from generation.terrainModification import TerrainModification
-    terrainModification: TerrainModification = TerrainModification(build_area, wallConstruction)
-    terrainModification.removeRecursivelyAt(world_modifications, 228, 71, -190)
-    exit()
-
     resources: Resources = Resources()
     resLoader.loadAllResources(resources)
     chestGeneration: ChestGeneration = ChestGeneration(resources)
@@ -105,8 +89,9 @@ if not args.remove:
     """reference_structure: BaseStructure = resources.structures[structure_name]
     
     from generation.structures.generated.structureInConstruction import StructureInConstruction
-    structure: BaseStructure = StructureInConstruction(reference_structure)
-    print(structure.setupInfoAndGetCorners())"""
+    structure: BaseStructure = StructureInConstruction(reference_structure)"""
+
+    structure.setupInfoAndGetCorners()
 
     lore_structure: LoreStructure = LoreStructure()
     lore_structure.age = 1
@@ -118,7 +103,8 @@ if not args.remove:
     lore_structure.name = structure_name
     lore_structure.villagers = [villagers[0], villagers[2], villagers[2]]
     lore_structure.type = structure_type
-    lore_structure.position = [build_area[0] + size_area[0] / 2, 66, build_area[2] + size_area[1] / 2]
+    lore_structure.position = [build_area[0] + size_area[0] / 2, 63, build_area[2] + size_area[1] / 2]
+
     lore_structure.preBuildingInfo = structure.getNextBuildingInformation(lore_structure.flip, lore_structure.rotation)
 
     settlement_data: SettlementData = generator.createSettlementData(build_area, village, resources)
@@ -127,6 +113,7 @@ if not args.remove:
     import generation.loreMaker as loreMaker
 
     loreMaker.generateOrders(village)
+    loreMaker.applyLoreToSettlementData(settlement_data)
 
     structure.block_transformation = block_transformations
 
@@ -139,6 +126,26 @@ if not args.remove:
 
         villagers[i].diary[0] = "minecraft:written_book" + villagers[i].diary[0].printBook()
 
+    from generation.wallConstruction import WallConstruction
+
+    wallConstruction: WallConstruction = WallConstruction(village, 9)
+    wallConstruction.setConstructionZone(build_area)
+
+    wallConstruction.addRectangle([build_area[0] + 100, build_area[2] + 100, build_area[0] + 116, build_area[2] + 116])
+    wallConstruction.addRectangle([build_area[0] + size_area[0] // 2 - 10, build_area[2] + size_area[1] // 2 - 10,
+                                   build_area[0] + size_area[0] // 2 + 10, build_area[2] + size_area[1] // 2 + 10])
+    # wallConstruction.addRectangle([build_area[0] - 30, build_area[2] + 50, build_area[0] + 200, build_area[2] + 200])
+    wallConstruction.computeWall(WallConstruction.BOUNDING_CONVEX_HULL)
+    # wallConstruction.showImageRepresenting()
+
+    from generation.terrainModification import TerrainModification
+    terrainModification = TerrainModification(build_area, wallConstruction)
+
+    wallConstruction.placeAirZone(settlement_data, resources, world_modifications, terrainModification)
+    wallConstruction.placeWall(settlement_data, resources, world_modifications, block_transformations)
+    exit()
+
+    generator.makeAirZone(lore_structure, settlement_data, resources, world_modifications, terrainModification)
     generator.generateStructure(lore_structure, settlement_data, resources, world_modifications,
                                 chestGeneration, block_transformations)
 
