@@ -24,7 +24,7 @@ import generation.generator as generator
 Important information
 """
 
-structure_name: str = "basicgeneratedquarry"
+structure_name: str = "advancedhouse3"
 structure_type: str = LoreStructure.TYPE_HOUSES
 
 Config.getOrCreateConfig()
@@ -78,8 +78,8 @@ if not args.remove:
     village.villagers = villagers
     village.dead_villagers = deadVillagers
     village.murderer_data = MurdererData()
-    """village.murderer_data.villagerTarget = villagers[2]
-    village.murderer_data.villagerMurderer = villagers[0]"""
+    village.murderer_data.villagerTarget = villagers[2]
+    village.murderer_data.villagerMurderer = villagers[0]
 
     resources: Resources = Resources()
     resLoader.loadAllResources(resources)
@@ -103,7 +103,7 @@ if not args.remove:
     lore_structure.name = structure_name
     lore_structure.villagers = [villagers[0], villagers[2], villagers[2]]
     lore_structure.type = structure_type
-    lore_structure.position = [build_area[0] + size_area[0] / 2, 63, build_area[2] + size_area[1] / 2]
+    lore_structure.position = [build_area[0] + size_area[0] / 2, 64, build_area[2] + size_area[1] / 2]
 
     lore_structure.preBuildingInfo = structure.getNextBuildingInformation(lore_structure.flip, lore_structure.rotation)
 
@@ -128,26 +128,26 @@ if not args.remove:
 
     from generation.wallConstruction import WallConstruction
 
-    wallConstruction: WallConstruction = WallConstruction(village, 9)
-    wallConstruction.setConstructionZone(build_area)
+    wall_construction: WallConstruction = WallConstruction(village, 9)
+    wall_construction.setConstructionZone(build_area)
 
-    wallConstruction.addRectangle([build_area[0] + 100, build_area[2] + 100, build_area[0] + 116, build_area[2] + 116])
-    wallConstruction.addRectangle([build_area[0] + size_area[0] // 2 - 10, build_area[2] + size_area[1] // 2 - 10,
-                                   build_area[0] + size_area[0] // 2 + 10, build_area[2] + size_area[1] // 2 + 10])
+    wall_construction.addRectangle([build_area[0] + 100, build_area[2] + 100, build_area[0] + 116, build_area[2] + 116])
+    wall_construction.addRectangle([build_area[0] + size_area[0] // 2 - 10, build_area[2] + size_area[1] // 2 - 10,
+                                    build_area[0] + size_area[0] // 2 + 10, build_area[2] + size_area[1] // 2 + 10])
     # wallConstruction.addRectangle([build_area[0] - 30, build_area[2] + 50, build_area[0] + 200, build_area[2] + 200])
-    wallConstruction.computeWall(WallConstruction.BOUNDING_CONVEX_HULL)
+    wall_construction.computeWall(WallConstruction.BOUNDING_CONVEX_HULL)
     # wallConstruction.showImageRepresenting()
 
     from generation.terrainModification import TerrainModification
-    terrainModification = TerrainModification(build_area, wallConstruction)
+    terrain_modification = TerrainModification(build_area, wall_construction)
 
-    wallConstruction.placeAirZone(settlement_data, resources, world_modifications, terrainModification)
-    wallConstruction.placeWall(settlement_data, resources, world_modifications, block_transformations)
+    wall_construction.placeAirZone(settlement_data, resources, world_modifications, terrain_modification)
+    wall_construction.placeWall(settlement_data, resources, world_modifications, block_transformations, terrain_modification)
     exit()
 
-    generator.makeAirZone(lore_structure, settlement_data, resources, world_modifications, terrainModification)
+    generator.makeAirZone(lore_structure, settlement_data, resources, world_modifications, terrain_modification)
     generator.generateStructure(lore_structure, settlement_data, resources, world_modifications,
-                                chestGeneration, block_transformations)
+                                chestGeneration, block_transformations, terrain_modification)
 
     """
     from generation.data.trade import Trade

@@ -106,7 +106,7 @@ def makeAirZone(lore_structure: LoreStructure, settlement_data: SettlementData, 
 
 def generateStructure(lore_structure: LoreStructure, settlement_data: SettlementData, resources: Resources,
                       world_modification: WorldModification, chest_generation: ChestGeneration,
-                      block_transformations: list) -> None:
+                      block_transformations: list, terrainModification) -> None:
     # print(structureData["name"])
     # print(structureData["validPosition"])
     for block_transformation in block_transformations:
@@ -148,7 +148,7 @@ def generateStructure(lore_structure: LoreStructure, settlement_data: Settlement
 
     if build_murderer_cache:
         buildMurdererCache(lore_structure, settlement_data, resources, world_modification, chest_generation,
-                           block_transformations, building_conditions)
+                           block_transformations, building_conditions, terrainModification)
 
     if lore_structure.gift != "Undefined":
         position = lore_structure.position
@@ -250,7 +250,7 @@ def modifyBuildingConditionDependingOnStructure(building_conditions: BuildingCon
 def buildMurdererCache(lore_structure: LoreStructure, settlement_data: SettlementData, resources: Resources,
                        world_modification: WorldModification, chest_generation: ChestGeneration,
                        block_transformation: list,
-                       building_conditions_original: BuildingCondition):
+                       building_conditions_original: BuildingCondition, terrainModification):
     print("Build a house hosting a murderer")
     structure = resources.structures[lore_structure.name]
     info = structure.info
@@ -260,7 +260,7 @@ def buildMurdererCache(lore_structure: LoreStructure, settlement_data: Settlemen
         info["villageInfo"]["murdererTrap"], building_conditions.flip, building_conditions.rotation,
         building_conditions.referencePoint, building_conditions.position)
 
-    structure_murderer = resources.structures["murderercache"]
+    structure_murderer: BaseStructure = resources.structures["murderercache"]
     structure_murderer.setupInfoAndGetCorners()
 
     building_info = structure_murderer.getNextBuildingInformation(building_conditions.flip,
@@ -278,6 +278,7 @@ def buildMurdererCache(lore_structure: LoreStructure, settlement_data: Settlemen
     modifyBuildingConditionDependingOnStructure(building_conditions, settlement_data,
                                                 lore_structure)
 
+    structure_murderer.placeAirZones(world_modification, building_conditions.__copy__(), terrainModification)
     structure_murderer.build(world_modification, building_conditions, chest_generation, block_transformation)
     facing = structure_murderer.getFacingMainEntry(building_conditions.flip, building_conditions.rotation)
 

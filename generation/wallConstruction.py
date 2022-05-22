@@ -45,8 +45,8 @@ class WallConstruction:
     MODEL_INNER_CORNER: int = 2
     MODEL_DOOR = 3
     MODEL_STAIRS = 4
-    MODEL_INNER_CORNER_STAIRS = 5
-    MODEL_EXTERN_CORNER_STAIRS = 6
+    MODEL_EXTERN_CORNER_STAIRS = 5
+    MODEL_INNER_CORNER_STAIRS = 6
 
     WALL_PARTS = ["line", "externcorner", "innercorner", "door", "stairs", "externcornerstairs", "innercornerstairs"]
 
@@ -460,18 +460,18 @@ class WallConstruction:
 
             elif to_change.wall_type == WallConstruction.MODEL_INNER_CORNER:
                 to_change.wall_type = WallConstruction.MODEL_INNER_CORNER_STAIRS
-                to_change.rotation = (to_change.rotation + 2) % 4
-                if side:
-                    to_change.rotation = (to.rotation + 3) % 4
-                    to_change.flip = (to.flip + 3) % 4
+
+                if not side:
+                    to_change.flip = (to_change.flip + 2) % 4
+                    to_change.rotation = (to_change.rotation + 1) % 4
 
             elif to_change.wall_type == WallConstruction.MODEL_EXTERN_CORNER:
                 to_change.wall_type = WallConstruction.MODEL_EXTERN_CORNER_STAIRS
-                to_change.rotation = (to_change.rotation + 2) % 4
 
-                if side:
-                    to_change.rotation = (to.rotation + 3) % 4
-                    to_change.flip = (to.flip + 1) % 4
+                if not side:
+                    to_change.flip = (to_change.flip + 1) % 4
+                    to_change.rotation = (to_change.rotation + 3) % 4
+
 
         for wallCell in self.wall_list:
             wallCell.augmented_height = max_height
@@ -541,7 +541,7 @@ class WallConstruction:
             generator.makeAirZone(lore_structure, settlement_data, resources, world_modification, terrain_modification)
 
     def placeWall(self, settlement_data: SettlementData, resources: Resources,
-                  world_modification: WorldModification, block_transformations: list):
+                  world_modification: WorldModification, block_transformations: list, terrain_modification):
 
         # Choose door
         door_candidate: list = []
@@ -583,7 +583,7 @@ class WallConstruction:
             )
 
             generator.generateStructure(lore_structure, settlement_data, resources, world_modification, None,
-                                        block_transformations)
+                                        block_transformations, terrain_modification)
 
     def returnWallEntries(self) -> list:
         result: list = []

@@ -23,6 +23,12 @@ def loadAllResources(resources: Resources) -> None:
     resources.loadStructures("houses/advanced/advancedhouse1.nbt", "houses/advanced/advancedhouse1.json",
                              "advancedhouse1")
 
+    resources.loadStructures("houses/advanced/advancedhouse2.nbt", "houses/advanced/advancedhouse2.json",
+                             "advancedhouse2")
+
+    resources.loadStructures("houses/advanced/advancedhouse3.nbt", "houses/advanced/advancedhouse3.json",
+                             "advancedhouse3")
+
     ## Load work structures : functionals
 
     resources.addGeneratedStructures(GeneratedQuarry(), "functionals/quarry/basicgeneratedquarry.json",

@@ -9,13 +9,14 @@
             "1" : [
                 "mediumhouse1",
                 "mediumhouse2",
+                "mediumhouse3",
                 "mediumhouse3"
             ],
             "2" : [
                 "advancedhouse1",
-                "mediumhouse1",
-                "mediumhouse2",
-                "mediumhouse3"
+                "advancedhouse2",
+                "advancedhouse3",
+                "advancedhouse2"
             ]
         },
         "type" : "houses",

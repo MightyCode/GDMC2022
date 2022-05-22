@@ -23,13 +23,15 @@
     ]
   },
   "lootTables" : [
-    ["kitchenhouse", [0, 0, 0, 12, 8, 12]],
-    ["townhall", [0, 9, 0, 12, 10, 12]],
-    ["bedroomhouse", [0, 11, 0, 12, 20, 12]]
+    ["bedroomhouse", [0, 0, 0, 5, 4, 12]],
+    ["kitchenhouse", [6, 0, 0, 12, 4, 12]],
+    ["kitchenhouse", [0, 9, 0, 12, 11, 12]],
+    ["bedroomhouse", [0, 12, 0, 12, 14, 12]],
+    ["townhall", [0, 15, 0, 12, 20, 12]]
   ],
   "villageInfo" : {
     "villager" : 4,
-    "murdererTrap" : [4, -1, 4]
+    "murdererTrap" : [8, -1, 9]
   },
   "ground" : {
     "zones" : [
@@ -45,10 +47,10 @@
   },
   "special" : {
     "additionalItem": {
-      "diary0" : [2, 12, 4],
-      "diary1" : [2, 12, 4],
+      "diary0" : [3, 1, 4],
+      "diary1" : [3, 1, 8],
       "diary2" : [10, 12, 4],
-      "diary3" : [10, 12, 8]
+      "diary3" : [10, 12, 7]
     }
   }
 }

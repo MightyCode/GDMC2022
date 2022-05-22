@@ -312,7 +312,7 @@ if not args.remove:
         """ Five main step : places every structure and after that every decorations """
         print("\nConstruct wall")
 
-        wallConstruction.placeWall(settlement_data, resources, world_modification, block_transformation)
+        wallConstruction.placeWall(settlement_data, resources, world_modification, block_transformation, terrain_modification)
 
         # Connect entry of village in wall to rest of village paths
         wallEntries: list = wallConstruction.returnWallEntries()
@@ -335,7 +335,7 @@ if not args.remove:
         while i < len(current_village.lore_structures) and current_time / 1000 < TIME_LIMIT:
             print("Build structure " + str(i + 1) + "/" + str(settlement_data.structure_number_goal) + "  ", end="\r")
             generator.generateStructure(current_village.lore_structures[i], settlement_data, resources,
-                                        world_modification, chest_generation, block_transformation)
+                                        world_modification, chest_generation, block_transformation, terrain_modification)
 
             if not current_village.lore_structures[i].destroyed:
                 util.spawnVillagerForStructure(settlement_data, current_village.lore_structures[i],
