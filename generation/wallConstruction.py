@@ -26,14 +26,17 @@ class WallPart:
         self.height: int = 0
         self.augmented_height: int = 0
 
+        self.step: int = 0
+
         self.sided_wall_1 = None
         self.sided_wall_2 = None
 
-    def setInfo(self, x: int, z: int, wallType: int, flip: int, rotation: int):
+    def setInfo(self, x: int, z: int, wallType: int, flip: int, rotation: int, step: int = 0):
         self.position = [x, z]
         self.wall_type = wallType
         self.flip = flip
         self.rotation = rotation
+        self.step = step
 
 
 class WallConstruction:
@@ -393,7 +396,7 @@ class WallConstruction:
         # Connect wall cell
         wall = self.wall_list[0]
         while wall != None:
-            next = None
+            next_wall = None
             for wall_sub in self.wall_list:
                 if wall_sub == wall:
                     continue
@@ -406,12 +409,12 @@ class WallConstruction:
                     if wall.sided_wall_1 == None and wall_sub != wall.sided_wall_2:
                         wall.sided_wall_1 = wall_sub
                         wall_sub.sided_wall_2 = wall
-                        next = wall_sub
+                        next_wall = wall_sub
                     elif wall.sided_wall_2 == None and wall_sub != wall.sided_wall_1:
                         wall.sided_wall_2 = wall_sub
                         wall_sub.sided_wall_1 = wall
 
-            wall = next
+            wall = next_wall
 
         max_height: int = 0
         maximum = None
@@ -433,26 +436,30 @@ class WallConstruction:
                 max_height = wallCell.height
                 maximum = wallCell
 
-        step: int = 2
+        listStep: list = [8, 4, 2]
+
+        step: int
         extremum: list = [maximum]
 
-        def find_interval_from(wall):
-            height = wall.augmented_height - step
+        def find_interval_from(from_wall):
+            height_wall = from_wall.augmented_height - step
 
-            if wall.sided_wall_1.height > height:
-                return wall
+            if from_wall.sided_wall_1.height > height_wall:
+                return from_wall
 
-            next = wall.sided_wall_1
+            next_wall = from_wall.sided_wall_1
 
-            while next != wall:
-                if next.sided_wall_1.height > height or next.sided_wall_1 in extremum:
+            while next_wall != from_wall:
+                if next_wall.sided_wall_1.height > height_wall or next_wall.sided_wall_1 in extremum:
                     break
 
-                next = next.sided_wall_1
+                next_wall = next_wall.sided_wall_1
 
-            return next
+            return next_wall
 
-        def change_type_to_stairs(to_change, side):
+        def change_type_to_stairs(to_change: WallPart, side: int, wall_step: int = 2):
+            to_change.step = wall_step
+
             if to_change.wall_type == WallConstruction.MODEL_LINE:
                 to_change.wall_type = WallConstruction.MODEL_STAIRS
                 if side:
@@ -472,48 +479,49 @@ class WallConstruction:
                     to_change.flip = (to_change.flip + 1) % 4
                     to_change.rotation = (to_change.rotation + 3) % 4
 
-
         for wallCell in self.wall_list:
             wallCell.augmented_height = max_height
 
-        height: int = max_height
-        made_changes = True
+        for i in range(len(listStep)):
+            step = listStep[i]
 
-        while made_changes:
-            made_changes = False
+            height: int = max_height
+            made_changes = True
+            while made_changes:
+                made_changes = False
 
-            start = maximum
-            next = maximum.sided_wall_1
+                start = maximum
+                next_wall = maximum.sided_wall_1
 
-            while next != start:
-                if next.augmented_height == height and next.sided_wall_1.augmented_height == height and next.sided_wall_2.augmented_height == height\
-                   and next.augmented_height - step > next.height:
-                    to = find_interval_from(next)
+                while next_wall != start:
+                    if next_wall.augmented_height == height and next_wall.sided_wall_1.augmented_height == height and next_wall.sided_wall_2.augmented_height == height\
+                       and next_wall.augmented_height - step > next_wall.height:
+                        to = find_interval_from(next_wall)
 
-                    if next != to:
-                        made_changes = True
-                        extremum.append(next)
-                        extremum.append(to)
-                        change_type_to_stairs(next, False)
-                        change_type_to_stairs(to, True)
+                        if next_wall != to:
+                            made_changes = True
+                            extremum.append(next_wall)
+                            extremum.append(to)
+                            change_type_to_stairs(next_wall, False, step)
+                            change_type_to_stairs(to, True, step)
 
-                        while next != to:
-                            next.augmented_height -= step
-                            next = next.sided_wall_1
+                            while next_wall != to:
+                                next_wall.augmented_height -= step
+                                next_wall = next_wall.sided_wall_1
 
-                        to.augmented_height -= step
+                            to.augmented_height -= step
+                        else:
+                            next_wall = next_wall.sided_wall_1
                     else:
-                        next = next.sided_wall_1
-                else:
-                    next = next.sided_wall_1
+                        next_wall = next_wall.sided_wall_1
 
-            height -= step
+                height -= step
 
     def createWallLoreStructure(self, wallCell, x_real, y, z_real, settlement_data):
         tier: str = "basic" if self.village.tier == 0 else "medium" if self.village.tier == 1 else "advanced"
 
         lore_structure: LoreStructure = LoreStructure()
-        lore_structure.name = tier + "wall" + self.WALL_PARTS[wallCell.wall_type]
+        lore_structure.name = tier + "wall" + self.WALL_PARTS[wallCell.wall_type] + ("" if wallCell.step == 0 else str(wallCell.step))
         lore_structure.position = [x_real, y - 1, z_real]
         lore_structure.flip = wallCell.flip
         lore_structure.rotation = wallCell.rotation
@@ -612,17 +620,18 @@ class WallConstruction:
 
         return result
 
-    def appendWallCell(self, x: int, z: int, wallType: int, flip: int, rotation: int) -> None:
+    def appendWallCell(self, x: int, z: int, wallType: int, flip: int, rotation: int, step: int = 0) -> None:
         for wall in self.wall_list:
             if pmath.is2DPointEqual([x, z], wall.position):
                 wall.type = wallType
                 wall.flip = flip
                 wall.rotation = rotation
+                wall.step = step
 
                 return
 
         current: WallPart = WallPart()
-        current.setInfo(x, z, wallType, flip, rotation)
+        current.setInfo(x, z, wallType, flip, rotation, step)
 
         self.wall_list.append(current)
 

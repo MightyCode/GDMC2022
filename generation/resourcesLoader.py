@@ -154,16 +154,16 @@ def loadAllResources(resources: Resources) -> None:
     resources.loadStructures("decorations/statue/mediumstatue.nbt",
                              "decorations/statue/mediumstatue.json", "mediumstatue")
 
-    wall_types: list = ["line", "stairs", "door", "externcorner", "innercorner", "externcornerstairs", "innercornerstairs"]
+    wall_types: list = ["line", "door", "externcorner", "innercorner", "externcornerstairs2", "innercornerstairs2", "stairs2",
+                                                                       "externcornerstairs4", "innercornerstairs4", "stairs4",
+                                                                       "externcornerstairs8", "innercornerstairs8", "stairs8"]
 
     for wall_type in wall_types:
         resources.loadStructures("wall/basic/basicwall" + wall_type + ".nbt", "wall/wall.json", "basicwall" + wall_type)
         resources.loadStructures("wall/advanced/advancedwall" + wall_type + ".nbt", "wall/wall.json", "advancedwall" + wall_type)
         resources.loadStructures("wall/medium/mediumwall" + wall_type + ".nbt", "wall/wall.json", "mediumwall" + wall_type)
 
-
     # Load lootTable
-
     resources.loadLootTable("emptyloottable.json", "empty")
 
     resources.loadLootTable("houses/kitchenhouse.json", "kitchenhouse")
