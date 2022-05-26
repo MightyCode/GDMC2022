@@ -316,10 +316,10 @@ class WallConstruction:
 
         # Display status of border
         for y in range(extended_size[1]):
-            print("")
             for x in range(extended_size[0]):
                 print("1" if getValue_extended(x, y) else "2" if getValue(x + extended_offset[0],
                                                                           y + extended_offset[1]) else "0", end="")
+            print("")
 
         info_adjustment: list = [
             [[-1, 1, -1,
@@ -394,6 +394,9 @@ class WallConstruction:
 
     def computeWallHeight(self):
         # Connect wall cell
+        if len(self.wall_list) == 0:
+            return
+
         wall = self.wall_list[0]
         while wall != None:
             next_wall = None
@@ -484,6 +487,7 @@ class WallConstruction:
 
         for i in range(len(listStep)):
             step = listStep[i]
+            print(step)
 
             height: int = max_height
             made_changes = True
@@ -496,6 +500,7 @@ class WallConstruction:
                 while next_wall != start:
                     if next_wall.augmented_height == height and next_wall.sided_wall_1.augmented_height == height and next_wall.sided_wall_2.augmented_height == height\
                        and next_wall.augmented_height - step > next_wall.height:
+                        print("Down " + str(step))
                         to = find_interval_from(next_wall)
 
                         if next_wall != to:

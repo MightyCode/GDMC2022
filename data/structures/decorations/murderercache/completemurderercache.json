@@ -1,0 +1,23 @@
+{
+  "mainEntry": {
+    "facing" : "west",
+    "position" : [18, 8, 2]
+  },
+  "replacements" : {
+    "oak" : { "type" : "woodType", "state" : 2 },
+    "spruce" : { "type" : "woodType2", "state" : 2 }
+  },
+  "air" : {
+    "preferredAirMode" : 2,
+    "replacements" : [
+      [0, 0, 0, 17, 8, 4]
+    ]
+  },
+  "lootTables" : [
+    ["murderercache"]
+  ],
+  "special" : {
+    "sign" : [{ "position" : [6, 2, 3], "orientation" : "north"},
+              { "position" : [7, 2, 3], "orientation" : "north"}]
+  } 
+}

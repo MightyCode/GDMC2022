@@ -131,7 +131,7 @@
                 "mediumstonecutter"
             ],
             "2": [
-                "mediumstonecutter"
+                "advancedstonecutter"
             ]
         },
         "type" : "functionals",
@@ -148,10 +148,10 @@
                 "basicsmeltery"
             ],
             "1": [
-                "basicsmeltery"
+                "mediumsmeltery"
             ],
             "2": [
-                "basicsmeltery"
+                "advancedsmeltery"
             ]
         },
         "type" : "functionals",
@@ -208,10 +208,10 @@
                 "basicjail"
             ],
             "1": [
-                "basicjail"
+                "mediumjail"
             ],
             "2": [
-                "basicjail"
+                "advancedjail"
             ]
         },
         "type" : "representatives",
@@ -313,7 +313,7 @@
                 "mediumweaverhouse"
             ],
             "2": [
-                "mediumweaverhouse"
+                "advancedweaverhouse"
             ]
         },
         "type" : "functionals",

@@ -175,7 +175,6 @@ if not args.remove:
 
             current_village.lore_structures[i].generateAge(current_village)
             baseStructure = resources.structures[current_village.lore_structures[i].name]
-            structureManager.printStructureChoose()
 
             corners: tuple = baseStructure.setupInfoAndGetCorners()
             result: dict = floodFill.findPosHouse(corners)
@@ -221,6 +220,8 @@ if not args.remove:
                 floodFill.set_number_of_houses(settlement_data.structure_number_goal)
                 print("Abort finding position and adding structures due to time expired")
                 break
+
+        structureManager.printStructureChoose()
 
         """ Third main step : creates lore of the village """
         print("\nGenerate lore of the village")

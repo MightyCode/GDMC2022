@@ -24,7 +24,7 @@ import generation.generator as generator
 Important information
 """
 
-structure_name: str = "advancedhouse3"
+structure_name: str = "advancedhouse1"
 structure_type: str = LoreStructure.TYPE_HOUSES
 
 Config.getOrCreateConfig()
@@ -55,6 +55,7 @@ if not args.remove:
     village.name = "TestLand"
     village.tier = 2
     village.color = "red"
+    village.isDestroyed = True
 
     otherVillage: Village = Village()
     otherVillage.name = "TestLand 2"
@@ -103,7 +104,7 @@ if not args.remove:
     lore_structure.name = structure_name
     lore_structure.villagers = [villagers[0], villagers[2], villagers[2]]
     lore_structure.type = structure_type
-    lore_structure.position = [build_area[0] + size_area[0] / 2, 64, build_area[2] + size_area[1] / 2]
+    lore_structure.position = [build_area[0] + size_area[0] / 2, 63, build_area[2] + size_area[1] / 2]
 
     lore_structure.preBuildingInfo = structure.getNextBuildingInformation(lore_structure.flip, lore_structure.rotation)
 
@@ -141,9 +142,9 @@ if not args.remove:
     from generation.terrainModification import TerrainModification
     terrain_modification = TerrainModification(build_area, wall_construction)
 
-    wall_construction.placeAirZone(settlement_data, resources, world_modifications, terrain_modification)
+    """wall_construction.placeAirZone(settlement_data, resources, world_modifications, terrain_modification)
     wall_construction.placeWall(settlement_data, resources, world_modifications, block_transformations, terrain_modification)
-    exit()
+    exit()"""
 
     generator.makeAirZone(lore_structure, settlement_data, resources, world_modifications, terrain_modification)
     generator.generateStructure(lore_structure, settlement_data, resources, world_modifications,

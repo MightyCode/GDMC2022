@@ -33,8 +33,6 @@ def createSettlementData(area: list, village_model: Village, resources: Resource
     # settlement_data.structure_number_goal = Config.getValueOrDefault("numberStructures", 8)
     settlement_data.structure_number_goal = Config.getValueOrDefault("numberStructures", random.randint(25, 55))
 
-    print(settlement_data.structure_number_goal)
-
     return settlement_data
 
 
@@ -186,6 +184,9 @@ def modifyBuildingConditionDependingOnStructure(building_conditions: BuildingCon
         building_conditions.special = {"sign": ["Next target :", "", "", ""]}
         name = murderer_data.villagerTarget.name
         util.parseVillagerNameInLines([name], building_conditions.special["sign"], 1)
+    elif structure.name == "completemurderercache":
+        building_conditions.special = {"sign": ["Infiltre village", settlement_data.village_model.name + " : X", "Kill the mayor : X",
+                                                "Divulgate precious", " information : X", "Win the war : X", "", "", ""]}
 
     elif structure.name == "adventurerhouse":
         writer = book.createBookForAdventurerHouse(settlement_data.village_model.name, building_conditions.flip)
@@ -260,7 +261,7 @@ def buildMurdererCache(lore_structure: LoreStructure, settlement_data: Settlemen
         info["villageInfo"]["murdererTrap"], building_conditions.flip, building_conditions.rotation,
         building_conditions.referencePoint, building_conditions.position)
 
-    structure_murderer: BaseStructure = resources.structures["murderercache"]
+    structure_murderer: BaseStructure = resources.structures["completemurderercache" if settlement_data.village_model.isDestroyed else "murderercache"]
     structure_murderer.setupInfoAndGetCorners()
 
     building_info = structure_murderer.getNextBuildingInformation(building_conditions.flip,
@@ -272,8 +273,9 @@ def buildMurdererCache(lore_structure: LoreStructure, settlement_data: Settlemen
         building_conditions.referencePoint, settlement_data.area)
 
     lore_structure: LoreStructure = LoreStructure()
-    lore_structure.name = "murderercache"
+    lore_structure.name = "completemurderercache" if settlement_data.village_model.isDestroyed else "murderercache"
     lore_structure.type = LoreStructure.TYPE_DECORATIONS
+    print(lore_structure.name)
 
     modifyBuildingConditionDependingOnStructure(building_conditions, settlement_data,
                                                 lore_structure)

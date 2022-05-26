@@ -289,8 +289,9 @@ def handleMurderer(village: Village):
 
 def generateOrders(village: Village):
     for structure in village.lore_structures:
+        print("Generate order")
         if structure.type != LoreStructure.TYPE_FUNCTIONALS:
-            return
+            continue
 
         orders: list = []
         # Between (0, 1); (0, 2) or (0, 3)
@@ -299,7 +300,6 @@ def generateOrders(village: Village):
         size: int = len(village.villagers)
         # Order for
         for j in range(min(number, size)):
-
             villager: Villager = village.villagers[
                 random.choice(
                     [i for i in range(size) if
