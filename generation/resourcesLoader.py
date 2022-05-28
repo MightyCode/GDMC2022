@@ -46,6 +46,7 @@ def loadAllResources(resources: Resources) -> None:
 
     resources.loadStructures("functionals/farm/basicfarm.nbt", "functionals/farm/basicfarm.json", "basicfarm")
     resources.loadStructures("functionals/farm/mediumfarm1.nbt", "functionals/farm/mediumfarm1.json", "mediumfarm1")
+    resources.loadStructures("functionals/farm/mediumfarm2.nbt", "functionals/farm/mediumfarm2.json", "mediumfarm2")
 
     resources.loadStructures("functionals/windmill/basicwindmill.nbt", "functionals/windmill/basicwindmill.json",
                              "basicwindmill")
@@ -110,6 +111,8 @@ def loadAllResources(resources: Resources) -> None:
                              "basictavern")
     resources.loadStructures("representatives/tavern/mediumtavern.nbt", "representatives/tavern/mediumtavern.json",
                              "mediumtavern")
+    resources.loadStructures("representatives/tavern/advancedtavern.nbt", "representatives/tavern/advancedtavern.json",
+                             "advancedtavern")
 
     resources.loadStructures("representatives/barrack/basicbarrack.nbt", "representatives/barrack/basicbarrack.json",
                              "basicbarrack")

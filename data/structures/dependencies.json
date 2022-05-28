@@ -49,10 +49,10 @@
                 "basicfarm"
             ],
             "1": [
-                "mediumfarm1"
+                "mediumfarm1", "mediumfarm2"
             ],
             "2" : [
-                "mediumfarm1"
+                "mediumfarm1", "mediumfarm2"
             ]
         },
         "type" : "functionals",
@@ -292,7 +292,7 @@
                 "mediumtavern"
             ],
             "2": [
-                "mediumtavern"
+                "advancedtavern"
             ]
         },
         "type" : "representatives",

@@ -160,7 +160,7 @@ if not args.remove:
         """ Second main step : choose structures and their position """
         i = 0
         while i < settlement_data.structure_number_goal:
-            print("Generate position " + str(i + 1) + "/" + str(settlement_data.structure_number_goal) + "  ", end="\r")
+            print("Generate position " + str(i + 1) + "/" + str(settlement_data.structure_number_goal) + "  ", end="")
             current_village.lore_structures.append(LoreStructure())
             # 0 -> normal, 1 -> replacement, 2 -> no more structure
             result: int = structureManager.chooseOneStructure()
