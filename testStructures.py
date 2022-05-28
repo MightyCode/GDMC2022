@@ -24,7 +24,7 @@ import generation.generator as generator
 Important information
 """
 
-structure_name: str = "basictownhall"
+structure_name: str = "mediumtownhall"
 structure_type: str = LoreStructure.TYPE_HOUSES
 
 Config.getOrCreateConfig()
@@ -146,6 +146,9 @@ if not args.remove:
     wall_construction.placeWall(settlement_data, resources, world_modifications, block_transformations, terrain_modification)
     exit()"""
 
+    books: dict = generator.generateVillageBooks(settlement_data)
+    settlement_data.setVillageBook(books)
+
     generator.makeAirZone(lore_structure, settlement_data, resources, world_modifications, terrain_modification)
     generator.generateStructure(lore_structure, settlement_data, resources, world_modifications,
                                 chestGeneration, block_transformations, terrain_modification)
@@ -159,9 +162,7 @@ if not args.remove:
         Trade.generateFromTradeTable(village, villager, resources.trades[villager.job], settlement_data.getMatRepDeepCopy())
 
     util.spawnVillagerForStructure(settlement_data, lore_structure, lore_structure.position)"""
-
-    books: dict = generator.generateVillageBooks(settlement_data)
-    generator.placeBooks(settlement_data, books, world_modifications)
+    # generator.placeBooks(settlement_data, books, world_modifications)
 
     world_modifications.saveToFile(file)
 else:

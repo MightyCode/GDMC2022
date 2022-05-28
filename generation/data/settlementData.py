@@ -69,6 +69,22 @@ class SettlementData:
                                             resources.biomesBlocks[self.biome_block_id][
                                                 aProperty])
 
+    def setVillageBook(self, books):
+        self.setMaterialReplacement("villageLecternBook", books["villageBook"])
+
+        self.setMaterialReplacement("villageBookItem", "minecraft:written_book" + books["villageBook"])
+        self.setMaterialReplacement("villagerRegistryItem",
+                                               "minecraft:written_book" + books["villagerNamesBook"])
+        self.setMaterialReplacement("deadVillagerRegistryItem",
+                                               "minecraft:written_book" + books["deadVillagersBook"])
+
+        self.setMaterialReplacement("villageBookTrade",
+                                               "\"minecraft:written_book\",tag:" + books["villageBook"])
+        self.setMaterialReplacement("villagerRegistryTrade",
+                                               "\"minecraft:written_book\",tag:" + books["villagerNamesBook"])
+        self.setMaterialReplacement("deadVillagerRegistryTrade",
+                                               "\"minecraft:written_book\",tag:" + books["deadVillagersBook"])
+
     def setMaterialReplacement(self, property_name: str, replacement: str) -> None:
         self.__materials_replacement[property_name] = replacement
 

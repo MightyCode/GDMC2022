@@ -159,6 +159,7 @@ REASON_OF_DEATHS = ["died because of old age", "died of creeper attack", "died o
                     "died suffocating from gravel falling",
                     "disappeared for reasons still unclear"]
 
+
 # Minimum of 10 deaths
 def createListOfDeadVillager(village: Village, name_generator):
     random_dead_villagers = random.randint(10, max(len(village.villagers) - 1, 10))
@@ -173,6 +174,7 @@ def createListOfDeadVillager(village: Village, name_generator):
         else:
             random_death = random.randint(0, len(REASON_OF_DEATHS) - 1)
             village.dead_villagers[-1].reason_death = REASON_OF_DEATHS[random_death]
+
 
 def isDestroyStructure(current_village: Village, lore_structure: LoreStructure):
     if current_village.isDestroyed:
@@ -281,6 +283,12 @@ def handleMurderer(village: Village):
         random.choice(
             [i for i in range(0, len(village.villagers))
              if village.villagers[i] != village.murderer_data.villagerMurderer])]
+
+    if random.randint(1, 2) == 1:
+        village.murderer_data.fakeVillagerMurderer = village.villagers[
+            random.choice(
+                [i for i in range(0, len(village.villagers))
+                 if village.villagers[i] != village.murderer_data.villagerMurderer])]
 
     for structureData in village.lore_structures:
         if village.murderer_data.villagerTarget in structureData.villagers:

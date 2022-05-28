@@ -55,7 +55,7 @@ def generateVillageBooks(settlement_data: SettlementData) -> dict:
                                   description="List of all dead villagers")
 
     return {
-        "villageNameBook": writer_village_presentation_book.printBook(),
+        "villageBook": writer_village_presentation_book.printBook(),
         "villagerNamesBook": writer_villagers_names.printBook(),
         "deadVillagersBook": writer_dead_villagers.printBook()
     }
@@ -86,7 +86,7 @@ def placeBooks(settlement_data: SettlementData, books: dict, world_modification:
     toolbox.placeLectern(
         settlement_data.center[0],
         Constants.getHeight(settlement_data.center[0], settlement_data.center[2]),
-        settlement_data.center[2] + 1, books["villageNameBook"], world_modification, 'east')
+        settlement_data.center[2] + 1, books["villageBook"], world_modification, 'east')
 
 
 def makeAirZone(lore_structure: LoreStructure, settlement_data: SettlementData, resources: Resources,

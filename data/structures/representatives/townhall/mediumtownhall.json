@@ -19,7 +19,7 @@
       ["townhall"]    
     ],
     "lectern" : {
-      "*villageLecternBook*" : [10, 1, 10]
+      "*villageLecternBook*" : [9, 1, 10]
     },
     "villageInfo" : {
       "villager" : 1,

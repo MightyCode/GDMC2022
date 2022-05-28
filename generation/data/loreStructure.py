@@ -66,4 +66,6 @@ class LoreStructure:
         order.order_item = item
         order.order_quantity = quantity
 
+        villager.orders.append(order)
+
         self.orders.append(order)

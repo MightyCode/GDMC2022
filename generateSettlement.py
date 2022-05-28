@@ -228,11 +228,8 @@ if not args.remove:
 
         loreMaker.generateLoreAfterAllStructure(current_village, name_generator)
 
-        # Murderer
-        murdererData: MurdererData = current_village.murderer_data
-
         books: dict = generator.generateVillageBooks(settlement_data)
-        generator.placeBooks(settlement_data, books, world_modification)
+        # generator.placeBooks(settlement_data, books, world_modification)
 
         # Villager interaction
         for villager in current_village.villagers:
@@ -245,7 +242,7 @@ if not args.remove:
                     structure = tested_structure
                     break
 
-            if random.randint(1, 3) == 1 and available:
+            if (random.randint(1, 3) == 1 or villager == settlement_data.village_model.murderer_data.fakeVillagerMurderer) and available:
                 # print("Generate diary of " + settlementData["villagerNames"][i])
                 villager.diary = book.createBookForVillager(settlement_data.village_model, villager)
                 villager.diary[0].setInfo(title="Diary of " + villager.name, author=villager.name,
@@ -257,20 +254,7 @@ if not args.remove:
                     structure.gift = villager.diary[1]
 
         # Add books replacements
-        settlement_data.setMaterialReplacement("villageLecternBook", books["villageNameBook"])
-
-        settlement_data.setMaterialReplacement("villageBookItem", "minecraft:written_book" + books["villageNameBook"])
-        settlement_data.setMaterialReplacement("villagerRegistryItem",
-                                               "minecraft:written_book" + books["villagerNamesBook"])
-        settlement_data.setMaterialReplacement("deadVillagerRegistryItem",
-                                               "minecraft:written_book" + books["deadVillagersBook"])
-
-        settlement_data.setMaterialReplacement("villageBookTrade",
-                                               "\"minecraft:written_book\",tag:" + books["villageNameBook"])
-        settlement_data.setMaterialReplacement("villagerRegistryTrade",
-                                               "\"minecraft:written_book\",tag:" + books["villagerNamesBook"])
-        settlement_data.setMaterialReplacement("deadVillagerRegistryTrade",
-                                               "\"minecraft:written_book\",tag:" + books["deadVillagersBook"])
+        settlement_data.setVillageBook(books)
 
         for villager in current_village.villagers:
             if villager.job == Villager.DEFAULT_JOB:

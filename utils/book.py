@@ -5,6 +5,7 @@ from generation.data.villageInteraction import VillageInteraction
 from utils.bookWriter import BookWriter
 
 import generation.generator as generator
+import utils.projectMath as pmath
 
 import random as rd
 
@@ -167,6 +168,7 @@ DIARY_TEXTS_WITHOUT_TARGETS = [" I really like the color of the village. ", " I 
 DIARY_TEXTS_WITH_TARGETS = [" I am sad since the death of ", " I am happy since the death of ", " I used to hate ",
                             " I once hit "]
 
+
 """
 Return the text of the book of the dead villagers names and professions
 """
@@ -187,34 +189,50 @@ def createTextForDeadVillagers(village_name: str, villagers: list, deadVillagers
 
 def createBookForVillager(village_model: Village, villager: Villager) -> list:
     villager_name: str = villager.name
-    gift: str = ""
 
     # 1 / 2 chance to a gift
+    available_indices: list = generator.returnVillagerAvailableForGift(village_model, [villager])
     random_gift = rd.randint(1, 4)
-    if random_gift == 1:
+    gift: str = ""
+    if random_gift == 1 and len(available_indices) >= 1:
         gift = "minecraft:gold_block"
-    elif random_gift == 2:
+    elif random_gift == 2 and len(available_indices) >= 1:
         gift = "minecraft:tnt"
 
-    gift_place = rd.randint(1, 3)
+    gift_place = -1 if gift == "" else rd.randint(1, 3)
+
+    new_diary_text_without_target = DIARY_TEXTS_WITHOUT_TARGETS.copy()
+    new_diary_text_with_target = DIARY_TEXTS_WITH_TARGETS.copy()
+
+    target_text_done = False
+    murderer_suspicious = False
+    murdererData = village_model.murderer_data
+
+    number_phrase = rd.randint(4, 7) + len(villager.orders)
+    order_places = pmath.generatePlacesAmong((i for i in range(10) if i != gift_place), len(villager.orders))
+    order_counter = 1
 
     book_writer: BookWriter = BookWriter()
     book_writer.writeFirstPage(villager_name + " diary", "")
 
-    new_diary_text_without_target = DIARY_TEXTS_WITHOUT_TARGETS.copy()
-    new_diary_text_with_target = DIARY_TEXTS_WITH_TARGETS.copy()
-    target_text_done = False
-    murderer_suspicious = False
-
-    number_phrase = rd.randint(3, 7)
     for i in range(number_phrase):
+        # Other phrase
+        random = rd.randint(1, 5)
+
         # Spaces
         book_writer.writeEmptyLine(rd.randint(0, 1))
 
-        available_indices: list = generator.returnVillagerAvailableForGift(village_model, [villager])
+        if villager == village_model.murderer_data.fakeVillagerMurderer and not murderer_suspicious:
+            murderer_suspicious = True
+            book_writer.writeLine(f'I don\'t understand why people have been looking at me strangely lately. ')
 
+        elif i in order_places:
+            order = villager.orders[order_counter]
+
+            book_writer.writeLine(f'I made an order to the {order.structure.name}')
+            order_counter += 1
         # Gift phrase
-        if i == gift_place and len(available_indices) >= 1:
+        elif i == gift_place:
             targeted_villager: Villager = available_indices[rd.randint(0, len(available_indices) - 1)]
 
             if random_gift == 1:
@@ -238,18 +256,19 @@ def createBookForVillager(village_model: Village, villager: Villager) -> list:
                     book_writer.writeLine(', I placed a tnt under the door.')
                 else:
                     book_writer.writeLine(', I put a deadly trap under the door.')
-            continue
 
         # Murderer suspicion
-        murdererData = village_model.murderer_data
-        if rd.randint(1, 5) == 1 and not murderer_suspicious and murdererData.villagerMurderer is not None:
-            book_writer.writeLine(f'I think that {murdererData.villagerMurderer.name} is really strange.')
-            murderer_suspicious = True
-            continue
+        elif rd.randint(1, 3) == 1 and not murderer_suspicious and murdererData.villagerMurderer is not None:
+            suspected = murdererData.fakeVillagerMurderer if murdererData.fakeVillagerMurderer is not None and rd.randint(1, 2) else murdererData.villagerMurderer
 
-        # Other phrase    
-        random = rd.randint(1, 5)
-        if random == 1:
+            if rd.randint(1, 2) == 1:
+                book_writer.writeLine(f'I think that {suspected.name} is really strange.')
+            else:
+                book_writer.writeLine(f'I think that {suspected.name} has a strange behaviour.')
+
+            murderer_suspicious = True
+
+        elif random == 1:
             randomProfession = rd.randint(0, len(Villager.VILLAGE_PROFESSION_LIST) - 1)
             book_writer.writeLine(f'I hate all {Villager.VILLAGE_PROFESSION_LIST[randomProfession]}.')
 
