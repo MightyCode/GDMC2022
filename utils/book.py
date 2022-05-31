@@ -157,8 +157,8 @@ DIARY_TEXTS_WITHOUT_TARGETS = [" I really like the color of the village. ", " I 
                                " I hate the color of the village.",
                                " I am afraid of spiders. ", " I am afraid of creepers. ", " I am afraid of zombies. ",
                                " I am afraid of skeletons. ",
-                               " I don\\'t like the facade of my house. ",
-                               " I don\\'t like the flower of the village. ",
+                               " I don\\\'t like the facade of my house. ",
+                               " I don\\\'t like the flower of the village. ",
                                " I really like the flower of the village. ", " I really like the mayor. ",
                                " I hate the flower of the village. ", " I hate the mayor. ",
                                " I would like to have a better house. ",
@@ -167,7 +167,6 @@ DIARY_TEXTS_WITHOUT_TARGETS = [" I really like the color of the village. ", " I 
 
 DIARY_TEXTS_WITH_TARGETS = [" I am sad since the death of ", " I am happy since the death of ", " I used to hate ",
                             " I once hit "]
-
 
 """
 Return the text of the book of the dead villagers names and professions
@@ -209,11 +208,31 @@ def createBookForVillager(village_model: Village, villager: Villager) -> list:
     murdererData = village_model.murderer_data
 
     number_phrase = rd.randint(4, 7) + len(villager.orders)
-    order_places = pmath.generatePlacesAmong((i for i in range(10) if i != gift_place), len(villager.orders))
-    order_counter = 1
+    order_places = pmath.generatePlacesAmong(list(i for i in range(number_phrase) if i != gift_place), len(villager.orders))
+    order_counter = 0
 
     book_writer: BookWriter = BookWriter()
     book_writer.writeFirstPage(villager_name + " diary", "")
+    book_writer.writeLine(f'My job is to be a {villager.job}')
+
+    sentence: str = ""
+    for structure in village_model.lore_structures:
+        if structure.type != LoreStructure.TYPE_HOUSES or villager not in structure.villagers:
+            continue
+
+        if len(structure.villagers) == 1:
+            sentence = "nobody"
+        else:
+            for i in range(len(structure.villagers)):
+                if structure.villagers[i] == villager:
+                    continue
+
+                sentence += structure.villagers[i].name
+
+                if i != len(structure.villagers) - 1 or i != len(structure.villagers) - 2 and villager != structure.villagers[-1]:
+                    sentence += ", "
+
+    book_writer.writeLine(f'I\\\'m living with {sentence}')
 
     for i in range(number_phrase):
         # Other phrase
@@ -224,12 +243,13 @@ def createBookForVillager(village_model: Village, villager: Villager) -> list:
 
         if villager == village_model.murderer_data.fakeVillagerMurderer and not murderer_suspicious:
             murderer_suspicious = True
-            book_writer.writeLine(f'I don\'t understand why people have been looking at me strangely lately. ')
+            book_writer.writeLine(f'I don\\\'t understand why people have been looking at me strangely lately. ')
 
         elif i in order_places:
             order = villager.orders[order_counter]
 
-            book_writer.writeLine(f'I made an order to the {order.structure.name}')
+            book_writer.writeLine(f'I made an order to the {order.structure.group}')
+            print(f'I made an order to the {order.structure.group}')
             order_counter += 1
         # Gift phrase
         elif i == gift_place:
@@ -250,7 +270,7 @@ def createBookForVillager(village_model: Village, villager: Villager) -> list:
                 if rd.randint(1, 2) == 1:
                     book_writer.writeLine(f'I hate {targeted_villager.name}', breakLine=False)
                 else:
-                    book_writer.writeLine(f'{targeted_villager.name} is a jerk.', breakLine=False)
+                    book_writer.writeLine(f'{targeted_villager.name} is a jerk', breakLine=False)
 
                 if rd.randint(1, 2) == 1:
                     book_writer.writeLine(', I placed a tnt under the door.')
@@ -259,7 +279,7 @@ def createBookForVillager(village_model: Village, villager: Villager) -> list:
 
         # Murderer suspicion
         elif rd.randint(1, 3) == 1 and not murderer_suspicious and murdererData.villagerMurderer is not None:
-            suspected = murdererData.fakeVillagerMurderer if murdererData.fakeVillagerMurderer is not None and rd.randint(1, 2) else murdererData.villagerMurderer
+            suspected = murdererData.fakeVillagerMurderer if (murdererData.fakeVillagerMurderer is not None and rd.randint(1, 2) == 1) else murdererData.villagerMurderer
 
             if rd.randint(1, 2) == 1:
                 book_writer.writeLine(f'I think that {suspected.name} is really strange.')
@@ -290,7 +310,7 @@ def createBookForVillager(village_model: Village, villager: Villager) -> list:
                 targeted = village_model.dead_villagers[rd.randint(0, len(village_model.dead_villagers) - 1)].name
 
             if targeted != -1:
-                book_writer.writeLine(f'{new_diary_text_with_target[randomDiaryTextWithTarget]} {targeted}.')
+                book_writer.writeLine(f'{new_diary_text_with_target[randomDiaryTextWithTarget]}{targeted}.')
 
             new_diary_text_with_target.remove(new_diary_text_with_target[randomDiaryTextWithTarget])
             target_text_done = True

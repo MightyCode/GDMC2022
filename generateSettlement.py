@@ -160,7 +160,7 @@ if not args.remove:
         """ Second main step : choose structures and their position """
         i = 0
         while i < settlement_data.structure_number_goal:
-            print("Generate position " + str(i + 1) + "/" + str(settlement_data.structure_number_goal) + "  ", end="")
+            print("Generate position " + str(i + 1) + "/" + str(settlement_data.structure_number_goal) + "  ")
             current_village.lore_structures.append(LoreStructure())
             # 0 -> normal, 1 -> replacement, 2 -> no more structure
             result: int = structureManager.chooseOneStructure()
@@ -242,8 +242,8 @@ if not args.remove:
                     structure = tested_structure
                     break
 
-            if (random.randint(1, 3) == 1 or villager == settlement_data.village_model.murderer_data.fakeVillagerMurderer) and available:
-                # print("Generate diary of " + settlementData["villagerNames"][i])
+            if (random.randint(1, 10) <= 9 or villager == settlement_data.village_model.murderer_data.fakeVillagerMurderer) and available:
+                print("Generate diary of " + villager.name)
                 villager.diary = book.createBookForVillager(settlement_data.village_model, villager)
                 villager.diary[0].setInfo(title="Diary of " + villager.name, author=villager.name,
                                           description="Diary of " + villager.name)
@@ -283,7 +283,8 @@ if not args.remove:
         print("\nCompute wall")
         wallConstruction.computeWall(WallConstruction.BOUNDING_CONVEX_HULL)
 
-        wallConstruction.showImageRepresenting()
+        if Config.LOADED_CONFIG["shouldShowWallSchematic"]:
+            wallConstruction.showImageRepresenting()
 
         i: int = 0
         print("Generate air zone")

@@ -191,5 +191,6 @@ def generatePlacesAmong(places: list, number: int):
 
         result.append(places[index])
         del places[index]
+        i += 1
 
     return result

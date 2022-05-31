@@ -33,7 +33,7 @@ class LoreStructure:
         self.preBuildingInfo: dict = {}
 
         self.destroyed: bool = False
-        self.causeDestroy: bool = {}
+        self.causeDestroy: dict = {}
         self.inConstruction: bool = False
 
         self.orders: list = []

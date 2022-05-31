@@ -24,8 +24,23 @@ import generation.generator as generator
 Important information
 """
 
-structure_name: str = "mediumtownhall"
+structure_name: str = "advancedhouse1"
 structure_type: str = LoreStructure.TYPE_HOUSES
+
+from utils.bookWriter import BookWriter
+
+bookw: BookWriter = BookWriter()
+for i in range(26):
+    if i % 2 == 0:
+        bookw.writeLine("aaaaa" + str(i))
+        bookw.writeEmptyLine(1)
+    else:
+        bookw.writeLine("aaaaaaaaaaaaaaaaaaaaaa" + str(i))
+
+
+interfaceUtil.runCommand("give TamalouMax minecraft:written_book" + bookw.printBook())
+print(bookw.printBook())
+exit()
 
 Config.getOrCreateConfig()
 

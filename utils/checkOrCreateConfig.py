@@ -1,12 +1,16 @@
 import os
 import json
 
+
 class Config:
     CONFIG_PATH: str = "config/config.json"
 
     @staticmethod
     def createConfig() -> dict:
         return {
+            "shouldShowWallSchematic": False,
+            "minVillageStructure": 25,
+            "maxVillageStructure": 55,
             "saveConstructionInFile": True,
             "villageTier": {
                 "state": False,
@@ -63,7 +67,7 @@ class Config:
         if os.path.exists(Config.CONFIG_PATH):
             with open(Config.CONFIG_PATH) as f:
                 Config.LOADED_CONFIG = json.load(f)
-                print(Config.LOADED_CONFIG )
+                print(Config.LOADED_CONFIG)
         else:
             Config.LOADED_CONFIG = Config.createConfigFile()
 

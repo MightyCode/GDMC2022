@@ -31,7 +31,9 @@ def createSettlementData(area: list, village_model: Village, resources: Resource
     loreMaker.fillSettlementDataWithColor(settlement_data, "white")
 
     # settlement_data.structure_number_goal = Config.getValueOrDefault("numberStructures", 8)
-    settlement_data.structure_number_goal = Config.getValueOrDefault("numberStructures", random.randint(25, 55))
+    settlement_data.structure_number_goal = Config.getValueOrDefault(
+        "numberStructures",
+        random.randint(Config.LOADED_CONFIG["minVillageStructure"], Config.LOADED_CONFIG["maxVillageStructure"]))
 
     return settlement_data
 

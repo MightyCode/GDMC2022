@@ -24,8 +24,8 @@
     "info" : "all"
   },
   "sign" : {
-    "position" : [6, 3, 4],
-    "facing" : "east",
+    "position" : [6, 3, 3],
+    "facing" : "south",
     "tier" : 2,
     "name" : "Farm"
   },

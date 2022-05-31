@@ -297,7 +297,6 @@ def handleMurderer(village: Village):
 
 def generateOrders(village: Village):
     for structure in village.lore_structures:
-        print("Generate order")
         if structure.type != LoreStructure.TYPE_FUNCTIONALS:
             continue
 
@@ -316,5 +315,4 @@ def generateOrders(village: Village):
             orders.append(villager)
 
         for ordering in orders:
-            print(ordering.name)
             structure.addOrder(ordering, "uninitialized", 0)

@@ -429,8 +429,7 @@ class WallConstruction:
             x_real: int = x * self.zone_size + self.area[0] + self.zone_size // 2 + 1
             z_real: int = z * self.zone_size + self.area[2] + self.zone_size // 2 + 1
 
-            if not (self.area[0] <= x_real and x_real + self.zone_size <= self.area[3]
-                    and self.area[2] <= z_real and z_real + self.zone_size <= self.area[5]):
+            if not (self.area[0] <= x_real <= self.area[3] and self.area[2] <= z_real <= self.area[5]):
                 continue
 
             wallCell.height = util.getHighestNonAirBlock(x_real, z_real, x_real - self.area[0], z_real - self.area[2])
@@ -541,8 +540,7 @@ class WallConstruction:
             x_real: int = x * self.zone_size + self.area[0] + self.zone_size // 2 + 1
             z_real: int = z * self.zone_size + self.area[2] + self.zone_size // 2 + 1
 
-            if not (self.area[0] <= x_real and x_real + self.zone_size <= self.area[3]
-                    and self.area[2] <= z_real and z_real + self.zone_size <= self.area[5]):
+            if not (self.area[0] <= x_real <= self.area[3] and self.area[2] <= z_real <= self.area[5]):
                 continue
 
             y = wallCell.augmented_height
@@ -577,8 +575,7 @@ class WallConstruction:
             x_real: int = x * self.zone_size + self.area[0] + self.zone_size // 2 + 1
             z_real: int = z * self.zone_size + self.area[2] + self.zone_size // 2 + 1
 
-            if not (self.area[0] <= x_real and x_real + self.zone_size <= self.area[3]
-                    and self.area[2] <= z_real and z_real + self.zone_size <= self.area[5]):
+            if not (self.area[0] <= x_real <= self.area[3] and self.area[2] <= z_real <= self.area[5]):
                 continue
 
             y = wallCell.augmented_height
