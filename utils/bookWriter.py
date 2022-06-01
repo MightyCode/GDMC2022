@@ -129,8 +129,8 @@ class BookWriter:
             first, second = self.cutInFrom(message, BookWriter.NUMBER_CHAR_PAGE - self.count_char)
             print("decompoze", first, second)
 
-            """if BookWriter.NUMBER_CHAR_PAGE != self.count_char:
-                self.texts[-1]["text"] += first"""
+            """if BookWriter.NUMBER_CHAR_PAGE != self.count_char:"""
+            self.texts[-1]["text"] += first
 
             old_size: int = self.count_char
             self.breakPage()
