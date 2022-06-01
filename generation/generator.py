@@ -193,8 +193,8 @@ def modifyBuildingConditionDependingOnStructure(building_conditions: BuildingCon
     elif structure.name == "adventurerhouse":
         writer = book.createBookForAdventurerHouse(settlement_data.village_model.name, building_conditions.flip)
         writer.setInfo(title="Portal Manual", author="Mayor",
-                       description="Contains useful instruction")
-        building_conditions.special["adventurerhouse"] = ["minecraft:written_book" + writer.printBook()]
+                       description="Contains useful instructions")
+        building_conditions.special["guide"] = ["minecraft:written_book" + writer.printBook()]
 
     elif "exchanger" in structure.name:
         building_conditions.special["trade"] = []
@@ -210,7 +210,7 @@ def modifyBuildingConditionDependingOnStructure(building_conditions: BuildingCon
                                                                 '}, Enchantments:[{}]'
                                                                 '}'
                 )
-    elif structure.name == "mediumstatue":
+    elif "statue" in structure.name:
         building_conditions.special = {"sign": ["", "", "", "", "", "", "", ""]}
         index: int = 0
         if len(settlement_data.village_model.dead_villagers) > 1:

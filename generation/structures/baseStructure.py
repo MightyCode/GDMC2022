@@ -128,24 +128,15 @@ class BaseStructure:
     Convert a property using computedOrientation (left, right, north, south, east, west)
     """
 
-    def convertProperty(self, property_name, property_value):
+    def convertProperty(self, property_name: str, property_value: str):
         result: str = property_value
 
-        if property_value in self.computed_orientation.keys():
+        if property_name == "rotation" and property_value.isnumeric():
+            result = self.computed_orientation[property_value]
+        elif property_value in self.computed_orientation.keys() and not property_value.isnumeric():
             result = self.computed_orientation[property_value]
 
         return property_name + "=" + result
-
-    """
-    Return number, depending to the rotation
-    """
-
-    def returnRotationFromFacing(self, facing):
-        for i in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]:
-            if BaseStructure.LIST_ALL_FACING[i] == facing:
-                return i
-
-        return -1
 
     """
     Compute all orientation
@@ -464,6 +455,7 @@ class BaseStructure:
                     position: list
                     for key in self.info["special"]["additionalItem"]:
                         position = self.info["special"]["additionalItem"][key]
+                        print(key, position, x, y, z,)
 
                         if x == position[0] and y == position[1] and z == position[2]:
                             if key in building_conditions.special.keys():

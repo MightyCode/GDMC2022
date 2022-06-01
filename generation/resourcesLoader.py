@@ -163,6 +163,7 @@ def loadAllResources(resources: Resources) -> None:
 
     wall_types: list = ["line", "door", "externcorner", "innercorner", "externcornerstairs2", "innercornerstairs2", "stairs2",
                                                                        "externcornerstairs4", "innercornerstairs4", "stairs4",
+                                                                       "externcornerstairs6", "innercornerstairs6", "stairs6",
                                                                        "externcornerstairs8", "innercornerstairs8", "stairs8"]
 
     for wall_type in wall_types:

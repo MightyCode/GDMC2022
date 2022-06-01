@@ -3,7 +3,6 @@ from generation.data.village import Village
 from generation.data.villager import Villager
 from generation.data.trade import Trade
 from generation.data.loreStructure import LoreStructure
-from generation.data.murdererData import MurdererData
 from generation.chestGeneration import ChestGeneration
 from generation.structureManager import StructureManager
 from generation.structures.blockTransformation.oldStructureTransformation import OldStructureTransformation
@@ -35,7 +34,7 @@ config: dict = Config.getOrCreateConfig()
 
 milliseconds: int = int(round(time.time() * 1000))
 
-TIME_LIMIT: int = 600
+TIME_LIMIT: int = Config.LOADED_CONFIG["timeLimit"]
 TIME_TO_BUILD_A_VILLAGE: int = 30
 
 file: str = "temp.txt"
@@ -281,7 +280,8 @@ if not args.remove:
                 wallConstruction.addPoints(blockPath)
 
         print("\nCompute wall")
-        wallConstruction.computeWall(WallConstruction.BOUNDING_CONVEX_HULL)
+        wallType: int = WallConstruction.BOUNDING_CONVEX_HULL if Config.LOADED_CONFIG["villageWall"] == "convexHull" else WallConstruction.BOUNDING_RECTANGULAR
+        wallConstruction.computeWall(wallType)
 
         if Config.LOADED_CONFIG["shouldShowWallSchematic"]:
             wallConstruction.showImageRepresenting()

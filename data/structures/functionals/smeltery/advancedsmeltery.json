@@ -24,9 +24,9 @@
     "info" : "all"
   },
   "sign" : {
-    "position" : [4, 4, 2],
+    "position" : [4, 4, 1],
     "facing" : "north",
-    "tier" : 1,
+    "tier" : 3,
     "name" : "Smeltery"
   },
   "special" : {
