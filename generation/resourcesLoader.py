@@ -154,8 +154,12 @@ def loadAllResources(resources: Resources) -> None:
     resources.loadStructures("decorations/murderercache/completemurderercache.nbt",
                              "decorations/murderercache/completemurderercache.json", "completemurderercache")
 
+    resources.loadStructures("decorations/statue/basicstatue.nbt",
+                             "decorations/statue/statue.json", "basicstatue")
     resources.loadStructures("decorations/statue/mediumstatue.nbt",
-                             "decorations/statue/mediumstatue.json", "mediumstatue")
+                             "decorations/statue/statue.json", "mediumstatue")
+    resources.loadStructures("decorations/statue/advancedstatue.nbt",
+                             "decorations/statue/statue.json", "advancedstatue")
 
     wall_types: list = ["line", "door", "externcorner", "innercorner", "externcornerstairs2", "innercornerstairs2", "stairs2",
                                                                        "externcornerstairs4", "innercornerstairs4", "stairs4",

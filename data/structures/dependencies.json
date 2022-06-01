@@ -341,13 +341,13 @@
     "Statue" : {
         "tier" : {
             "0": [
-                "mediumstatue"
+                "basicstatue"
             ],
             "1": [
                 "mediumstatue"
             ],
             "2": [
-                "mediumstatue"
+                "advancedstatue"
             ]
         },
         "type" : "decorations",

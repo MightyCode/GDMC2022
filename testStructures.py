@@ -24,9 +24,10 @@ import generation.generator as generator
 Important information
 """
 
-structure_name: str = "advancedhouse1"
-structure_type: str = LoreStructure.TYPE_HOUSES
+structure_name: str = "advancedstatue"
+structure_type: str = LoreStructure.TYPE_DECORATIONS
 
+"""
 from utils.bookWriter import BookWriter
 
 bookw: BookWriter = BookWriter()
@@ -40,7 +41,7 @@ for i in range(26):
 
 interfaceUtil.runCommand("give TamalouMax minecraft:written_book" + bookw.printBook())
 print(bookw.printBook())
-exit()
+exit()"""
 
 Config.getOrCreateConfig()
 
