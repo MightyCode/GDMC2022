@@ -24,8 +24,24 @@ import generation.generator as generator
 Important information
 """
 
-structure_name: str = "basicgeneratedquarry"
-structure_type: str = LoreStructure.TYPE_HOUSES
+structure_name: str = "advancedstatue"
+structure_type: str = LoreStructure.TYPE_DECORATIONS
+
+"""
+from utils.bookWriter import BookWriter
+
+bookw: BookWriter = BookWriter()
+for i in range(26):
+    if i % 2 == 0:
+        bookw.writeLine("aaaaasdsdfs" + str(i))
+        bookw.writeEmptyLine(2)
+    else:
+        bookw.writeLine("aaaaaaaaaaaaaaaaaaaaaa" + str(i))
+
+
+interfaceUtil.runCommand("give TamalouMax minecraft:written_book" + bookw.printBook())
+print(bookw.printBook())
+exit()"""
 
 Config.getOrCreateConfig()
 
@@ -55,6 +71,7 @@ if not args.remove:
     village.name = "TestLand"
     village.tier = 2
     village.color = "red"
+    village.isDestroyed = True
 
     otherVillage: Village = Village()
     otherVillage.name = "TestLand 2"
@@ -78,8 +95,8 @@ if not args.remove:
     village.villagers = villagers
     village.dead_villagers = deadVillagers
     village.murderer_data = MurdererData()
-    """village.murderer_data.villagerTarget = villagers[2]
-    village.murderer_data.villagerMurderer = villagers[0]"""
+    village.murderer_data.villagerTarget = villagers[2]
+    village.murderer_data.villagerMurderer = villagers[0]
 
     resources: Resources = Resources()
     resLoader.loadAllResources(resources)
@@ -128,26 +145,29 @@ if not args.remove:
 
     from generation.wallConstruction import WallConstruction
 
-    wallConstruction: WallConstruction = WallConstruction(village, 9)
-    wallConstruction.setConstructionZone(build_area)
+    wall_construction: WallConstruction = WallConstruction(village, 9)
+    wall_construction.setConstructionZone(build_area)
 
-    wallConstruction.addRectangle([build_area[0] + 100, build_area[2] + 100, build_area[0] + 116, build_area[2] + 116])
-    wallConstruction.addRectangle([build_area[0] + size_area[0] // 2 - 10, build_area[2] + size_area[1] // 2 - 10,
-                                   build_area[0] + size_area[0] // 2 + 10, build_area[2] + size_area[1] // 2 + 10])
+    wall_construction.addRectangle([build_area[0] + 100, build_area[2] + 100, build_area[0] + 116, build_area[2] + 116])
+    wall_construction.addRectangle([build_area[0] + size_area[0] // 2 - 10, build_area[2] + size_area[1] // 2 - 10,
+                                    build_area[0] + size_area[0] // 2 + 10, build_area[2] + size_area[1] // 2 + 10])
     # wallConstruction.addRectangle([build_area[0] - 30, build_area[2] + 50, build_area[0] + 200, build_area[2] + 200])
-    wallConstruction.computeWall(WallConstruction.BOUNDING_CONVEX_HULL)
+    wall_construction.computeWall(WallConstruction.BOUNDING_CONVEX_HULL)
     # wallConstruction.showImageRepresenting()
 
     from generation.terrainModification import TerrainModification
-    terrainModification = TerrainModification(build_area, wallConstruction)
+    terrain_modification = TerrainModification(build_area, wall_construction)
 
-    wallConstruction.placeAirZone(settlement_data, resources, world_modifications, terrainModification)
-    wallConstruction.placeWall(settlement_data, resources, world_modifications, block_transformations)
-    exit()
+    """wall_construction.placeAirZone(settlement_data, resources, world_modifications, terrain_modification)
+    wall_construction.placeWall(settlement_data, resources, world_modifications, block_transformations, terrain_modification)
+    exit()"""
 
-    generator.makeAirZone(lore_structure, settlement_data, resources, world_modifications, terrainModification)
+    books: dict = generator.generateVillageBooks(settlement_data)
+    settlement_data.setVillageBook(books)
+
+    generator.makeAirZone(lore_structure, settlement_data, resources, world_modifications, terrain_modification)
     generator.generateStructure(lore_structure, settlement_data, resources, world_modifications,
-                                chestGeneration, block_transformations)
+                                chestGeneration, block_transformations, terrain_modification)
 
     """
     from generation.data.trade import Trade
@@ -158,9 +178,7 @@ if not args.remove:
         Trade.generateFromTradeTable(village, villager, resources.trades[villager.job], settlement_data.getMatRepDeepCopy())
 
     util.spawnVillagerForStructure(settlement_data, lore_structure, lore_structure.position)"""
-
-    books: dict = generator.generateVillageBooks(settlement_data)
-    generator.placeBooks(settlement_data, books, world_modifications)
+    # generator.placeBooks(settlement_data, books, world_modifications)
 
     world_modifications.saveToFile(file)
 else:

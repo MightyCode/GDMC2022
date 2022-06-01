@@ -9,13 +9,14 @@
             "1" : [
                 "mediumhouse1",
                 "mediumhouse2",
+                "mediumhouse3",
                 "mediumhouse3"
             ],
             "2" : [
                 "advancedhouse1",
-                "mediumhouse1",
-                "mediumhouse2",
-                "mediumhouse3"
+                "advancedhouse2",
+                "advancedhouse3",
+                "advancedhouse2"
             ]
         },
         "type" : "houses",
@@ -48,10 +49,10 @@
                 "basicfarm"
             ],
             "1": [
-                "mediumfarm1"
+                "mediumfarm1", "mediumfarm2"
             ],
             "2" : [
-                "mediumfarm1"
+                "mediumfarm1", "mediumfarm2"
             ]
         },
         "type" : "functionals",
@@ -130,7 +131,7 @@
                 "mediumstonecutter"
             ],
             "2": [
-                "mediumstonecutter"
+                "advancedstonecutter"
             ]
         },
         "type" : "functionals",
@@ -147,10 +148,10 @@
                 "basicsmeltery"
             ],
             "1": [
-                "basicsmeltery"
+                "mediumsmeltery"
             ],
             "2": [
-                "basicsmeltery"
+                "advancedsmeltery"
             ]
         },
         "type" : "functionals",
@@ -207,10 +208,10 @@
                 "basicjail"
             ],
             "1": [
-                "basicjail"
+                "mediumjail"
             ],
             "2": [
-                "basicjail"
+                "advancedjail"
             ]
         },
         "type" : "representatives",
@@ -291,7 +292,7 @@
                 "mediumtavern"
             ],
             "2": [
-                "mediumtavern"
+                "advancedtavern"
             ]
         },
         "type" : "representatives",
@@ -312,7 +313,7 @@
                 "mediumweaverhouse"
             ],
             "2": [
-                "mediumweaverhouse"
+                "advancedweaverhouse"
             ]
         },
         "type" : "functionals",
@@ -340,13 +341,13 @@
     "Statue" : {
         "tier" : {
             "0": [
-                "mediumstatue"
+                "basicstatue"
             ],
             "1": [
                 "mediumstatue"
             ],
             "2": [
-                "mediumstatue"
+                "advancedstatue"
             ]
         },
         "type" : "decorations",

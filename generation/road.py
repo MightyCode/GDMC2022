@@ -215,6 +215,7 @@ class Road:
                 terrain_modification.removeRecursivelyAt(world_modification, block[0], y, block[1])
                 world_modification.setBlock(block[0], y, block[1], "minecraft:air")
                 terrain_modification.removeRecursivelyAt(world_modification, block[0], y + 1, block[1])
+                world_modification.setBlock(block[0], y + 1, block[1], "minecraft:air")
                 terrain_modification.removeRecursivelyAt(world_modification, block[0], y + 2, block[1])
 
                 if iu.getBlock(block[0], y - 1, block[1]) == 'minecraft:water':

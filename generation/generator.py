@@ -31,9 +31,9 @@ def createSettlementData(area: list, village_model: Village, resources: Resource
     loreMaker.fillSettlementDataWithColor(settlement_data, "white")
 
     # settlement_data.structure_number_goal = Config.getValueOrDefault("numberStructures", 8)
-    settlement_data.structure_number_goal = Config.getValueOrDefault("numberStructures", random.randint(25, 55))
-
-    print(settlement_data.structure_number_goal)
+    settlement_data.structure_number_goal = Config.getValueOrDefault(
+        "numberStructures",
+        random.randint(Config.LOADED_CONFIG["minVillageStructure"], Config.LOADED_CONFIG["maxVillageStructure"]))
 
     return settlement_data
 
@@ -57,7 +57,7 @@ def generateVillageBooks(settlement_data: SettlementData) -> dict:
                                   description="List of all dead villagers")
 
     return {
-        "villageNameBook": writer_village_presentation_book.printBook(),
+        "villageBook": writer_village_presentation_book.printBook(),
         "villagerNamesBook": writer_villagers_names.printBook(),
         "deadVillagersBook": writer_dead_villagers.printBook()
     }
@@ -88,7 +88,7 @@ def placeBooks(settlement_data: SettlementData, books: dict, world_modification:
     toolbox.placeLectern(
         settlement_data.center[0],
         Constants.getHeight(settlement_data.center[0], settlement_data.center[2]),
-        settlement_data.center[2] + 1, books["villageNameBook"], world_modification, 'east')
+        settlement_data.center[2] + 1, books["villageBook"], world_modification, 'east')
 
 
 def makeAirZone(lore_structure: LoreStructure, settlement_data: SettlementData, resources: Resources,
@@ -106,7 +106,7 @@ def makeAirZone(lore_structure: LoreStructure, settlement_data: SettlementData, 
 
 def generateStructure(lore_structure: LoreStructure, settlement_data: SettlementData, resources: Resources,
                       world_modification: WorldModification, chest_generation: ChestGeneration,
-                      block_transformations: list) -> None:
+                      block_transformations: list, terrainModification) -> None:
     # print(structureData["name"])
     # print(structureData["validPosition"])
     for block_transformation in block_transformations:
@@ -148,7 +148,7 @@ def generateStructure(lore_structure: LoreStructure, settlement_data: Settlement
 
     if build_murderer_cache:
         buildMurdererCache(lore_structure, settlement_data, resources, world_modification, chest_generation,
-                           block_transformations, building_conditions)
+                           block_transformations, building_conditions, terrainModification)
 
     if lore_structure.gift != "Undefined":
         position = lore_structure.position
@@ -186,6 +186,9 @@ def modifyBuildingConditionDependingOnStructure(building_conditions: BuildingCon
         building_conditions.special = {"sign": ["Next target :", "", "", ""]}
         name = murderer_data.villagerTarget.name
         util.parseVillagerNameInLines([name], building_conditions.special["sign"], 1)
+    elif structure.name == "completemurderercache":
+        building_conditions.special = {"sign": ["Infiltre village", settlement_data.village_model.name + " : X", "Kill the mayor : X",
+                                                "Divulgate precious", " information : X", "Win the war : X", "", "", ""]}
 
     elif structure.name == "adventurerhouse":
         writer = book.createBookForAdventurerHouse(settlement_data.village_model.name, building_conditions.flip)
@@ -250,7 +253,7 @@ def modifyBuildingConditionDependingOnStructure(building_conditions: BuildingCon
 def buildMurdererCache(lore_structure: LoreStructure, settlement_data: SettlementData, resources: Resources,
                        world_modification: WorldModification, chest_generation: ChestGeneration,
                        block_transformation: list,
-                       building_conditions_original: BuildingCondition):
+                       building_conditions_original: BuildingCondition, terrainModification):
     print("Build a house hosting a murderer")
     structure = resources.structures[lore_structure.name]
     info = structure.info
@@ -260,7 +263,7 @@ def buildMurdererCache(lore_structure: LoreStructure, settlement_data: Settlemen
         info["villageInfo"]["murdererTrap"], building_conditions.flip, building_conditions.rotation,
         building_conditions.referencePoint, building_conditions.position)
 
-    structure_murderer = resources.structures["murderercache"]
+    structure_murderer: BaseStructure = resources.structures["completemurderercache" if settlement_data.village_model.isDestroyed else "murderercache"]
     structure_murderer.setupInfoAndGetCorners()
 
     building_info = structure_murderer.getNextBuildingInformation(building_conditions.flip,
@@ -272,12 +275,14 @@ def buildMurdererCache(lore_structure: LoreStructure, settlement_data: Settlemen
         building_conditions.referencePoint, settlement_data.area)
 
     lore_structure: LoreStructure = LoreStructure()
-    lore_structure.name = "murderercache"
+    lore_structure.name = "completemurderercache" if settlement_data.village_model.isDestroyed else "murderercache"
     lore_structure.type = LoreStructure.TYPE_DECORATIONS
+    print(lore_structure.name)
 
     modifyBuildingConditionDependingOnStructure(building_conditions, settlement_data,
                                                 lore_structure)
 
+    structure_murderer.placeAirZones(world_modification, building_conditions.__copy__(), terrainModification)
     structure_murderer.build(world_modification, building_conditions, chest_generation, block_transformation)
     facing = structure_murderer.getFacingMainEntry(building_conditions.flip, building_conditions.rotation)
 

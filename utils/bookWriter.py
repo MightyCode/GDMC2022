@@ -1,5 +1,5 @@
 import copy
-
+import math
 
 class BookWriter:
     COLOR_BLUE = "blue"
@@ -50,7 +50,7 @@ class BookWriter:
 
         self.text_created: bool = False
 
-        self.countChar: int = 0
+        self.count_char: int = 0
 
         self.newText()
 
@@ -88,24 +88,57 @@ class BookWriter:
 
         return result
 
+    def computeLineSize(self, message):
+        parts = message.split("\\\\n")
+
+        size: int = 0
+
+        if len(parts) > 1:
+            for part in parts[:-1]:
+                size += math.ceil(len(part) / BookWriter.NUMBER_CHAR_LINE) * BookWriter.NUMBER_CHAR_LINE
+
+        size += len(parts[-1])
+
+        return size
+
+    def cutInFrom(self, message, position):
+        parts = message.split("\\\\n")
+
+        size: int = 0
+        char_position: int = 0
+
+        if len(parts) > 1:
+            for part in parts[:-1]:
+                size += math.ceil(len(part) / BookWriter.NUMBER_CHAR_LINE) * BookWriter.NUMBER_CHAR_LINE
+                char_position += len(part) + 1
+
+                if size >= position:
+                    return [message[0: position], message[position:]]
+
+        return [message[0: position], message[position:]]
+
     def writeLine(self, message: str, breakLine: bool = True):
-        if len(message) + self.countChar <= BookWriter.NUMBER_CHAR_PAGE:
-            self.texts[-1]["text"] += message + ("\\\\n" if breakLine else "")
-            self.text_created = False
-            self.countChar += len(message)
+        message += (" \\\\n" if breakLine else "")
+        message_len = self.computeLineSize(message)
+        print(message, self.count_char, message_len, message_len + self.count_char, BookWriter.NUMBER_CHAR_PAGE)
+
+        if self.count_char + message_len <= BookWriter.NUMBER_CHAR_PAGE:
+            self.texts[-1]["text"] += message
+            self.count_char += message_len
         else:
-            second: str = message[BookWriter.NUMBER_CHAR_PAGE - self.countChar:]
+            first, second = self.cutInFrom(message, BookWriter.NUMBER_CHAR_PAGE - self.count_char)
+            print("decompoze", first, second)
 
-            if BookWriter.NUMBER_CHAR_PAGE != self.countChar:
-                first: str = message[0:BookWriter.NUMBER_CHAR_PAGE - self.countChar]
-                self.texts[-1]["text"] += first
+            """if BookWriter.NUMBER_CHAR_PAGE != self.count_char:"""
+            self.texts[-1]["text"] += first
 
+            old_size: int = self.count_char
             self.breakPage()
 
-            self.texts[-1]["text"] += second + ("\\\\n" if breakLine else "")
-            self.countChar += len(second)
+            self.texts[-1]["text"] += second
+            self.count_char += (old_size + message_len) - BookWriter.NUMBER_CHAR_PAGE
 
-            self.text_created = False
+        self.text_created = False
 
     def writeEmptyLine(self, number: int):
         for i in range(number):
@@ -140,7 +173,7 @@ class BookWriter:
         if self.text_created:
             return
 
-        self.countChar = 0
+        self.count_char = 0
         new: dict = self.createInfoForText()
         self.texts.append(new)
 

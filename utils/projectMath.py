@@ -1,5 +1,5 @@
 import math
-
+import random
 
 def isPointInCube(point, cube):
     if cube[0] <= point[0] <= cube[3]:
@@ -116,6 +116,7 @@ def generateCorners(position: list, offsetCorner: list) -> list:
     ]
 
 
+
 """
 Find the orientation of ordered triplet p, q, r
 return 0 if p, q, r are collinear else 1 if Clockwise or 2-> CounterClockwise
@@ -179,3 +180,17 @@ def rotateSquaredMatrix(matrix):
 
 def manhattanForCoord(point: list, point2: list):
     return abs(point2[0] - point[0]) + abs(point2[1] - point[1])
+
+
+def generatePlacesAmong(places: list, number: int):
+    result: list = []
+
+    i: int = 0
+    while i < number and 0 < len(places):
+        index: int = random.randint(1, len(places) - 1)
+
+        result.append(places[index])
+        del places[index]
+        i += 1
+
+    return result

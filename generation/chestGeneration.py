@@ -8,13 +8,13 @@ class ChestGeneration:
         self.resources = resources
 
     """
-    Generate a chest content at given position and loottable
+    Generate a chest content at given position and loot_table
     x : x position of chest
     y : y position of chest
     z : z position of chest
     lootTableName : name of the lootTable used
     changeItemName : indicates what ** balise should change, ex : *woodType*
-    additionnalObjects : refers to items that must appear in the chest
+    additionalObjects : refers to items that must appear in the chest
     """
 
     def generate(self, x, y, z, loot_table_name, change_item_name: dict = None, additional_object: list = None):

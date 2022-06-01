@@ -1,0 +1,56 @@
+{
+  "mainEntry": {
+    "facing" : "north",
+    "position" : [3, 5, 3]
+  },
+  "replacements" : {
+    "oak" : { "type" : "woodType", "state" : 2 },
+    "spruce" : { "type" : "woodType2", "state" : 2 },
+    "birch" : { "type" : "woodType3", "state" : 2 },
+    "jungle" : { "type" : "woodType4", "state" : 2 },
+    "minecraft:grass_block" : { "type" : "ground", "state" : 1 },
+    "minecraft:dirt" : { "type" : "ground2", "state" : 1 },
+    "minecraft:white_bed" : { "type" : "bed", "state" : 1 },
+    "minecraft:white_carpet" : { "type" : "carpet", "state" : 1 }
+  },
+  "air" : {
+    "preferredAirMode" : 2,
+    "replacements" : [
+      [3, 0, 4, 9, 4, 8],
+      [1, 5, 1, 11, 10, 9],
+      [0, 11, 0, 12, 14, 10],
+      [3, 15, 4, 11, 18, 9]
+    ]
+  },
+  "lootTables" : [
+    ["bedroomhouse", [0, 0, 0, 5, 4, 12]],
+    ["kitchenhouse", [6, 0, 0, 12, 4, 12]],
+    ["kitchenhouse", [0, 9, 0, 12, 11, 12]],
+    ["bedroomhouse", [0, 12, 0, 12, 14, 12]],
+    ["townhall", [0, 15, 0, 12, 20, 12]]
+  ],
+  "villageInfo" : {
+    "villager" : 4,
+    "murdererTrap" : [8, -1, 9]
+  },
+  "ground" : {
+    "zones" : [
+      [3, 0, 4, 1],
+      [2, 2, 11, 8]
+    ]
+  },
+  "sign" : {
+    "position" : [2, 7, 2],
+    "facing" : "north",
+    "tier" : 3,
+    "name" : "House"
+  },
+  "special" : {
+    "additionalItem": {
+      "diary0" : [3, 1, 4],
+      "diary1" : [3, 1, 8],
+      "diary2" : [10, 12, 4],
+      "diary3" : [10, 12, 7]
+    }
+  }
+}

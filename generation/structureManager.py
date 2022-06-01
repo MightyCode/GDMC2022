@@ -244,7 +244,7 @@ class StructureManager:
         return True
 
     def printStructureChoose(self):
-        string = "\n["
+        string = ": ["
         for structure in self.village_model.lore_structures:
             string = string + structure.name + ", "
 

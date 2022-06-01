@@ -4,6 +4,8 @@
     "position" : [4, 1, 0]
   },
   "replacements" : {
+    "oak" : { "type" : "woodType", "state" : 2 },
+    "spruce" : { "type" : "woodType2", "state" : 2 }
   },
   "air" : {
     "preferredAirMode" : 2,
@@ -13,6 +15,9 @@
   },
   "lootTables" : [
   ],
+    "villageInfo" : {
+    "villager" : 0
+  },
   "special" : {
     "sign" : [
       { "position" : [4, 1, 0], "orientation" : "north"},

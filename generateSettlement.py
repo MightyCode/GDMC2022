@@ -160,7 +160,7 @@ if not args.remove:
         """ Second main step : choose structures and their position """
         i = 0
         while i < settlement_data.structure_number_goal:
-            print("Generate position " + str(i + 1) + "/" + str(settlement_data.structure_number_goal) + "  ", end="\r")
+            print("Generate position " + str(i + 1) + "/" + str(settlement_data.structure_number_goal) + "  ")
             current_village.lore_structures.append(LoreStructure())
             # 0 -> normal, 1 -> replacement, 2 -> no more structure
             result: int = structureManager.chooseOneStructure()
@@ -175,7 +175,6 @@ if not args.remove:
 
             current_village.lore_structures[i].generateAge(current_village)
             baseStructure = resources.structures[current_village.lore_structures[i].name]
-            structureManager.printStructureChoose()
 
             corners: tuple = baseStructure.setupInfoAndGetCorners()
             result: dict = floodFill.findPosHouse(corners)
@@ -222,16 +221,15 @@ if not args.remove:
                 print("Abort finding position and adding structures due to time expired")
                 break
 
+        structureManager.printStructureChoose()
+
         """ Third main step : creates lore of the village """
         print("\nGenerate lore of the village")
 
         loreMaker.generateLoreAfterAllStructure(current_village, name_generator)
 
-        # Murderer
-        murdererData: MurdererData = current_village.murderer_data
-
         books: dict = generator.generateVillageBooks(settlement_data)
-        generator.placeBooks(settlement_data, books, world_modification)
+        # generator.placeBooks(settlement_data, books, world_modification)
 
         # Villager interaction
         for villager in current_village.villagers:
@@ -244,8 +242,8 @@ if not args.remove:
                     structure = tested_structure
                     break
 
-            if random.randint(1, 3) == 1 and available:
-                # print("Generate diary of " + settlementData["villagerNames"][i])
+            if (random.randint(1, 10) <= 9 or villager == settlement_data.village_model.murderer_data.fakeVillagerMurderer) and available:
+                print("Generate diary of " + villager.name)
                 villager.diary = book.createBookForVillager(settlement_data.village_model, villager)
                 villager.diary[0].setInfo(title="Diary of " + villager.name, author=villager.name,
                                           description="Diary of " + villager.name)
@@ -256,20 +254,7 @@ if not args.remove:
                     structure.gift = villager.diary[1]
 
         # Add books replacements
-        settlement_data.setMaterialReplacement("villageLecternBook", books["villageNameBook"])
-
-        settlement_data.setMaterialReplacement("villageBookItem", "minecraft:written_book" + books["villageNameBook"])
-        settlement_data.setMaterialReplacement("villagerRegistryItem",
-                                               "minecraft:written_book" + books["villagerNamesBook"])
-        settlement_data.setMaterialReplacement("deadVillagerRegistryItem",
-                                               "minecraft:written_book" + books["deadVillagersBook"])
-
-        settlement_data.setMaterialReplacement("villageBookTrade",
-                                               "\"minecraft:written_book\",tag:" + books["villageNameBook"])
-        settlement_data.setMaterialReplacement("villagerRegistryTrade",
-                                               "\"minecraft:written_book\",tag:" + books["villagerNamesBook"])
-        settlement_data.setMaterialReplacement("deadVillagerRegistryTrade",
-                                               "\"minecraft:written_book\",tag:" + books["deadVillagersBook"])
+        settlement_data.setVillageBook(books)
 
         for villager in current_village.villagers:
             if villager.job == Villager.DEFAULT_JOB:
@@ -298,7 +283,8 @@ if not args.remove:
         print("\nCompute wall")
         wallConstruction.computeWall(WallConstruction.BOUNDING_CONVEX_HULL)
 
-        wallConstruction.showImageRepresenting()
+        if Config.LOADED_CONFIG["shouldShowWallSchematic"]:
+            wallConstruction.showImageRepresenting()
 
         i: int = 0
         print("Generate air zone")
@@ -312,7 +298,7 @@ if not args.remove:
         """ Five main step : places every structure and after that every decorations """
         print("\nConstruct wall")
 
-        wallConstruction.placeWall(settlement_data, resources, world_modification, block_transformation)
+        wallConstruction.placeWall(settlement_data, resources, world_modification, block_transformation, terrain_modification)
 
         # Connect entry of village in wall to rest of village paths
         wallEntries: list = wallConstruction.returnWallEntries()
@@ -335,7 +321,7 @@ if not args.remove:
         while i < len(current_village.lore_structures) and current_time / 1000 < TIME_LIMIT:
             print("Build structure " + str(i + 1) + "/" + str(settlement_data.structure_number_goal) + "  ", end="\r")
             generator.generateStructure(current_village.lore_structures[i], settlement_data, resources,
-                                        world_modification, chest_generation, block_transformation)
+                                        world_modification, chest_generation, block_transformation, terrain_modification)
 
             if not current_village.lore_structures[i].destroyed:
                 util.spawnVillagerForStructure(settlement_data, current_village.lore_structures[i],

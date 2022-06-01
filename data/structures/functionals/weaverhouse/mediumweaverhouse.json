@@ -28,5 +28,10 @@
     "facing" : "north",
     "tier" : 2,
     "name" : "Weaver house"
+  },
+  "special" : {
+    "additionalItem": {
+      "order" : [2, 1, 4]
+    }
   }
 }

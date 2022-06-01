@@ -335,8 +335,8 @@ class BaseStructure:
 
                         world_modification.fillBlocks(position[0], position[1], position[2], position[0],
                                                       position[1] + i,
-                                                      position[2],
-                                                      building_conditions.replacements["ground2"])
+                                                      position[2], "minecraft:stone")
+                        """building_conditions.replacements["ground2"]"""
 
     """
     Place air at given position

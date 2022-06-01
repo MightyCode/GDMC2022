@@ -33,7 +33,7 @@ class LoreStructure:
         self.preBuildingInfo: dict = {}
 
         self.destroyed: bool = False
-        self.causeDestroy: bool = {}
+        self.causeDestroy: dict = {}
         self.inConstruction: bool = False
 
         self.orders: list = []
@@ -65,5 +65,7 @@ class LoreStructure:
         order.villager_ordering = villager
         order.order_item = item
         order.order_quantity = quantity
+
+        villager.orders.append(order)
 
         self.orders.append(order)

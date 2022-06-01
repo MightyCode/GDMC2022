@@ -76,8 +76,8 @@
         "woodType2" : "birch",
         "woodType3" : "oak",
         "woodType4" : "spruce",
-        "ground" : "minecraft:stone",
-        "ground2" : "minecraft:stone"
+        "ground" : "minecraft:red_sand",
+        "ground2" : "minecraft:red_sand"
     },
     "6" : {
         "Comment": "Cold biome, normal ground",
