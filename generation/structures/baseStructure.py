@@ -18,11 +18,43 @@ class BaseStructure:
 
     ORIENTATIONS = ["west", "north", "east", "south"]
 
-    LIST_ALL_FACING = ["south", "south-southwest", "southwest",
-                       "west-southwest", "west", "west-northwest",
-                       "northwest", "north-northwest", "north",
-                       "north-northeast", "northeast", "east-northeast",
-                       "east", "east-southeast", "southeast", "south-southeast"]
+    FULL_ORIENTATION_FLIP_SOUTH_NORTH = {
+        "0": "8",
+        "1": "7",
+        "2": "6",
+        "3": "5",
+        "4": "4",
+        "5": "3",
+        "6": "2",
+        "7": "1",
+        "8": "0",
+        "9": "15",
+        "10": "14",
+        "11": "13",
+        "12": "12",
+        "13": "11",
+        "14": "10",
+        "15": "9",
+    }
+
+    FULL_ORIENTATION_FLIP_EAST_WEST = {
+        "0": "0",
+        "1": "15",
+        "2": "14",
+        "3": "13",
+        "4": "12",
+        "5": "11",
+        "6": "10",
+        "7": "9",
+        "8": "8",
+        "9": "7",
+        "10": "6",
+        "11": "5",
+        "12": "4",
+        "13": "3",
+        "14": "2",
+        "15": "1"
+    }
 
     AIR_FILLING_PROBLEMATIC_BLOCS = ["minecraft:sand", "minecraft:red_sand",
                                      "minecraft:gravel", "minecraft:water", "minecraft:lava"]
@@ -127,19 +159,28 @@ class BaseStructure:
             "left": "left",
             "right": "right",
             "x": "x",
-            "y": "y",
+            "z": "z",
             BaseStructure.ORIENTATIONS[0]: BaseStructure.ORIENTATIONS[0],
             BaseStructure.ORIENTATIONS[1]: BaseStructure.ORIENTATIONS[1],
             BaseStructure.ORIENTATIONS[2]: BaseStructure.ORIENTATIONS[2],
             BaseStructure.ORIENTATIONS[3]: BaseStructure.ORIENTATIONS[3]
         }
 
+        for i in range(16):
+            self.computed_orientation[str(i)] = str(i)
+
         # Apply flip to orientation
         if flip == 1 or flip == 3:
+            for i in range(16):
+                self.computed_orientation[str(i)] = BaseStructure.FULL_ORIENTATION_FLIP_EAST_WEST[self.computed_orientation[str(i)]]
+
             self.computed_orientation["east"] = "west"
             self.computed_orientation["west"] = "east"
 
         if flip == 2 or flip == 3:
+            for i in range(16):
+                self.computed_orientation[str(i)] = BaseStructure.FULL_ORIENTATION_FLIP_SOUTH_NORTH[self.computed_orientation[str(i)]]
+
             self.computed_orientation["south"] = "north"
             self.computed_orientation["north"] = "south"
 
@@ -151,9 +192,12 @@ class BaseStructure:
         for orientation in self.computed_orientation.keys():
             if orientation in BaseStructure.ORIENTATIONS:
                 self.computed_orientation[orientation] = BaseStructure.ORIENTATIONS[
-                    (BaseStructure.ORIENTATIONS.index(self.computed_orientation[orientation]) + rotation) % len(
-                        BaseStructure.ORIENTATIONS)
+                    (BaseStructure.ORIENTATIONS.index(self.computed_orientation[orientation]) + rotation) % len(BaseStructure.ORIENTATIONS)
                     ]
+
+        for i in range(16):
+            value: int = int(self.computed_orientation[str(i)])
+            self.computed_orientation[str(i)] = str((value + rotation * 4) % 16)
 
         if rotation == 1 or rotation == 3:
             self.computed_orientation["x"] = "z"

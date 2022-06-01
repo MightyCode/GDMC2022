@@ -120,14 +120,14 @@ class BookWriter:
     def writeLine(self, message: str, breakLine: bool = True):
         message += (" \\\\n" if breakLine else "")
         message_len = self.computeLineSize(message)
-        print(message, self.count_char, message_len, message_len + self.count_char, BookWriter.NUMBER_CHAR_PAGE)
+        #print(message, self.count_char, message_len, message_len + self.count_char, BookWriter.NUMBER_CHAR_PAGE)
 
         if self.count_char + message_len <= BookWriter.NUMBER_CHAR_PAGE:
             self.texts[-1]["text"] += message
             self.count_char += message_len
         else:
             first, second = self.cutInFrom(message, BookWriter.NUMBER_CHAR_PAGE - self.count_char)
-            print("decompoze", first, second)
+            #print("decompoze", first, second)
 
             """if BookWriter.NUMBER_CHAR_PAGE != self.count_char:"""
             self.texts[-1]["text"] += first

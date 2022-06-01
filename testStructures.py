@@ -24,12 +24,11 @@ import generation.generator as generator
 Important information
 """
 
-structure_name: str = "advancedstatue"
+structure_name: str = "basictownhall"
 structure_type: str = LoreStructure.TYPE_DECORATIONS
 
 """
 from utils.bookWriter import BookWriter
-
 bookw: BookWriter = BookWriter()
 for i in range(26):
     if i % 2 == 0:
@@ -37,8 +36,6 @@ for i in range(26):
         bookw.writeEmptyLine(2)
     else:
         bookw.writeLine("aaaaaaaaaaaaaaaaaaaaaa" + str(i))
-
-
 interfaceUtil.runCommand("give TamalouMax minecraft:written_book" + bookw.printBook())
 print(bookw.printBook())
 exit()"""
@@ -60,7 +57,6 @@ build_area: tuple = (
 size_area: list = [build_area[3] - build_area[0] + 1, build_area[5] - build_area[2] + 1]
 
 if not args.remove:
-
     interfaceUtil.makeGlobalSlice()
 
     block_transformations: list = [OldStructureTransformation(), DamagedStructureTransformation(),
@@ -112,9 +108,9 @@ if not args.remove:
 
     lore_structure: LoreStructure = LoreStructure()
     lore_structure.age = 1
-    lore_structure.flip = 0
-    lore_structure.rotation = 0
-    lore_structure.destroyed = True
+    lore_structure.flip = 3
+    lore_structure.rotation = 3
+    lore_structure.destroyed = False
     # lore_structure.causeDestroy = {"burned": "burned", "abandoned": "abandoned", "damaged": "damaged"}
 
     lore_structure.name = structure_name
@@ -164,6 +160,13 @@ if not args.remove:
 
     books: dict = generator.generateVillageBooks(settlement_data)
     settlement_data.setVillageBook(books)
+
+    """world_modifications.setBlock(build_area[0] + size_area[0] // 2, 63, build_area[2] + size_area[1] // 2, "minecraft:white_banner", True)
+    command = f'blockdata {build_area[0] + size_area[0] // 2} {63} {build_area[2] + size_area[1] // 2} ' \
+              f'minecraft:white_banner ' + "{Patterns:[ 0:{Pattern:\"rs\",Color:14} , 1:{Pattern:\"drs\",Color:6}]}"
+    print(interfaceUtil.runCommand(command))
+    print(command)
+    exit()"""
 
     generator.makeAirZone(lore_structure, settlement_data, resources, world_modifications, terrain_modification)
     generator.generateStructure(lore_structure, settlement_data, resources, world_modifications,
