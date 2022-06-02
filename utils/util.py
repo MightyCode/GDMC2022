@@ -203,7 +203,7 @@ def addItemChest(x, y, z, items):
         interfaceUtils.runCommand(command)
 
 
-IGNORED_BLOCKS: list = ['minecraft:oak_leaves', 'minecraft:birch_leaves', 'minecraft:spruce_leaves',
+IGNORED_BLOCKS: list = ['minecraft:air', 'minecraft:oak_leaves', 'minecraft:birch_leaves', 'minecraft:spruce_leaves',
                         'minecraft:dark_oak_leaves', 'minecraft:jungle_leaves', 'minecraft:acacia_leaves'
                         'minecraft:oak_log', 'minecraft:birch_log', 'minecraft:spruce_log', 'minecraft:jungle_log',
                         'minecraft:acacia_log', 'minecraft:dark_oak_log']

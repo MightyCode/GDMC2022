@@ -6,7 +6,6 @@ from generation.structures.blockTransformation.oldStructureTransformation import
 from utils import util
 from utils.worldModification import WorldModification
 from generation.data.roadData import RoadData
-from utils.constants import Constants
 from utils.node import Node
 
 import utils.projectMath as projectMath
@@ -253,12 +252,24 @@ class Road:
 
                     self.lanterns.append([position[0], position[1]])
 
-                    world_modification.setBlock(position[0], y - 1, position[1], 'minecraft:cobblestone')
-                    world_modification.setBlock(position[0], y, position[1], 'minecraft:cobblestone_wall')
+                    # Per default / Village tier 0
+                    copy: dict = settlement_data.getMatRepDeepCopy()
+                    block_support: str = util.changeNameWithReplacements('minecraft:*woodType*_log', copy)[1]
+                    block_wall: str = util.changeNameWithReplacements('minecraft:*woodType*_fence', copy)[1]
+                    light_source: str = 'minecraft:torch'
+
+                    if settlement_data.village_model.tier >= 1:
+                        block_support = 'minecraft:cobblestone'
+                        block_wall = 'minecraft:cobblestone_wall'
+
+                    if settlement_data.village_model.tier >= 2:
+                        light_source = "minecraft:lantern"
+
+                    world_modification.setBlock(position[0], y, position[1], old_transformation.replaceBlock(block_support))
+                    world_modification.setBlock(position[0], y + 1, position[1], old_transformation.replaceBlock(block_wall))
 
                     if not settlement_data.village_model.isDestroyed:
-                        world_modification.setBlock(position[0], y + 1, position[1], 'minecraft:torch')
-
+                        world_modification.setBlock(position[0], y + 2, position[1], old_transformation.replaceBlock(light_source))
                     break
 
                 counter += 1

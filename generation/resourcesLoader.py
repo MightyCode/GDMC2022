@@ -167,9 +167,9 @@ def loadAllResources(resources: Resources) -> None:
                                                                        "externcornerstairs8", "innercornerstairs8", "stairs8"]
 
     for wall_type in wall_types:
-        resources.loadStructures("wall/basic/basicwall" + wall_type + ".nbt", "wall/wall.json", "basicwall" + wall_type)
-        resources.loadStructures("wall/advanced/advancedwall" + wall_type + ".nbt", "wall/wall.json", "advancedwall" + wall_type)
-        resources.loadStructures("wall/medium/mediumwall" + wall_type + ".nbt", "wall/wall.json", "mediumwall" + wall_type)
+        resources.loadStructures("wall/basic/basicwall" + wall_type + ".nbt", "wall/basicwall.json", "basicwall" + wall_type)
+        resources.loadStructures("wall/medium/mediumwall" + wall_type + ".nbt", "wall/mediumwall.json", "mediumwall" + wall_type)
+        resources.loadStructures("wall/advanced/advancedwall" + wall_type + ".nbt", "wall/advancedwall.json", "advancedwall" + wall_type)
 
     # Load lootTable
     resources.loadLootTable("emptyloottable.json", "empty")

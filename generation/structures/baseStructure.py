@@ -221,7 +221,6 @@ class BaseStructure:
                                 building_conditions.special["sign"][i * 4 + 3] == "":
                             continue
 
-                    print(building_conditions.special["sign"], sign_position)
                     interfaceUtils.setSignText(
                         sign_position[0], sign_position[1] + 1, sign_position[2],
                         building_conditions.special["sign"][i * 4], building_conditions.special["sign"][i * 4 + 1],
@@ -345,13 +344,18 @@ class BaseStructure:
         if "ground" not in self.info.keys():
             return
 
+        ground_type: str = "minecraft:stone"
+        if "type" in self.info["ground"].keys():
+            result: list = util.changeNameWithReplacements(self.info["ground"]["type"], building_conditions.replacements)
+            if result[0] != -1:
+                ground_type = result[1]
+
         zones: list = []
         if "info" in self.info["ground"].keys():
             if "all" == self.info["ground"]["info"]:
                 zones.append([0, 0, self.size[0] - 1, self.size[2] - 1])
             elif "lastLayer" == self.info["ground"]["info"]:
                 zones = self.getLastLayerBlockPosition()
-                print(zones)
         elif "zones" in self.info["ground"].keys():
             zones = self.info["ground"]["zones"]
 
@@ -373,7 +377,7 @@ class BaseStructure:
 
                         world_modification.fillBlocks(position[0], position[1], position[2], position[0],
                                                       position[1] + i,
-                                                      position[2], "minecraft:stone")
+                                                      position[2], ground_type)
                         """building_conditions.replacements["ground2"]"""
 
     """
@@ -458,7 +462,6 @@ class BaseStructure:
                     position: list
                     for key in self.info["special"]["additionalItem"]:
                         position = self.info["special"]["additionalItem"][key]
-                        print(key, position, x, y, z,)
 
                         if x == position[0] and y == position[1] and z == position[2]:
                             if key in building_conditions.special.keys():

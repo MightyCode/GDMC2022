@@ -281,7 +281,6 @@ class NbtStructures(BaseStructure):
 
         def computeBlockAt(x_pos, z_pos):
             block_palette = self.palette[self.blocks[x_pos][0][z_pos]]
-            print(block_palette)
 
             block_name = block_palette["Name"]
             # Check for block air replacement

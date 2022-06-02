@@ -65,9 +65,9 @@ if not args.remove:
     # Create Village
     village: Village = Village()
     village.name = "TestLand"
-    village.tier = 2
+    village.tier = 0
     village.color = "red"
-    village.isDestroyed = True
+    village.isDestroyed = False
 
     otherVillage: Village = Village()
     otherVillage.name = "TestLand 2"

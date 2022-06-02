@@ -16,6 +16,7 @@ class WorldModification:
     def __init__(self):
         self.before_modification: list = []
         self.after_modification: list = []
+        self.stateBefore: bool = False
 
         WorldModification.DEBUG_MODE = Config.LOADED_CONFIG["saveConstructionInFile"]
 
@@ -36,9 +37,14 @@ class WorldModification:
             self.after_modification.append([x, y, z, block])
 
         if place_immediately:
-            interfaceUtils.setBuffering(False)
+            self.stateBefore = interfaceUtils.globalinterface.isBuffering()
+            if self.stateBefore:
+                interfaceUtils.setBuffering(False)
+
             interfaceUtils.setBlock(x, y, z, block)
-            interfaceUtils.setBuffering(True)
+
+            if self.stateBefore:
+                interfaceUtils.setBuffering(True)
         else:
             interfaceUtils.setBlock(x, y, z, block)
 
