@@ -109,8 +109,6 @@ def generateStructure(lore_structure: LoreStructure, settlement_data: Settlement
                       block_transformations: list, terrainModification) -> None:
     # print(structureData["name"])
     # print(structureData["validPosition"])
-    for block_transformation in block_transformations:
-        block_transformation.setLoreStructure(lore_structure)
 
     structure = resources.structures[lore_structure.name]
     current_village: Village = settlement_data.village_model
@@ -143,6 +141,9 @@ def generateStructure(lore_structure: LoreStructure, settlement_data: Settlement
             building_conditions.replacements[aProperty] = resources.biomesBlocks[structure_biome_block_id][aProperty]
 
     modifyBuildingConditionDependingOnStructure(building_conditions, settlement_data, lore_structure)
+
+    for block_transformation in block_transformations:
+        block_transformation.setLoreStructure(lore_structure)
 
     structure.build(world_modification, building_conditions, chest_generation, block_transformations)
 
@@ -179,17 +180,6 @@ def modifyBuildingConditionDependingOnStructure(building_conditions: BuildingCon
                 del list_of_dead[index]
 
             i += 1
-
-    elif structure.name == "murderercache":
-        murderer_data = settlement_data.village_model.murderer_data
-
-        building_conditions.special = {"sign": ["Next target :", "", "", ""]}
-        name = murderer_data.villagerTarget.name
-        util.parseVillagerNameInLines([name], building_conditions.special["sign"], 1)
-    elif structure.name == "completemurderercache":
-        building_conditions.special = {"sign": ["Infiltre village", settlement_data.village_model.name + " : X", "Kill the mayor : X",
-                                                "Divulgate precious", " information : X", "Win the war : X", "", "", ""]}
-
     elif structure.name == "adventurerhouse":
         writer = book.createBookForAdventurerHouse(settlement_data.village_model.name, building_conditions.flip)
         writer.setInfo(title="Portal Manual", author="Mayor",
@@ -259,6 +249,8 @@ def buildMurdererCache(lore_structure: LoreStructure, settlement_data: Settlemen
     info = structure.info
 
     building_conditions = building_conditions_original.__copy__()
+    building_conditions.loreStructure.destroyed = False
+    building_conditions.loreStructure.causeDestroy = {}
     building_conditions.position = structure.returnWorldPosition(
         info["villageInfo"]["murdererTrap"], building_conditions.flip, building_conditions.rotation,
         building_conditions.referencePoint, building_conditions.position)
@@ -277,10 +269,20 @@ def buildMurdererCache(lore_structure: LoreStructure, settlement_data: Settlemen
     lore_structure: LoreStructure = LoreStructure()
     lore_structure.name = "completemurderercache" if settlement_data.village_model.isDestroyed else "murderercache"
     lore_structure.type = LoreStructure.TYPE_DECORATIONS
-    print(lore_structure.name)
 
-    modifyBuildingConditionDependingOnStructure(building_conditions, settlement_data,
-                                                lore_structure)
+    if lore_structure.name == "murderercache":
+        murderer_data = settlement_data.village_model.murderer_data
+
+        building_conditions.special = {"sign": ["Next target :", "", "", ""]}
+        name = murderer_data.villagerTarget.name
+        util.parseVillagerNameInLines([name], building_conditions.special["sign"], 1)
+    elif lore_structure.name == "completemurderercache":
+        building_conditions.special = {
+            "sign": ["Infiltre village", settlement_data.village_model.name + " : X", "Kill the mayor : X",
+                     "Divulgate precious", " information : X", "Win the war : X", "", "", ""]}
+
+    for transformation in block_transformation:
+        transformation.setLoreStructure(lore_structure)
 
     structure_murderer.placeAirZones(world_modification, building_conditions.__copy__(), terrainModification)
     structure_murderer.build(world_modification, building_conditions, chest_generation, block_transformation)

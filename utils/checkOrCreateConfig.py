@@ -13,7 +13,7 @@ class Config:
             "shouldShowWallSchematic": False,
             "minVillageStructure": 25,
             "maxVillageStructure": 55,
-            "saveConstructionInFile": True,
+            "saveConstructionInFile": False,
             "villageTier": {
                 "state": False,
                 "value": 0
@@ -78,3 +78,6 @@ class Config:
             return Config.LOADED_CONFIG[valueName]["value"]
 
         return defaultValue
+
+if __name__ == "__main__":
+    Config.getOrCreateConfig()

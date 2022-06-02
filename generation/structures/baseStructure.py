@@ -214,14 +214,14 @@ class BaseStructure:
                     world_modification.setBlock(
                         sign_position[0], sign_position[1] + 1, sign_position[2],
                         "minecraft:" + building_conditions.replacements["woodType"]
-                        + "_wall_sign[facing=" + self.computed_orientation[sign["orientation"]] + "]",
-                        False, True)
+                        + "_wall_sign[facing=" + self.computed_orientation[sign["orientation"]] + "]", place_immediately=True)
 
                     if building_conditions.special["sign"][i * 4] == "" and building_conditions.special["sign"][i * 4 + 1] == "":
                         if building_conditions.special["sign"][i * 4 + 2] == "" and \
                                 building_conditions.special["sign"][i * 4 + 3] == "":
                             continue
 
+                    print(building_conditions.special["sign"], sign_position)
                     interfaceUtils.setSignText(
                         sign_position[0], sign_position[1] + 1, sign_position[2],
                         building_conditions.special["sign"][i * 4], building_conditions.special["sign"][i * 4 + 1],

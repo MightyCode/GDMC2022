@@ -24,7 +24,7 @@ import generation.generator as generator
 Important information
 """
 
-structure_name: str = "adventurerhouse"
+structure_name: str = "mediumhouse3"
 structure_type: str = LoreStructure.TYPE_DECORATIONS
 
 """
@@ -67,7 +67,7 @@ if not args.remove:
     village.name = "TestLand"
     village.tier = 2
     village.color = "red"
-    village.isDestroyed = False
+    village.isDestroyed = True
 
     otherVillage: Village = Village()
     otherVillage.name = "TestLand 2"
@@ -76,10 +76,6 @@ if not args.remove:
     )
     # Force relation for tests
     village.village_interactions[otherVillage].economicalRelation = True
-
-    import utils.util
-    print(utils.util.getHighestNonAirBlock(build_area[0] + size_area[0] // 2, build_area[2] + size_area[1] // 2, size_area[0] // 2, size_area[1] // 2))
-    exit()
 
     villagers: list = [Villager(village), Villager(village), Villager(village), Villager(village), Villager(village)]
     villagers[0].name = "Rodriguez 1"
@@ -112,10 +108,10 @@ if not args.remove:
 
     lore_structure: LoreStructure = LoreStructure()
     lore_structure.age = 1
-    lore_structure.flip = 3
-    lore_structure.rotation = 3
-    lore_structure.destroyed = False
-    # lore_structure.causeDestroy = {"burned": "burned", "abandoned": "abandoned", "damaged": "damaged"}
+    lore_structure.flip = 0
+    lore_structure.rotation = 0
+    lore_structure.destroyed = True
+    lore_structure.causeDestroy = {"burned": "burned", "abandoned": "abandoned", "damaged": "damaged"}
 
     lore_structure.name = structure_name
     lore_structure.villagers = [villagers[0], villagers[2], villagers[2]]
@@ -158,9 +154,9 @@ if not args.remove:
     from generation.terrainModification import TerrainModification
     terrain_modification = TerrainModification(build_area, wall_construction)
 
-    wall_construction.placeAirZone(settlement_data, resources, world_modifications, terrain_modification)
+    """wall_construction.placeAirZone(settlement_data, resources, world_modifications, terrain_modification)
     wall_construction.placeWall(settlement_data, resources, world_modifications, block_transformations, terrain_modification)
-    exit()
+    exit()"""
 
     books: dict = generator.generateVillageBooks(settlement_data)
     settlement_data.setVillageBook(books)
