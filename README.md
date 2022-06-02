@@ -1,7 +1,7 @@
 # GDMC2022
-by Maxence Bazin
+by Maxence Bazin and by Melvin Cledat, second builder.
 
-This repository is the continuation of my work last year with the tsukuba team.
+This repository is the continuation of my [work last year with the tsukuba team done with Lucien Mocrete and Yusuf Senel](https://github.com/MightyCode/GDMC2021Tsukuba)
 
 ## How to run this project:
 - Make sure to have the [http interface mod](https://github.com/nilsgawlik/gdmc_http_interface) installed;
