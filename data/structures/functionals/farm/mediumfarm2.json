@@ -25,13 +25,13 @@
   },
   "sign" : {
     "position" : [6, 3, 3],
-    "facing" : "south",
+    "facing" : "north",
     "tier" : 2,
     "name" : "Farm"
   },
   "special" : {
     "additionalItem": {
-      "order" : [3, 5, 6]
+      "order" : [3, 5, 5]
     }
   }
 }

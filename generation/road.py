@@ -112,6 +112,7 @@ class Road:
 
             closed_list.append(current)
 
+        return []
         print("Warning : No path found")
 
     def computeXEntry(self, xLocalPosition: int, facingStruct, cornerStruct):
@@ -208,22 +209,25 @@ class Road:
         old_transformation.setLoreStructure(lore_structure)
 
         for roadData in self.roadParts:
+            if roadData is None:
+                continue
+
             for block in roadData.path:
                 y = util.getHighestNonAirBlock(block[0], block[1], block[0] - self.area[0], block[1] - self.area[2])
                 material = 'minecraft:grass_path'
                 # Here, we need to check if there is a tree above the path, and if yes, we want to remove it
                 terrain_modification.removeRecursivelyAt(world_modification, block[0], y, block[1])
-                world_modification.setBlock(block[0], y, block[1], "minecraft:air")
-                terrain_modification.removeRecursivelyAt(world_modification, block[0], y + 1, block[1])
                 world_modification.setBlock(block[0], y + 1, block[1], "minecraft:air")
+                terrain_modification.removeRecursivelyAt(world_modification, block[0], y + 1, block[1])
+                world_modification.setBlock(block[0], y + 2, block[1], "minecraft:air")
                 terrain_modification.removeRecursivelyAt(world_modification, block[0], y + 2, block[1])
 
-                if iu.getBlock(block[0], y - 1, block[1]) == 'minecraft:water':
+                if iu.getBlock(block[0], y, block[1]) == 'minecraft:water':
                     material = "minecraft:" + settlement_data.getMaterialReplacement("woodType") + "_planks"
-                elif iu.getBlock(block[0], y - 1, block[1]) == 'minecraft:lava':
+                elif iu.getBlock(block[0], y, block[1]) == 'minecraft:lava':
                     material = "minecraft:nether_bricks"
 
-                world_modification.setBlock(block[0], y - 1, block[1], old_transformation.replaceBlock(material))
+                world_modification.setBlock(block[0], y, block[1], old_transformation.replaceBlock(material))
 
         for roadData in self.roadParts:
             counter = 1

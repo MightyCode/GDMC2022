@@ -27,5 +27,10 @@
       "facing" : "north",
       "tier" : 3,
       "name" : "Adventurerhouse"
+    },
+    "special" : {
+      "additionalItem": {
+        "guide": [2, 1, 2]
+      }
     }
-  }
+}

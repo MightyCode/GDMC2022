@@ -43,19 +43,6 @@ class Constants:
         return y
 
     """
-    to get the height of a x,z position and taking water and lava in it
-    """
-
-    @staticmethod
-    def getHeightRoad(x: int, z: int):
-        y = 255
-        while Constants.is_air(x, y, z) and y > 0 and not (
-                iu.getBlock(x, y - 1, z) == "minecraft:water" or iu.getBlock(x, y - 1, z) == "minecraft:lava"):
-            y -= 1
-
-        return y
-
-    """
     To know if it's a air block (or leaves and stuff)
     """
 

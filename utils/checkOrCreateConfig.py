@@ -8,10 +8,12 @@ class Config:
     @staticmethod
     def createConfig() -> dict:
         return {
+            "timeLimit": 600,
+            "villageWall": "convexHull",
             "shouldShowWallSchematic": False,
             "minVillageStructure": 25,
             "maxVillageStructure": 55,
-            "saveConstructionInFile": True,
+            "saveConstructionInFile": False,
             "villageTier": {
                 "state": False,
                 "value": 0
@@ -67,7 +69,6 @@ class Config:
         if os.path.exists(Config.CONFIG_PATH):
             with open(Config.CONFIG_PATH) as f:
                 Config.LOADED_CONFIG = json.load(f)
-                print(Config.LOADED_CONFIG)
         else:
             Config.LOADED_CONFIG = Config.createConfigFile()
 
@@ -77,3 +78,6 @@ class Config:
             return Config.LOADED_CONFIG[valueName]["value"]
 
         return defaultValue
+
+if __name__ == "__main__":
+    Config.getOrCreateConfig()

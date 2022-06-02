@@ -18,11 +18,43 @@ class BaseStructure:
 
     ORIENTATIONS = ["west", "north", "east", "south"]
 
-    LIST_ALL_FACING = ["south", "south-southwest", "southwest",
-                       "west-southwest", "west", "west-northwest",
-                       "northwest", "north-northwest", "north",
-                       "north-northeast", "northeast", "east-northeast",
-                       "east", "east-southeast", "southeast", "south-southeast"]
+    FULL_ORIENTATION_FLIP_SOUTH_NORTH = {
+        "0": "8",
+        "1": "7",
+        "2": "6",
+        "3": "5",
+        "4": "4",
+        "5": "3",
+        "6": "2",
+        "7": "1",
+        "8": "0",
+        "9": "15",
+        "10": "14",
+        "11": "13",
+        "12": "12",
+        "13": "11",
+        "14": "10",
+        "15": "9",
+    }
+
+    FULL_ORIENTATION_FLIP_EAST_WEST = {
+        "0": "0",
+        "1": "15",
+        "2": "14",
+        "3": "13",
+        "4": "12",
+        "5": "11",
+        "6": "10",
+        "7": "9",
+        "8": "8",
+        "9": "7",
+        "10": "6",
+        "11": "5",
+        "12": "4",
+        "13": "3",
+        "14": "2",
+        "15": "1"
+    }
 
     AIR_FILLING_PROBLEMATIC_BLOCS = ["minecraft:sand", "minecraft:red_sand",
                                      "minecraft:gravel", "minecraft:water", "minecraft:lava"]
@@ -96,24 +128,15 @@ class BaseStructure:
     Convert a property using computedOrientation (left, right, north, south, east, west)
     """
 
-    def convertProperty(self, property_name, property_value):
+    def convertProperty(self, property_name: str, property_value: str):
         result: str = property_value
 
-        if property_value in self.computed_orientation.keys():
+        if property_name == "rotation" and property_value.isnumeric():
+            result = self.computed_orientation[property_value]
+        elif property_value in self.computed_orientation.keys() and not property_value.isnumeric():
             result = self.computed_orientation[property_value]
 
         return property_name + "=" + result
-
-    """
-    Return number, depending to the rotation
-    """
-
-    def returnRotationFromFacing(self, facing):
-        for i in [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]:
-            if BaseStructure.LIST_ALL_FACING[i] == facing:
-                return i
-
-        return -1
 
     """
     Compute all orientation
@@ -127,19 +150,28 @@ class BaseStructure:
             "left": "left",
             "right": "right",
             "x": "x",
-            "y": "y",
+            "z": "z",
             BaseStructure.ORIENTATIONS[0]: BaseStructure.ORIENTATIONS[0],
             BaseStructure.ORIENTATIONS[1]: BaseStructure.ORIENTATIONS[1],
             BaseStructure.ORIENTATIONS[2]: BaseStructure.ORIENTATIONS[2],
             BaseStructure.ORIENTATIONS[3]: BaseStructure.ORIENTATIONS[3]
         }
 
+        for i in range(16):
+            self.computed_orientation[str(i)] = str(i)
+
         # Apply flip to orientation
         if flip == 1 or flip == 3:
+            for i in range(16):
+                self.computed_orientation[str(i)] = BaseStructure.FULL_ORIENTATION_FLIP_EAST_WEST[self.computed_orientation[str(i)]]
+
             self.computed_orientation["east"] = "west"
             self.computed_orientation["west"] = "east"
 
         if flip == 2 or flip == 3:
+            for i in range(16):
+                self.computed_orientation[str(i)] = BaseStructure.FULL_ORIENTATION_FLIP_SOUTH_NORTH[self.computed_orientation[str(i)]]
+
             self.computed_orientation["south"] = "north"
             self.computed_orientation["north"] = "south"
 
@@ -151,9 +183,12 @@ class BaseStructure:
         for orientation in self.computed_orientation.keys():
             if orientation in BaseStructure.ORIENTATIONS:
                 self.computed_orientation[orientation] = BaseStructure.ORIENTATIONS[
-                    (BaseStructure.ORIENTATIONS.index(self.computed_orientation[orientation]) + rotation) % len(
-                        BaseStructure.ORIENTATIONS)
+                    (BaseStructure.ORIENTATIONS.index(self.computed_orientation[orientation]) + rotation) % len(BaseStructure.ORIENTATIONS)
                     ]
+
+        for i in range(16):
+            value: int = int(self.computed_orientation[str(i)])
+            self.computed_orientation[str(i)] = str((value + rotation * 4) % 16)
 
         if rotation == 1 or rotation == 3:
             self.computed_orientation["x"] = "z"
@@ -179,14 +214,14 @@ class BaseStructure:
                     world_modification.setBlock(
                         sign_position[0], sign_position[1] + 1, sign_position[2],
                         "minecraft:" + building_conditions.replacements["woodType"]
-                        + "_wall_sign[facing=" + self.computed_orientation[sign["orientation"]] + "]",
-                        False, True)
+                        + "_wall_sign[facing=" + self.computed_orientation[sign["orientation"]] + "]", place_immediately=True)
 
                     if building_conditions.special["sign"][i * 4] == "" and building_conditions.special["sign"][i * 4 + 1] == "":
                         if building_conditions.special["sign"][i * 4 + 2] == "" and \
                                 building_conditions.special["sign"][i * 4 + 3] == "":
                             continue
 
+                    print(building_conditions.special["sign"], sign_position)
                     interfaceUtils.setSignText(
                         sign_position[0], sign_position[1] + 1, sign_position[2],
                         building_conditions.special["sign"][i * 4], building_conditions.special["sign"][i * 4 + 1],
@@ -314,6 +349,9 @@ class BaseStructure:
         if "info" in self.info["ground"].keys():
             if "all" == self.info["ground"]["info"]:
                 zones.append([0, 0, self.size[0] - 1, self.size[2] - 1])
+            elif "lastLayer" == self.info["ground"]["info"]:
+                zones = self.getLastLayerBlockPosition()
+                print(zones)
         elif "zones" in self.info["ground"].keys():
             zones = self.info["ground"]["zones"]
 
@@ -420,6 +458,7 @@ class BaseStructure:
                     position: list
                     for key in self.info["special"]["additionalItem"]:
                         position = self.info["special"]["additionalItem"][key]
+                        print(key, position, x, y, z,)
 
                         if x == position[0] and y == position[1] and z == position[2]:
                             if key in building_conditions.special.keys():
@@ -524,6 +563,9 @@ class BaseStructure:
 
     def getRotatedSize(self) -> list:
         return [self.size[2], self.size[1], self.size[0]]
+
+    def getLastLayerBlockPosition(self):
+        return []
 
     """
     Indicates if property is valid with a block

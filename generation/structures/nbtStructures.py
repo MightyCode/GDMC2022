@@ -2,7 +2,6 @@ from generation.structures.baseStructure import BaseStructure
 from generation.buildingCondition import BuildingCondition
 from generation.chestGeneration import ChestGeneration
 import utils.projectMath as projectMath
-import utils.util as util
 
 """
 Structure using nbt
@@ -195,7 +194,7 @@ class NbtStructures(BaseStructure):
         self.placeSupportUnderStructure(world_modification, building_conditions)
 
         # Air zone
-        #self.placeAirZones(world_modification, building_conditions)
+        # self.placeAirZones(world_modification, building_conditions)
 
         for x in range(self.size[0]):
             for y in range(self.size[1]):
@@ -217,7 +216,8 @@ class NbtStructures(BaseStructure):
 
         self.parseSpecialRule(building_conditions, world_modification)
 
-    def computeBlockAt(self, building_conditions: BuildingCondition, world_modification, chest_generation: ChestGeneration, x: int, y: int, z: int) -> None:
+    def computeBlockAt(self, building_conditions: BuildingCondition, world_modification,
+                       chest_generation: ChestGeneration, x: int, y: int, z: int) -> None:
         block_palette = self.palette[self.blocks[x][y][z]]
         self.placeImmediately = False
 
@@ -275,3 +275,25 @@ class NbtStructures(BaseStructure):
 
         block = block + properties + "]"
         return block
+
+    def getLastLayerBlockPosition(self):
+        zones: list = []
+
+        def computeBlockAt(x_pos, z_pos):
+            block_palette = self.palette[self.blocks[x_pos][0][z_pos]]
+            print(block_palette)
+
+            block_name = block_palette["Name"]
+            # Check for block air replacement
+            for air_block in NbtStructures.AIR_BLOCKS:
+                """and building_conditions.replaceAirMethod != BuildingCondition.ALL_AIR_PLACEMENT"""
+                if air_block in block_name:
+                    return
+
+            zones.append([x, z, x, z])
+
+        for x in range(self.size[0]):
+            for z in range(self.size[2]):
+                computeBlockAt(x, z)
+
+        return zones

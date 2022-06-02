@@ -438,10 +438,10 @@ class WallConstruction:
                 max_height = wallCell.height
                 maximum = wallCell
 
-        listStep: list = [8, 4, 2]
+        listStep: list = [8, 6, 4, 2]
 
         step: int
-        extremum: list = [maximum]
+        excluded: list = [maximum]
 
         def find_interval_from(from_wall):
             height_wall = from_wall.augmented_height - step
@@ -452,7 +452,7 @@ class WallConstruction:
             next_wall = from_wall.sided_wall_1
 
             while next_wall != from_wall:
-                if next_wall.sided_wall_1.height > height_wall or next_wall.sided_wall_1 in extremum:
+                if next_wall.sided_wall_1.height > height_wall or next_wall.sided_wall_1 in excluded:
                     break
 
                 next_wall = next_wall.sided_wall_1
@@ -484,42 +484,35 @@ class WallConstruction:
         for wallCell in self.wall_list:
             wallCell.augmented_height = max_height
 
-        for i in range(len(listStep)):
-            step = listStep[i]
-            print(step)
+        height: int = max_height
+        min_height = max_height
 
-            height: int = max_height
-            made_changes = True
-            while made_changes:
-                made_changes = False
-
+        while height >= min_height:
+            for i in range(len(listStep)):
                 start = maximum
-                next_wall = maximum.sided_wall_1
-
+                next_wall = start.sided_wall_1
+                step = listStep[i]
                 while next_wall != start:
                     if next_wall.augmented_height == height and next_wall.sided_wall_1.augmented_height == height and next_wall.sided_wall_2.augmented_height == height\
-                       and next_wall.augmented_height - step > next_wall.height:
-                        print("Down " + str(step))
+                       and next_wall.augmented_height - step > next_wall.height and next_wall not in excluded:
                         to = find_interval_from(next_wall)
-
                         if next_wall != to:
-                            made_changes = True
-                            extremum.append(next_wall)
-                            extremum.append(to)
+                            if height - step < min_height:
+                                min_height = height - step
+
+                            excluded.append(next_wall)
+                            excluded.append(to)
                             change_type_to_stairs(next_wall, False, step)
                             change_type_to_stairs(to, True, step)
-
                             while next_wall != to:
                                 next_wall.augmented_height -= step
                                 next_wall = next_wall.sided_wall_1
-
                             to.augmented_height -= step
                         else:
                             next_wall = next_wall.sided_wall_1
                     else:
                         next_wall = next_wall.sided_wall_1
-
-                height -= step
+            height -= 2
 
     def createWallLoreStructure(self, wallCell, x_real, y, z_real, settlement_data):
         tier: str = "basic" if self.village.tier == 0 else "medium" if self.village.tier == 1 else "advanced"

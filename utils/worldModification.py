@@ -19,7 +19,7 @@ class WorldModification:
 
         WorldModification.DEBUG_MODE = Config.LOADED_CONFIG["saveConstructionInFile"]
 
-    def setBlock(self, x, y, z, block, compare_block_state=False, place_immediately=False):
+    def setBlock(self, x, y, z, block, place_immediately=False, compare_block_state=False):
         if WorldModification.DEBUG_MODE:
             previous_block = interfaceUtils.getBlock(x, y, z)
 

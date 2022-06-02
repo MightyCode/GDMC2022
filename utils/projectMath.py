@@ -116,7 +116,6 @@ def generateCorners(position: list, offsetCorner: list) -> list:
     ]
 
 
-
 """
 Find the orientation of ordered triplet p, q, r
 return 0 if p, q, r are collinear else 1 if Clockwise or 2-> CounterClockwise
