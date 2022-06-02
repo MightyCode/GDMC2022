@@ -154,9 +154,9 @@ if not args.remove:
     from generation.terrainModification import TerrainModification
     terrain_modification = TerrainModification(build_area, wall_construction)
 
-    """wall_construction.placeAirZone(settlement_data, resources, world_modifications, terrain_modification)
+    wall_construction.placeAirZone(settlement_data, resources, world_modifications, terrain_modification)
     wall_construction.placeWall(settlement_data, resources, world_modifications, block_transformations, terrain_modification)
-    exit()"""
+    exit()
 
     books: dict = generator.generateVillageBooks(settlement_data)
     settlement_data.setVillageBook(books)

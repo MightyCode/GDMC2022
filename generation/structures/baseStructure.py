@@ -349,6 +349,9 @@ class BaseStructure:
         if "info" in self.info["ground"].keys():
             if "all" == self.info["ground"]["info"]:
                 zones.append([0, 0, self.size[0] - 1, self.size[2] - 1])
+            elif "lastLayer" == self.info["ground"]["info"]:
+                zones = self.getLastLayerBlockPosition()
+                print(zones)
         elif "zones" in self.info["ground"].keys():
             zones = self.info["ground"]["zones"]
 
@@ -560,6 +563,9 @@ class BaseStructure:
 
     def getRotatedSize(self) -> list:
         return [self.size[2], self.size[1], self.size[0]]
+
+    def getLastLayerBlockPosition(self):
+        return []
 
     """
     Indicates if property is valid with a block
