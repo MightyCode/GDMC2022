@@ -645,7 +645,14 @@ class WallConstruction:
                 #print("Out side", pos_x, pos_z)
                 return False
 
-            return self.matrix[pos_z * self.detection_grid_size[0] + pos_x]
+            if self.matrix[pos_z * self.detection_grid_size[0] + pos_x]:
+                return True
+
+            for wall in self.wall_list:
+                if wall.position[0] == pos_x and wall.position[1] == pos_z:
+                    return True
+
+            return False
 
         return False
 

@@ -118,7 +118,7 @@ class BookWriter:
         return [message[0: position], message[position:]]
 
     def writeLine(self, message: str, breakLine: bool = True):
-        message += (" \\\\n" if breakLine else "")
+        message += ("\\\\n" if breakLine else "")
         message_len = self.computeLineSize(message)
         #print(message, self.count_char, message_len, message_len + self.count_char, BookWriter.NUMBER_CHAR_PAGE)
 
@@ -142,7 +142,7 @@ class BookWriter:
 
     def writeEmptyLine(self, number: int):
         for i in range(number):
-            self.writeLine("")
+            self.writeLine(" ")
 
     def writeSameSymbol(self, char: chr, number=1):
         self.writeLine(char * number)

@@ -24,7 +24,9 @@ Return the text of the book of the village presentation
 """
 
 
-def createTextOfPresentationVillage(village: Village) -> BookWriter:
+def createTextOfPresentationVillage(settlementData) -> BookWriter:
+    village: Village = settlementData.village_model
+
     book_writer: BookWriter = BookWriter()
     book_writer.writeFirstPage("Welcome to :",
                                "The " + ("old " if village.age == 1 else "") + "village of " + village.name)
@@ -53,7 +55,10 @@ def createTextOfPresentationVillage(village: Village) -> BookWriter:
     book_writer.writeEmptyLine(1)
 
     hadBrokeARelation: bool = False
-    book_writer.writeLine('Village relationships:')
+    book_writer.setTextMode(book_writer.TEXT_UNDERLINE, True)
+    book_writer.writeLine('Village relationships', False)
+    book_writer.setTextMode(book_writer.TEXT_UNDERLINE, False)
+    book_writer.writeLine(':')
     book_writer.writeEmptyLine(1)
 
     for village_key in village.village_interactions:
@@ -96,7 +101,16 @@ def createTextOfPresentationVillage(village: Village) -> BookWriter:
             if interaction.brokeTheirRelation:
                 book_writer.writeLine(village_key.name + ' ', breakLine=False)
 
-    book_writer.writeLine("")
+    book_writer.fillLineWith('-')
+    book_writer.breakPage()
+    book_writer.fillLineWith('-')
+    book_writer.setTextMode(book_writer.TEXT_UNDERLINE, True)
+    book_writer.writeLine('Village statistics', False)
+    book_writer.setTextMode(book_writer.TEXT_UNDERLINE, False)
+    book_writer.writeLine(':')
+    book_writer.writeLine(f'Dirt resources: {round(settlementData.resources["dirtResources"], 2)}')
+    book_writer.writeLine(f'Wood resources: {round(settlementData.resources["woodResources"], 2)}')
+    book_writer.writeLine(f'Stone resources: {round(settlementData.resources["stoneResources"], 2)}')
     book_writer.fillLineWith('-')
     book_writer.breakPage()
 

@@ -154,19 +154,14 @@ if not args.remove:
     from generation.terrainModification import TerrainModification
     terrain_modification = TerrainModification(build_area, wall_construction)
 
-    wall_construction.placeAirZone(settlement_data, resources, world_modifications, terrain_modification)
+    """wall_construction.placeAirZone(settlement_data, resources, world_modifications, terrain_modification)
     wall_construction.placeWall(settlement_data, resources, world_modifications, block_transformations, terrain_modification)
-    exit()
+    exit()"""
 
     books: dict = generator.generateVillageBooks(settlement_data)
+    interfaceUtil.runCommand("give TamalouMax minecraft:written_book" + books["villageBook"])
+    exit()
     settlement_data.setVillageBook(books)
-
-    """world_modifications.setBlock(build_area[0] + size_area[0] // 2, 63, build_area[2] + size_area[1] // 2, "minecraft:white_banner", True)
-    command = f'blockdata {build_area[0] + size_area[0] // 2} {63} {build_area[2] + size_area[1] // 2} ' \
-              f'minecraft:white_banner ' + "{Patterns:[ 0:{Pattern:\"rs\",Color:14} , 1:{Pattern:\"drs\",Color:6}]}"
-    print(interfaceUtil.runCommand(command))
-    print(command)
-    exit()"""
 
     generator.makeAirZone(lore_structure, settlement_data, resources, world_modifications, terrain_modification)
     generator.generateStructure(lore_structure, settlement_data, resources, world_modifications,
@@ -181,7 +176,8 @@ if not args.remove:
         Trade.generateFromTradeTable(village, villager, resources.trades[villager.job], settlement_data.getMatRepDeepCopy())
 
     util.spawnVillagerForStructure(settlement_data, lore_structure, lore_structure.position)"""
-    # generator.placeBooks(settlement_data, books, world_modifications)
+
+    #generator.placeBooks(settlement_data, books, world_modifications)
 
     world_modifications.saveToFile(file)
 else:

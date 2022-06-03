@@ -42,7 +42,7 @@ def generateVillageBooks(settlement_data: SettlementData) -> dict:
     village_model: Village = settlement_data.village_model
 
     # Create books for the village
-    writer_village_presentation_book = book.createTextOfPresentationVillage(village_model)
+    writer_village_presentation_book = book.createTextOfPresentationVillage(settlement_data)
     writer_village_presentation_book.setInfo(title="Village Presentation", author="Mayor",
                                              description="Presentation of the village")
 

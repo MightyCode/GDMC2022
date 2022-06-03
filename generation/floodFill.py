@@ -26,7 +26,7 @@ class FloodFill:
                                             self.buildArea[3] - self.size[0] / coef,
                                             self.buildArea[5] - self.size[1] / coef]
         self.minDistanceHouse = 4
-        self.floodfillHouseSpace = 10
+        self.floodfillHouseSpace = 5
         self.previousStructure = -1
 
     def set_number_of_houses(self, number_house: int):
@@ -149,8 +149,7 @@ class FloodFill:
         while verif_houses and verif_corners:
             house = verif_houses.pop()
 
-            if not projectMath.isTwoRectOverlaps(position, chosen_corner, [house[0], house[2]], house[3],
-                                                 self.minDistanceHouse):
+            if not projectMath.isTwoRectOverlaps(position, chosen_corner, [house[0], house[2]], house[3], self.minDistanceHouse):
                 verif_overlaps_house = True
             else:
                 """print("N " + str(xPos) + " " + str(zPos) + " " + str(chosenCorner) +  " : flip " + str(rand1) + 
@@ -248,7 +247,7 @@ class FloodFill:
                                     # If house is valid to create a floodfill
                                     if projectMath.isPointInSquare([x_pos, z_pos], self.validHouseFloodFillPosition):
                                         flood_fill_value = self.floodfill(x_pos, y_pos, z_pos,
-                                                                          size_struct + self.floodfillHouseSpace)
+                                                                          size_struct // 2 + self.floodfillHouseSpace)
 
                                     else:
                                         flood_fill_value = [x_pos, y_pos, z_pos]
