@@ -90,7 +90,6 @@ class FloodFill:
                 z = node[2] + add[1]
                 y = node[1]
                 if projectMath.isPointInCube([x, y, z], self.buildArea):
-
                     ground_height: int = -1
 
                     try:
@@ -175,7 +174,7 @@ class FloodFill:
 
         return verif_overlaps_house, verif_corners, debug
 
-    def findPosHouse(self, corner_pos):
+    def findPosHouse(self, corner_pos, base_facing="north"):
         size_struct = max(abs(corner_pos[0][0]) + abs(corner_pos[0][2]) + 1,
                           abs(corner_pos[0][1]) + abs(corner_pos[0][3]) + 1)
         if len(self.structures) % 4 == 0:
@@ -237,39 +236,42 @@ class FloodFill:
                     if Iu.getBlock(x_pos, y_pos, z_pos) == 'minecraft:water':
                         continue
 
-                    list_all_flips = [0, 1, 2, 3]
-                    while list_all_flips and not_found:
-                        chosen_flip = list_all_flips[random.randint(0, len(list_all_flips) - 1)]
+                    facing: str = projectMath.computeOrientation([x_pos, y_pos, z_pos], self.computeCenter())
+                    priority: list = projectMath.makeListOrientationFrom(facing)
+                    list_flip_rotation: list = [[], [], [], []]
+                    compositions: list = []
 
-                        list_all_flips.remove(chosen_flip)
-                        list_all_rotation = [0, 1, 2, 3]
-                        while list_all_rotation and not_found:
-                            chosen_rotation = list_all_rotation[random.randint(0, len(list_all_rotation) - 1)]
+                    for flip in range(4):
+                        for rotation in range(4):
+                            result: str = projectMath.computeNewOrientation(base_facing, flip, rotation)
+                            list_flip_rotation[priority.index(result)].append([flip, rotation])
 
-                            chosen_corner = corner_pos[chosen_flip * 4 + chosen_rotation]
-                            list_all_rotation.remove(chosen_rotation)
+                    for index in range(4):
+                        random.shuffle(list_flip_rotation[index])
+                        compositions.extend(list_flip_rotation[index])
 
-                            if self.verifCornersHouse(x_pos, y_pos, z_pos, chosen_corner):
-                                verif_overlaps_house, verif_corners, debug = self.isOverlapAnyHouse(debug,
-                                                                                                    [x_pos, z_pos],
-                                                                                                    chosen_corner)
+                    while compositions and not_found:
+                        chosen_flip, chosen_rotation = compositions[0]
+                        del compositions[0]
 
-                                if verif_corners and verif_overlaps_house:
-                                    """print("Y " + str(x_pos) + " " + str(z_pos) + " " + str(chosen_corner) + " : flip " + str(chosen_flip) + 
-                                        ", rot " + str(chosen_rotation) + " ::" + str(house[0]) + " " + str(house[2]))"""
-                                    not_found = False
+                        chosen_corner = corner_pos[chosen_flip * 4 + chosen_rotation]
 
-                                    # If house is valid to create a floodfill
-                                    if projectMath.isPointInSquare([x_pos, z_pos], self.validHouseFloodFillPosition):
-                                        flood_fill_value = self.floodfill(x_pos, y_pos, z_pos,
-                                                                          size_struct // 2 + self.floodfillHouseSpace)
+                        if self.verifCornersHouse(x_pos, y_pos, z_pos, chosen_corner):
+                            verif_overlaps_house, verif_corners, debug = self.isOverlapAnyHouse(debug, [x_pos, z_pos], chosen_corner)
 
-                                    else:
-                                        flood_fill_value = [x_pos, y_pos, z_pos]
+                            if verif_corners and verif_overlaps_house:
+                                """print("Y " + str(x_pos) + " " + str(z_pos) + " " + str(chosen_corner) + " : flip " + str(chosen_flip) + 
+                                    ", rot " + str(chosen_rotation) + " ::" + str(house[0]) + " " + str(house[2]))"""
+                                not_found = False
 
-                            else:
-                                verif_corners = False
-                                debug -= 1
+                                # If house is valid to create a floodfill
+                                if projectMath.isPointInSquare([x_pos, z_pos], self.validHouseFloodFillPosition):
+                                    flood_fill_value = self.floodfill(x_pos, y_pos, z_pos, size_struct // 2 + self.floodfillHouseSpace)
+                                else:
+                                    flood_fill_value = [x_pos, y_pos, z_pos]
+                        else:
+                            verif_corners = False
+                            debug -= 1
 
         if debug <= 0:
             dictionary = {"position": [x_pos, y_pos, z_pos], "validPosition": False, "flip": chosen_flip,

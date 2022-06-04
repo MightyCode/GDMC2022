@@ -16,8 +16,6 @@ import math
 class BaseStructure:
     AIR_BLOCKS = ["minecraft:air", "minecraft:void_air", "minecraft:cave_air"]
 
-    ORIENTATIONS = ["west", "north", "east", "south"]
-
     FULL_ORIENTATION_FLIP_SOUTH_NORTH = {
         "0": "8",
         "1": "7",
@@ -151,10 +149,10 @@ class BaseStructure:
             "right": "right",
             "x": "x",
             "z": "z",
-            BaseStructure.ORIENTATIONS[0]: BaseStructure.ORIENTATIONS[0],
-            BaseStructure.ORIENTATIONS[1]: BaseStructure.ORIENTATIONS[1],
-            BaseStructure.ORIENTATIONS[2]: BaseStructure.ORIENTATIONS[2],
-            BaseStructure.ORIENTATIONS[3]: BaseStructure.ORIENTATIONS[3]
+            projectMath.ORIENTATIONS[0]: projectMath.ORIENTATIONS[0],
+            projectMath.ORIENTATIONS[1]: projectMath.ORIENTATIONS[1],
+            projectMath.ORIENTATIONS[2]: projectMath.ORIENTATIONS[2],
+            projectMath.ORIENTATIONS[3]: projectMath.ORIENTATIONS[3]
         }
 
         for i in range(16):
@@ -181,9 +179,9 @@ class BaseStructure:
 
         # Apply rotation to orientation
         for orientation in self.computed_orientation.keys():
-            if orientation in BaseStructure.ORIENTATIONS:
-                self.computed_orientation[orientation] = BaseStructure.ORIENTATIONS[
-                    (BaseStructure.ORIENTATIONS.index(self.computed_orientation[orientation]) + rotation) % len(BaseStructure.ORIENTATIONS)
+            if orientation in projectMath.ORIENTATIONS:
+                self.computed_orientation[orientation] = projectMath.ORIENTATIONS[
+                    (projectMath.ORIENTATIONS.index(self.computed_orientation[orientation]) + rotation) % len(projectMath.ORIENTATIONS)
                     ]
 
         for i in range(16):

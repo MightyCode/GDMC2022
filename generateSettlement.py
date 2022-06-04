@@ -1,3 +1,4 @@
+import math
 import time
 from generation.data.village import Village
 from generation.data.villager import Villager

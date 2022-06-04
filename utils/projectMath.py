@@ -1,6 +1,9 @@
 import math
 import random
 
+ORIENTATIONS = ["west", "north", "east", "south"]
+
+
 def isPointInCube(point, cube):
     if cube[0] <= point[0] <= cube[3]:
         if cube[1] <= point[1] <= cube[4]:
@@ -87,6 +90,62 @@ def isInHouse(list_house: list, coord: list):
 
 def euclideanDistance2D(position1, position2):
     return math.sqrt(math.pow(position1[0] - position2[0], 2) + math.pow(position1[1] - position2[1], 2))
+
+
+def computeOrientation(p, b):
+    angle: float = math.atan2((b[2] - p[2]), (b[0] - p[0]))
+
+    if math.pi * -0.75 <= angle <= math.pi * -0.25:
+        return "north"
+    elif math.pi * -0.25 <= angle <= math.pi * 0.25:
+        return "east"
+    elif math.pi * 0.25 <= angle <= math.pi * 0.75:
+        return "south"
+
+    return "west"
+
+
+def computeNewOrientation(orient: str, flip: int, rotation: int):
+    result = orient
+
+    if (flip == 1 or flip == 3) and result == "east":
+        result = "west"
+    elif (flip == 1 or flip == 3) and result == "west":
+        result = "east"
+    elif (flip == 2 or flip == 3) and result == "south":
+        result = "north"
+    elif (flip == 2 or flip == 3) and result == "north":
+        result = "south"
+
+    if result in ORIENTATIONS:
+        result = ORIENTATIONS[(ORIENTATIONS.index(result) + rotation) % len(ORIENTATIONS)]
+
+    return result
+
+
+def makeListOrientationFrom(orient: str) -> list:
+    if orient == "south":
+        if random.randint(1, 2):
+            return ["south", "west", "east", "north"]
+        else:
+            return ["south", "east", "west", "north"]
+
+    elif orient == "west":
+        if random.randint(1, 2):
+            return ["west", "south", "north", "east"]
+        else:
+            return ["west", "north", "south", "east"]
+
+    elif orient == "north":
+        if random.randint(1, 2):
+            return ["north", "west", "east", "south"]
+        else:
+            return ["north", "east", "west", "south"]
+
+    if random.randint(1, 2):
+        return ["east", "north", "south", "west"]
+    else:
+        return ["east", "south", "north", "west"]
 
 
 def computeSquaredZoneWitNumber(zone_number: list, build_area: list) -> list:
