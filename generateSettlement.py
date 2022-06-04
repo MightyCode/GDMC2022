@@ -265,7 +265,7 @@ if not args.remove:
         """ Fourth main step : creates the roads and wall of the village """
         print("\nInitialized road")
         road = Road(area)
-        roadParts: list = road.initRoad(floodFill.listHouse, settlement_data)
+        roadParts: list = road.initRoad(floodFill.structures, settlement_data)
 
         for lore_structure in current_village.lore_structures:
             wallConstruction.addRectangle([
@@ -298,7 +298,7 @@ if not args.remove:
         """ Five main step : places every structure and after that every decorations """
         print("\nConstruct wall")
 
-        wallConstruction.placeWall(settlement_data, resources, world_modification, block_transformation, terrain_modification)
+        wallConstruction.placeWall(settlement_data, resources, floodFill.computeCenter(), world_modification, block_transformation, terrain_modification)
 
         # Connect entry of village in wall to rest of village paths
         wallEntries: list = wallConstruction.returnWallEntries()
@@ -314,7 +314,7 @@ if not args.remove:
             road.addRoad(entry, mayorPosition, mayorStruct, mayorStruct)
 
         print("\nConstruct road")
-        road.generateRoad(world_modification, floodFill.listHouse, settlement_data, terrain_modification)
+        road.generateRoad(world_modification, floodFill.structures, settlement_data, terrain_modification)
 
         i = 0
         current_time: int = int(round(time.time() * 1000)) - milliseconds
@@ -343,7 +343,7 @@ if not args.remove:
                    settlement_data.center[2]),
                settlement_data.center[1]])
         print("Position of first structure",
-              [floodFill.listHouse[0][0], floodFill.listHouse[0][1], floodFill.listHouse[0][2]])
+              [floodFill.structures[0][0], floodFill.structures[0][1], floodFill.structures[0][2]])
         # iu.runCommand("tp {} {} {}".format(floodFill.listHouse[0][0], floodFill.listHouse[0][1], floodFill.listHouse[0][2]))
         print("Time left :", TIME_LIMIT - (int(round(time.time() * 1000)) - milliseconds) / 1000, "s")
 

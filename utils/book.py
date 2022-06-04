@@ -263,7 +263,6 @@ def createBookForVillager(village_model: Village, villager: Villager) -> list:
             order = villager.orders[order_counter]
 
             book_writer.writeLine(f'I made an order to the {order.structure.group}')
-            print(f'I made an order to the {order.structure.group}')
             order_counter += 1
         # Gift phrase
         elif i == gift_place:

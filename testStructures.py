@@ -65,7 +65,7 @@ if not args.remove:
     # Create Village
     village: Village = Village()
     village.name = "TestLand"
-    village.tier = 0
+    village.tier = 1
     village.color = "red"
     village.isDestroyed = False
 
@@ -144,23 +144,23 @@ if not args.remove:
     wall_construction: WallConstruction = WallConstruction(village, 9)
     wall_construction.setConstructionZone(build_area)
 
-    wall_construction.addRectangle([build_area[0] + 100, build_area[2] + 100, build_area[0] + 116, build_area[2] + 116])
-    wall_construction.addRectangle([build_area[0] + size_area[0] // 2 - 10, build_area[2] + size_area[1] // 2 - 10,
-                                    build_area[0] + size_area[0] // 2 + 10, build_area[2] + size_area[1] // 2 + 10])
+    wall_construction.addRectangle([build_area[0] + 10, build_area[2] + 10, build_area[0] + 19, build_area[2] + 19])
+    wall_construction.addRectangle([build_area[0] + size_area[0] - 20, build_area[2] + size_area[1] - 20,
+                                    build_area[0] + size_area[0] - 19, build_area[2] + size_area[1] - 19])
     # wallConstruction.addRectangle([build_area[0] - 30, build_area[2] + 50, build_area[0] + 200, build_area[2] + 200])
     wall_construction.computeWall(WallConstruction.BOUNDING_CONVEX_HULL)
-    # wallConstruction.showImageRepresenting()
+    wall_construction.showImageRepresenting()
 
     from generation.terrainModification import TerrainModification
     terrain_modification = TerrainModification(build_area, wall_construction)
 
-    """wall_construction.placeAirZone(settlement_data, resources, world_modifications, terrain_modification)
-    wall_construction.placeWall(settlement_data, resources, world_modifications, block_transformations, terrain_modification)
-    exit()"""
+    wall_construction.placeAirZone(settlement_data, resources, world_modifications, terrain_modification)
+    wall_construction.placeWall(settlement_data, resources, [0, 64, 0], world_modifications, block_transformations, terrain_modification)
 
     books: dict = generator.generateVillageBooks(settlement_data)
-    interfaceUtil.runCommand("give TamalouMax minecraft:written_book" + books["villageBook"])
-    exit()
+    """interfaceUtil.runCommand("give TamalouMax minecraft:written_book" + books["villageBook"])
+    exit()"""
+
     settlement_data.setVillageBook(books)
 
     generator.makeAirZone(lore_structure, settlement_data, resources, world_modifications, terrain_modification)

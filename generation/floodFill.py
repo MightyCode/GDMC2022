@@ -11,23 +11,24 @@ class FloodFill:
         self.numberOfDecoration = 0
         self.world_modification = world_modification
         self.set_number_of_houses(settlement_data.structure_number_goal)
-        self.listHouse = []
+        self.structures = []
         # random.seed(None, 2)
-        self.startPosRange = [0.75, 0.75]
+        self.startPosRange = [0.73, 0.73]
 
         self.distanceFirstHouse = 40
         self.distanceFirstHouseIncrease = 3
 
         self.buildArea = settlement_data.area
         self.size = settlement_data.size
-        coef: int = 7
+        coef: int = 6
         self.validHouseFloodFillPosition = [self.buildArea[0] + self.size[0] / coef,
                                             self.buildArea[2] + self.size[1] / coef,
                                             self.buildArea[3] - self.size[0] / coef,
                                             self.buildArea[5] - self.size[1] / coef]
         self.minDistanceHouse = 4
-        self.floodfillHouseSpace = 5
-        self.previousStructure = -1
+        self.floodfillHouseSpace = random.randint(4, 7)
+
+        self.previous_structure = -1
 
     def set_number_of_houses(self, number_house: int):
         self.numberOfDecoration: int = int(number_house * 1.5)  # 150
@@ -53,6 +54,20 @@ class FloodFill:
             return y
         else:
             return -1
+
+    def computeCenter(self) -> list:
+        mean: list = [0, 0, 0]
+
+        for structure in self.structures:
+            mean[0] += structure[0]
+            mean[1] += structure[1]
+            mean[2] += structure[2]
+
+        mean[0] /= len(self.structures)
+        mean[1] /= len(self.structures)
+        mean[2] /= len(self.structures)
+
+        return mean
 
     def floodfill(self, xi, yi, zi, size):
         valid_positions = []
@@ -122,20 +137,20 @@ class FloodFill:
         return x_pos, z_pos
 
     def takeNewPositionForHouse(self, size_struct):
-        indices = list(range(0, len(self.listHouse)))
+        indices = list(range(0, len(self.structures)))
 
         while len(indices) > 0:
             index = random.randint(0, len(indices) - 1)
 
             # Test if new houses position is in build Area
-            if projectMath.isPointInSquare([self.listHouse[indices[index]][0], self.listHouse[indices[index]][2]],
+            if projectMath.isPointInSquare([self.structures[indices[index]][0], self.structures[indices[index]][2]],
                                            [self.buildArea[0] + size_struct, self.buildArea[2] + size_struct,
                                             self.buildArea[3] - size_struct, self.buildArea[5] - size_struct]):
-                index_place = random.randint(0, len(self.listHouse[indices[index]][4]) - 1)
+                index_place = random.randint(0, len(self.structures[indices[index]][4]) - 1)
 
-                if not isinstance(self.listHouse[indices[index]][4][index_place], int):
-                    self.previousStructure = indices[index]
-                    return self.listHouse[indices[index]][4][index_place]
+                if not isinstance(self.structures[indices[index]][4][index_place], int):
+                    self.previous_structure = indices[index]
+                    return self.structures[indices[index]][4][index_place]
 
             del indices[index]
 
@@ -143,7 +158,7 @@ class FloodFill:
 
     def isOverlapAnyHouse(self, debug, position, chosen_corner):
         verif_corners = True
-        verif_houses: list = self.listHouse.copy()
+        verif_houses: list = self.structures.copy()
         verif_overlaps_house = True
 
         while verif_houses and verif_corners:
@@ -163,7 +178,7 @@ class FloodFill:
     def findPosHouse(self, corner_pos):
         size_struct = max(abs(corner_pos[0][0]) + abs(corner_pos[0][2]) + 1,
                           abs(corner_pos[0][1]) + abs(corner_pos[0][3]) + 1)
-        if len(self.listHouse) % 4 == 0:
+        if len(self.structures) % 4 == 0:
             self.floodfillHouseSpace += 1
 
         not_found = True
@@ -181,7 +196,7 @@ class FloodFill:
         flood_fill_value = [-1, -1, -1]
 
         while not_found and (debug > 0) and (debug_no_house > 0) and not verif_corners:
-            if len(self.listHouse) == 0:
+            if len(self.structures) == 0:
                 x_pos, z_pos = self.takeRandomPosition(size_struct)
 
                 y_pos = Constants.getHeight(x_pos, z_pos)
@@ -265,7 +280,7 @@ class FloodFill:
 
             # print("debug failed")
         else:
-            self.listHouse.append((x_pos, y_pos, z_pos, chosen_corner, flood_fill_value, self.previousStructure))
+            self.structures.append((x_pos, y_pos, z_pos, chosen_corner, flood_fill_value, self.previous_structure))
 
             dictionary = {"position": [x_pos, y_pos - 1, z_pos], "validPosition": True, "flip": chosen_flip,
                           "rotation": chosen_rotation,
@@ -273,7 +288,7 @@ class FloodFill:
         return dictionary
 
     def decideMinMax(self):
-        houses_to_verify: list = self.listHouse.copy()
+        houses_to_verify: list = self.structures.copy()
 
         x_min = 0
         x_max = 0
@@ -303,6 +318,8 @@ class FloodFill:
         x_min, x_max, z_min, z_max = self.decideMinMax()
         decorations_coord: list = []
 
+        print(self.computeCenter())
+
         for i in range(self.numberOfDecoration):
             should_place_decoration = True
             debug = 5
@@ -317,7 +334,7 @@ class FloodFill:
                     #print("Exit water")
                     continue
 
-                if projectMath.isInHouse(self.listHouse, [x_rand, z_rand]):
+                if projectMath.isInHouse(self.structures, [x_rand, z_rand]):
                     #print("Exit house")
                     continue
 
