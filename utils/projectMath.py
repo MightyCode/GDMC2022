@@ -148,20 +148,20 @@ def makeListOrientationFrom(orient: str) -> list:
         return ["east", "south", "north", "west"]
 
 
-def computeSquaredZoneWitNumber(zone_number: list, build_area: list) -> list:
+def computeSquaredZoneWithNumber(number_zone: list, build_area: list) -> list:
     areas: list = []
+    size_area: list = [build_area[3] - build_area[0] + 1, build_area[5] - build_area[2] + 1]
 
-    for x in range(zone_number[0]):
-        for z in range(zone_number[1]):
+    for x in range(number_zone[0]):
+        for z in range(number_zone[1]):
             areas.append([
-                build_area[0] + x * zone_number[0],
+                build_area[0] + x * size_area[0] // number_zone[0],
                 build_area[1],
-                build_area[2] + z * zone_number[1],
-                build_area[3] if x == zone_number[0] - 1 else build_area[0] + (
-                        x + 1) * zone_number[0],
+                build_area[2] + z * size_area[1] // number_zone[1],
+                build_area[3] if x == number_zone[0] - 1 else build_area[0] + (x + 1) * size_area[0] // number_zone[0] - 1,
                 build_area[4],
-                build_area[5] if z == zone_number[1] - 1 else build_area[2] + (
-                        z + 1) * zone_number[1]])
+                build_area[5] if z == number_zone[1] - 1 else build_area[2] + (z + 1) * size_area[1] // number_zone[1] - 1
+            ])
 
     return areas
 

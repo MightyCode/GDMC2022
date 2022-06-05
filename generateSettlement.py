@@ -1,4 +1,3 @@
-import math
 import time
 from generation.data.village import Village
 from generation.data.villager import Villager
@@ -51,8 +50,7 @@ name_generator: NameGenerator = NameGenerator()
 if build_area == -1:
     exit()
 
-build_area: tuple = (
-    build_area[0], build_area[1], build_area[2], build_area[3] - 1, build_area[4] - 1, build_area[5] - 1)
+build_area: tuple = (build_area[0], build_area[1], build_area[2], build_area[3] - 1, build_area[4] - 1, build_area[5] - 1)
 size_area: list = [build_area[3] - build_area[0] + 1, build_area[5] - build_area[2] + 1]
 
 # Five main steps : init settlement Data, choose structures and find its positions, make road between these
@@ -65,14 +63,17 @@ if not args.remove:
 
     # Each zone for takes 500 blocks, division begin after 1000
     defined_zone_size = [500, 500]
-    settlement_zones_number: list = [int(size_area[0] / defined_zone_size[0]), int(size_area[1] / defined_zone_size[1])]
+    settlement_zones_number: list = [size_area[0] // defined_zone_size[0], size_area[1] // defined_zone_size[1]]
+    print("")
+    print("Number of settlement :", settlement_zones_number[0] * settlement_zones_number[1])
     if settlement_zones_number[0] == 0:
         settlement_zones_number[0] = 1
 
     if settlement_zones_number[1] == 0:
         settlement_zones_number[1] = 1
 
-    settlement_zones = projectMath.computeSquaredZoneWitNumber(settlement_zones_number, list(build_area))
+    settlement_zones = projectMath.computeSquaredZoneWithNumber(settlement_zones_number, list(build_area))
+    print("Settlement zones", settlement_zones)
 
     """Generate village involving on our generation"""
     print("Generate lore of the world")
@@ -337,7 +338,7 @@ if not args.remove:
         print("\nBuild decoration")
         if not current_village.isDestroyed:
             floodFill.placeDecorations(settlement_data, road, wallConstruction)
-        print("Position of lectern for village", current_zone_z * settlement_zones_number[0], ":",
+        print("Position of lectern for village", current_zone_z * settlement_zones_number[0] + current_zone_x, ":",
               [settlement_data.center[0],
                Constants.getHeight(
                    settlement_data.center[0],
