@@ -30,6 +30,8 @@ class BookWriter:
     NUMBER_CHAR_LINE: int = 19
     NUMBER_CHAR_PAGE: int = NUMBER_LINE * NUMBER_CHAR_LINE
 
+    LEN_RETURN_LINE = len("\\\\n")
+
     def __init__(self):
         self.title: str = ""
         self.author: str = ""
@@ -110,10 +112,10 @@ class BookWriter:
         if len(parts) > 1:
             for part in parts[:-1]:
                 size += math.ceil(len(part) / BookWriter.NUMBER_CHAR_LINE) * BookWriter.NUMBER_CHAR_LINE
-                char_position += len(part) + 1
+                char_position += len(part) + BookWriter.LEN_RETURN_LINE
 
                 if size >= position:
-                    return [message[0: position], message[position:]]
+                    return [message[0: char_position], message[char_position:]]
 
         return [message[0: position], message[position:]]
 
@@ -169,11 +171,12 @@ class BookWriter:
         new = self.texts[-1]
         new["newPage"] = True
 
+        self.count_char = 0
+
     def newText(self):
         if self.text_created:
             return
 
-        self.count_char = 0
         new: dict = self.createInfoForText()
         self.texts.append(new)
 

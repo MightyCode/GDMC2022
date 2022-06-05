@@ -70,10 +70,12 @@ if not args.remove:
     village.isDestroyed = False
 
     otherVillage: Village = Village()
-    otherVillage.name = "TestLand 2"
-    village.village_interactions[otherVillage] = (
-        VillageInteraction(village, otherVillage)
-    )
+    for i in range(10):
+        otherVillage: Village = Village()
+        otherVillage.name = f'TestLand {i + 2}'
+        village.village_interactions[otherVillage] = (
+            VillageInteraction(village, otherVillage)
+        )
     # Force relation for tests
     village.village_interactions[otherVillage].economicalRelation = True
 
@@ -149,17 +151,18 @@ if not args.remove:
                                     build_area[0] + size_area[0] - 19, build_area[2] + size_area[1] - 19])
     # wallConstruction.addRectangle([build_area[0] - 30, build_area[2] + 50, build_area[0] + 200, build_area[2] + 200])
     wall_construction.computeWall(WallConstruction.BOUNDING_CONVEX_HULL)
-    wall_construction.showImageRepresenting()
+    #wall_construction.showImageRepresenting()
 
     from generation.terrainModification import TerrainModification
     terrain_modification = TerrainModification(build_area, wall_construction)
 
-    wall_construction.placeAirZone(settlement_data, resources, world_modifications, terrain_modification)
-    wall_construction.placeWall(settlement_data, resources, [0, 64, 0], world_modifications, block_transformations, terrain_modification)
+    """wall_construction.placeAirZone(settlement_data, resources, world_modifications, terrain_modification)
+    wall_construction.placeWall(settlement_data, resources, [0, 64, 0], world_modifications, block_transformations, terrain_modification)"""
 
     books: dict = generator.generateVillageBooks(settlement_data)
-    """interfaceUtil.runCommand("give TamalouMax minecraft:written_book" + books["villageBook"])
-    exit()"""
+    interfaceUtil.runCommand("give TamalouMax minecraft:written_book" + books["villageBook"])
+    print(books["villageBook"])
+    exit()
 
     settlement_data.setVillageBook(books)
 

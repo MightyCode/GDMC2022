@@ -320,8 +320,6 @@ class FloodFill:
         x_min, x_max, z_min, z_max = self.decideMinMax()
         decorations_coord: list = []
 
-        print(self.computeCenter())
-
         for i in range(self.numberOfDecoration):
             should_place_decoration = True
             debug = 5

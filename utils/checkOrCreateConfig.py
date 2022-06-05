@@ -58,7 +58,7 @@ class Config:
     def createConfigFile() -> dict:
         config: dict = Config.createConfig()
 
-        print(os.mkdir("config"))
+        print("Create config ", os.mkdir("config"))
         with open(Config.CONFIG_PATH, "w") as f:
             f.write(json.dumps(config, indent=4, sort_keys=True))
 

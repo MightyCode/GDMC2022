@@ -93,6 +93,8 @@ def createTextOfPresentationVillage(settlementData) -> BookWriter:
         if interaction.state != interaction.STATE_NEUTRAL:
             book_writer.writeLine(f'{village_key.name}.')
 
+        book_writer.writeEmptyLine(1)
+
     if hadBrokeARelation:
         book_writer.writeLine(f'Due to the war, {village.name} had broke their relation with ', breakLine=False)
         for village_key in village.village_interactions:

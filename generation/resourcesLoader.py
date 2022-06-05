@@ -98,6 +98,9 @@ def loadAllResources(resources: Resources) -> None:
     resources.loadStructures("representatives/townhall/mediumtownhall2.nbt",
                              "representatives/townhall/mediumtownhall.json", "mediumtownhall2")
 
+    resources.loadStructures("representatives/townhall/advancedtownhall.nbt",
+                             "representatives/townhall/advancedtownhall.json", "advancedtownhall")
+
     resources.loadStructures("representatives/jail/basicjail.nbt", "representatives/jail/basicjail.json", "basicjail")
     resources.loadStructures("representatives/jail/mediumjail.nbt", "representatives/jail/mediumjail.json", "mediumjail")
     resources.loadStructures("representatives/jail/advancedjail.nbt", "representatives/jail/advancedjail.json", "advancedjail")
