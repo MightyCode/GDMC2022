@@ -271,7 +271,7 @@ def setSignText(x, y, z, line1 = "", line2 = "", line3 = "", line4 = ""):
     l3 = 'Text3:\'{"text":"'+line3+'"}\''
     l4 = 'Text4:\'{"text":"'+line4+'"}\''
     blockNBT = "{"+l1+","+l2+","+l3+","+l4+"}"
-    print(runCommand("data merge block {} {} {} ".format(x, y, z) + blockNBT))
+    runCommand("data merge block {} {} {} ".format(x, y, z) + blockNBT)
     return(runCommand("data merge block {} {} {} ".format(x, y, z) + blockNBT))
 
 

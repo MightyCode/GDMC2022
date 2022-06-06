@@ -24,8 +24,8 @@ import generation.generator as generator
 Important information
 """
 
-structure_name: str = "mediumhouse3"
-structure_type: str = LoreStructure.TYPE_DECORATIONS
+structure_name: str = "advancedgraveyard"
+structure_type: str = LoreStructure.TYPE_FUNCTIONALS
 
 """
 from utils.bookWriter import BookWriter
@@ -112,13 +112,13 @@ if not args.remove:
     lore_structure.age = 1
     lore_structure.flip = 0
     lore_structure.rotation = 0
-    lore_structure.destroyed = True
-    lore_structure.causeDestroy = {"burned": "burned", "abandoned": "abandoned", "damaged": "damaged"}
+    lore_structure.destroyed = False
+    #lore_structure.causeDestroy = {"burned": "burned", "abandoned": "abandoned", "damaged": "damaged"}
 
     lore_structure.name = structure_name
     lore_structure.villagers = [villagers[0], villagers[2], villagers[2]]
     lore_structure.type = structure_type
-    lore_structure.position = [build_area[0] + size_area[0] / 2, 63, build_area[2] + size_area[1] / 2]
+    lore_structure.position = [build_area[0] + size_area[0] / 2, 65, build_area[2] + size_area[1] / 2]
 
     lore_structure.preBuildingInfo = structure.getNextBuildingInformation(lore_structure.flip, lore_structure.rotation)
 
@@ -160,9 +160,9 @@ if not args.remove:
     wall_construction.placeWall(settlement_data, resources, [0, 64, 0], world_modifications, block_transformations, terrain_modification)"""
 
     books: dict = generator.generateVillageBooks(settlement_data)
-    interfaceUtil.runCommand("give TamalouMax minecraft:written_book" + books["villageBook"])
+    """interfaceUtil.runCommand("give TamalouMax minecraft:written_book" + books["villageBook"])
     print(books["villageBook"])
-    exit()
+    exit()"""
 
     settlement_data.setVillageBook(books)
 

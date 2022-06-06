@@ -32,7 +32,7 @@
                 "mediumlumberjackhut"
             ],
             "2": [
-                "mediumlumberjackhut"
+                "advancedlumberjackhut"
             ]
         },
         "type" : "functionals",
@@ -52,7 +52,7 @@
                 "mediumfarm1", "mediumfarm2"
             ],
             "2" : [
-                "mediumfarm1", "mediumfarm2"
+                "advancedfarm"
             ]
         },
         "type" : "functionals",
@@ -171,7 +171,7 @@
                 "mediumworkshop"
             ],
             "2": [
-                "mediumworkshop"
+                "advancedworkshop"
             ]
         },
         "type" : "functionals",
@@ -191,7 +191,7 @@
                 "mediumgraveyard"
             ],
             "2": [
-                "mediumgraveyard"
+                "advancedgraveyard"
             ]
         },
         "type" : "representatives",
@@ -252,7 +252,7 @@
                 "mediumwindmill"
             ],
             "2": [
-                "mediumwindmill"
+                "advancedwindmill"
             ]
         },
         "type" : "functionals",
@@ -272,7 +272,7 @@
                 "mediumbarrack"
             ],
             "2": [
-                "mediumbarrack"
+                "advancedbarrack"
             ]
         },
         "type" : "representatives",
@@ -367,7 +367,7 @@
                 "mediumshop"
             ],
             "2": [
-                "mediumshop"
+                "advancedshop"
             ]
         },
         "type" : "functionals",
@@ -406,7 +406,7 @@
                 "mediumexchanger"
             ],
             "2": [
-                "mediumexchanger"
+                "advancedexchanger"
             ]
         },
         "type" : "functionals",

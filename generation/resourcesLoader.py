@@ -36,6 +36,8 @@ def loadAllResources(resources: Resources) -> None:
                              "functionals/lumberjackhut/basiclumberjackhut.json", "basiclumberjackhut")
     resources.loadStructures("functionals/lumberjackhut/mediumlumberjackhut.nbt",
                              "functionals/lumberjackhut/mediumlumberjackhut.json", "mediumlumberjackhut")
+    resources.loadStructures("functionals/lumberjackhut/advancedlumberjackhut.nbt",
+                             "functionals/lumberjackhut/advancedlumberjackhut.json", "advancedlumberjackhut")
 
     resources.loadStructures("functionals/stonecutter/basicstonecutter.nbt",
                              "functionals/stonecutter/basicstonecutter.json", "basicstonecutter")
@@ -47,11 +49,14 @@ def loadAllResources(resources: Resources) -> None:
     resources.loadStructures("functionals/farm/basicfarm.nbt", "functionals/farm/basicfarm.json", "basicfarm")
     resources.loadStructures("functionals/farm/mediumfarm1.nbt", "functionals/farm/mediumfarm1.json", "mediumfarm1")
     resources.loadStructures("functionals/farm/mediumfarm2.nbt", "functionals/farm/mediumfarm2.json", "mediumfarm2")
+    resources.loadStructures("functionals/farm/advancedfarm.nbt", "functionals/farm/advancedfarm.json", "advancedfarm")
 
     resources.loadStructures("functionals/windmill/basicwindmill.nbt", "functionals/windmill/basicwindmill.json",
                              "basicwindmill")
     resources.loadStructures("functionals/windmill/mediumwindmill.nbt", "functionals/windmill/mediumwindmill.json",
                              "mediumwindmill")
+    resources.loadStructures("functionals/windmill/advancedwindmill.nbt", "functionals/windmill/advancedwindmill.json",
+                             "advancedwindmill")
 
     resources.loadStructures("functionals/furnace/basicfurnace1.nbt", "functionals/furnace/basicfurnace1.json",
                              "basicfurnace1")
@@ -71,6 +76,8 @@ def loadAllResources(resources: Resources) -> None:
                              "basicworkshop")
     resources.loadStructures("functionals/workshop/mediumworkshop.nbt", "functionals/workshop/mediumworkshop.json",
                              "mediumworkshop")
+    resources.loadStructures("functionals/workshop/advancedworkshop.nbt", "functionals/workshop/advancedworkshop.json",
+                             "advancedworkshop")
 
     resources.loadStructures("functionals/weaverhouse/basicweaverhouse.nbt",
                              "functionals/weaverhouse/basicweaverhouse.json", "basicweaverhouse")
@@ -83,11 +90,15 @@ def loadAllResources(resources: Resources) -> None:
                              "functionals/shop/basicshop.json", "basicshop")
     resources.loadStructures("functionals/shop/mediumshop.nbt",
                              "functionals/shop/mediumshop.json", "mediumshop")
+    resources.loadStructures("functionals/shop/advancedshop.nbt",
+                             "functionals/shop/advancedshop.json", "advancedshop")
 
     resources.loadStructures("functionals/exchanger/basicexchanger.nbt",
                              "functionals/exchanger/basicexchanger.json", "basicexchanger")
     resources.loadStructures("functionals/exchanger/mediumexchanger.nbt",
                              "functionals/exchanger/mediumexchanger.json", "mediumexchanger")
+    resources.loadStructures("functionals/exchanger/advancedexchanger.nbt",
+                             "functionals/exchanger/advancedexchanger.json", "advancedexchanger")
 
     ## Load representatives structures for a village
 
@@ -109,6 +120,8 @@ def loadAllResources(resources: Resources) -> None:
                              "representatives/graveyard/basicgraveyard.json", "basicgraveyard")
     resources.loadStructures("representatives/graveyard/mediumgraveyard.nbt",
                              "representatives/graveyard/mediumgraveyard.json", "mediumgraveyard")
+    resources.loadStructures("representatives/graveyard/advancedgraveyard.nbt",
+                             "representatives/graveyard/advancedgraveyard.json", "advancedgraveyard")
 
     resources.loadStructures("representatives/tavern/basictavern.nbt", "representatives/tavern/basictavern.json",
                              "basictavern")
@@ -119,9 +132,10 @@ def loadAllResources(resources: Resources) -> None:
 
     resources.loadStructures("representatives/barrack/basicbarrack.nbt", "representatives/barrack/basicbarrack.json",
                              "basicbarrack")
-
     resources.loadStructures("representatives/barrack/mediumbarrack.nbt", "representatives/barrack/mediumbarrack.json",
                              "mediumbarrack")
+    resources.loadStructures("representatives/barrack/advancedbarrack.nbt", "representatives/barrack/advancedbarrack.json",
+                             "advancedbarrack")
 
     resources.loadStructures("representatives/adventurerhouse/adventurerhouse.nbt",
                              "representatives/adventurerhouse/adventurerhouse.json", "adventurerhouse")
