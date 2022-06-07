@@ -1,0 +1,41 @@
+{
+    "mainEntry": {
+      "facing" : "north",
+      "position" : [10, 1, 0]
+    },
+    "replacements" : {
+      "oak" : { "type" : "woodType", "state" : 2 },
+      "spruce" : { "type" : "woodType2", "state" : 2 }
+    },
+    "air" : {
+      "preferredAirMode" : 1
+    },
+    "lootTables" : [
+    ],
+    "villageInfo" : {
+      "villager" : 0
+    },
+    "ground" : {
+      "info" : "lastLayer"
+    },
+    "special" : {
+      "sign" : [
+          { "position" : [7, 1, 1], "orientation" : "west"},
+          { "position" : [2, 1, 1], "orientation" : "east"},
+          { "position" : [7, 1, 3], "orientation" : "west"},
+          { "position" : [2, 1, 3], "orientation" : "east"},
+          { "position" : [7, 1, 5], "orientation" : "west"},
+          { "position" : [2, 1, 5], "orientation" : "east"},
+          { "position" : [7, 1, 7], "orientation" : "west"},
+          { "position" : [2, 1, 7], "orientation" : "east"},
+          { "position" : [7, 1, 9], "orientation" : "west"},
+          { "position" : [2, 1, 9], "orientation" : "east"}
+        ]
+    }, 
+    "sign" : {
+      "position" : [3, 2, -1],
+      "facing" : "north",
+      "tier" : 3,
+      "name" : "Graveyard"
+    }
+  }

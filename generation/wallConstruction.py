@@ -70,6 +70,8 @@ class WallConstruction:
         self.hull: list = []
         self.matrix: list = []
 
+        self.max_diff_for_door = 10
+
     def setConstructionZone(self, area):
         self.detection_grid_size = [0, 0]
         self.area = area
@@ -536,7 +538,7 @@ class WallConstruction:
             if not (self.area[0] <= x_real <= self.area[3] and self.area[2] <= z_real <= self.area[5]):
                 continue
 
-            y = wallCell.augmented_height
+            y = wallCell.augmented_height + 1
 
             lore_structure = self.createWallLoreStructure(wallCell, x_real, y, z_real, settlement_data)
             lore_structure.preBuildingInfo = resources.structures[lore_structure.name].getNextBuildingInformation(
@@ -544,13 +546,13 @@ class WallConstruction:
             )
             generator.makeAirZone(lore_structure, settlement_data, resources, world_modification, terrain_modification)
 
-    def placeWall(self, settlement_data: SettlementData, resources: Resources,
+    def placeWall(self, settlement_data: SettlementData, resources: Resources, mean_structure_positions: list,
                   world_modification: WorldModification, block_transformations: list, terrain_modification):
 
         # Choose door
         door_candidate: list = []
         for wallCell in self.wall_list:
-            if wallCell.wall_type == self.MODEL_LINE:
+            if wallCell.wall_type == self.MODEL_LINE and abs(wallCell.position[1] - mean_structure_positions[1]) > self.max_diff_for_door:
                 door_candidate.append(wallCell)
 
         if len(door_candidate) > 0:
@@ -571,7 +573,7 @@ class WallConstruction:
             if not (self.area[0] <= x_real <= self.area[3] and self.area[2] <= z_real <= self.area[5]):
                 continue
 
-            y = wallCell.augmented_height
+            y = wallCell.augmented_height + 1
 
             lore_structure = self.createWallLoreStructure(wallCell, x_real, y, z_real, settlement_data)
 
@@ -645,7 +647,14 @@ class WallConstruction:
                 #print("Out side", pos_x, pos_z)
                 return False
 
-            return self.matrix[pos_z * self.detection_grid_size[0] + pos_x]
+            if self.matrix[pos_z * self.detection_grid_size[0] + pos_x]:
+                return True
+
+            for wall in self.wall_list:
+                if wall.position[0] == pos_x and wall.position[1] == pos_z:
+                    return True
+
+            return False
 
         return False
 

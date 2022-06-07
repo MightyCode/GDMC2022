@@ -52,4 +52,4 @@ class TerrainModification:
 
         block: str = iu.getBlock(x, y, z)
 
-        return "leaves" in block or "log" in block
+        return "leaves" in block or "log" in block or block == "minecraft:bee_nest"

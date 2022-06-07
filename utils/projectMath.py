@@ -1,6 +1,9 @@
 import math
 import random
 
+ORIENTATIONS = ["west", "north", "east", "south"]
+
+
 def isPointInCube(point, cube):
     if cube[0] <= point[0] <= cube[3]:
         if cube[1] <= point[1] <= cube[4]:
@@ -89,20 +92,76 @@ def euclideanDistance2D(position1, position2):
     return math.sqrt(math.pow(position1[0] - position2[0], 2) + math.pow(position1[1] - position2[1], 2))
 
 
-def computeSquaredZoneWitNumber(zone_number: list, build_area: list) -> list:
-    areas: list = []
+def computeOrientation(p, b):
+    angle: float = math.atan2((b[2] - p[2]), (b[0] - p[0]))
 
-    for x in range(zone_number[0]):
-        for z in range(zone_number[1]):
+    if math.pi * -0.75 <= angle <= math.pi * -0.25:
+        return "north"
+    elif math.pi * -0.25 <= angle <= math.pi * 0.25:
+        return "east"
+    elif math.pi * 0.25 <= angle <= math.pi * 0.75:
+        return "south"
+
+    return "west"
+
+
+def computeNewOrientation(orient: str, flip: int, rotation: int):
+    result = orient
+
+    if (flip == 1 or flip == 3) and result == "east":
+        result = "west"
+    elif (flip == 1 or flip == 3) and result == "west":
+        result = "east"
+    elif (flip == 2 or flip == 3) and result == "south":
+        result = "north"
+    elif (flip == 2 or flip == 3) and result == "north":
+        result = "south"
+
+    if result in ORIENTATIONS:
+        result = ORIENTATIONS[(ORIENTATIONS.index(result) + rotation) % len(ORIENTATIONS)]
+
+    return result
+
+
+def makeListOrientationFrom(orient: str) -> list:
+    if orient == "south":
+        if random.randint(1, 2):
+            return ["south", "west", "east", "north"]
+        else:
+            return ["south", "east", "west", "north"]
+
+    elif orient == "west":
+        if random.randint(1, 2):
+            return ["west", "south", "north", "east"]
+        else:
+            return ["west", "north", "south", "east"]
+
+    elif orient == "north":
+        if random.randint(1, 2):
+            return ["north", "west", "east", "south"]
+        else:
+            return ["north", "east", "west", "south"]
+
+    if random.randint(1, 2):
+        return ["east", "north", "south", "west"]
+    else:
+        return ["east", "south", "north", "west"]
+
+
+def computeSquaredZoneWithNumber(number_zone: list, build_area: list) -> list:
+    areas: list = []
+    size_area: list = [build_area[3] - build_area[0] + 1, build_area[5] - build_area[2] + 1]
+
+    for x in range(number_zone[0]):
+        for z in range(number_zone[1]):
             areas.append([
-                build_area[0] + x * zone_number[0],
+                build_area[0] + x * size_area[0] // number_zone[0],
                 build_area[1],
-                build_area[2] + z * zone_number[1],
-                build_area[3] if x == zone_number[0] - 1 else build_area[0] + (
-                        x + 1) * zone_number[0],
+                build_area[2] + z * size_area[1] // number_zone[1],
+                build_area[3] if x == number_zone[0] - 1 else build_area[0] + (x + 1) * size_area[0] // number_zone[0] - 1,
                 build_area[4],
-                build_area[5] if z == zone_number[1] - 1 else build_area[2] + (
-                        z + 1) * zone_number[1]])
+                build_area[5] if z == number_zone[1] - 1 else build_area[2] + (z + 1) * size_area[1] // number_zone[1] - 1
+            ])
 
     return areas
 

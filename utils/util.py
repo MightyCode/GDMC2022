@@ -203,7 +203,7 @@ def addItemChest(x, y, z, items):
         interfaceUtils.runCommand(command)
 
 
-IGNORED_BLOCKS: list = ['minecraft:oak_leaves', 'minecraft:birch_leaves', 'minecraft:spruce_leaves',
+IGNORED_BLOCKS: list = ['minecraft:air', 'minecraft:cave_air', 'minecraft:oak_leaves', 'minecraft:birch_leaves', 'minecraft:spruce_leaves',
                         'minecraft:dark_oak_leaves', 'minecraft:jungle_leaves', 'minecraft:acacia_leaves'
                         'minecraft:oak_log', 'minecraft:birch_log', 'minecraft:spruce_log', 'minecraft:jungle_log',
                         'minecraft:acacia_log', 'minecraft:dark_oak_log']
@@ -215,7 +215,7 @@ def getHighestNonAirBlock(cx, cz, local_x, local_z):
     cy = interfaceUtils.globalWorldSlice.heightmaps["MOTION_BLOCKING_NO_LEAVES"][local_x, local_z] - 1
 
     ## Find highest non-air block
-    while interfaceUtils.getBlock(cx, cy-1, cz) in IGNORED_BLOCKS:
+    while interfaceUtils.getBlock(cx, cy, cz) in IGNORED_BLOCKS:
         cy -= 1
 
     return cy

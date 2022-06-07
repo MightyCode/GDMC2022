@@ -2,9 +2,7 @@
   "mainEntry": {
     "facing": "north",
     "position": [
-      3,
-      1,
-      0
+      3,1,0
     ]
   },
   "replacements": {
@@ -18,8 +16,9 @@
     }
   },
   "air": {
-    "preferredAirMode": 1,
+    "preferredAirMode": 2,
     "replacements": [
+      [0, 1, 0, 5, 9, 9]
     ]
   },
   "lootTables": [

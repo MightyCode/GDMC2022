@@ -1,38 +1,37 @@
 {
   "mainEntry": {
     "facing" : "north",
-    "position" : [4, 0, 0]
+    "position" : [7, 0, 0]
   },
   "replacements" : {
     "oak" : { "type" : "woodType", "state" : 2 },
-    "spruce" : { "type" : "woodType2", "state" : 2 }
+    "spruce" : { "type" : "woodType2", "state" : 2 },
+    "acacia" : { "type" : "woodType3", "state" : 2 }
   },
   "air" : {
-    "preferredAirMode" : 1,
-    "replacements" : [
-      [0, 0, 0, 9, 10, 10]
-    ]
+    "preferredAirMode" : 1
   },
   "lootTables" : [
-    ["shop"]
+    ["exchanger"]
   ],
   "villageInfo" : {
     "villager" : 1,
     "gameProfession" : "toolsmith",
-    "profession" : "Merchant"
+    "profession" : "Exchanger"
   },
   "ground" : {
-    "info" : "lastLayer"
+    "info": "lastLayer"
   },
   "sign" : {
-    "position" : [2, 2, 1],
+    "position" : [5, 2, 0],
     "facing" : "north",
-    "tier" : 2,
-    "name" : "Shop"
+    "tier" : 3,
+    "name" : "Exchanger"
   },
   "special" : {
     "additionalItem": {
-      "order" : [6, 2, 7]
+      "order" : [2, 2, 2],
+      "trade" : [2, 2, 2]
     }
   }
 }

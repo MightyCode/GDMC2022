@@ -19,14 +19,40 @@ There are several ways you can use to define a build are for this generator, dep
 -a A, --radius A      Radius for building area, only meaningful with -p
 -r [R], --remove [R]  Remove all structure if debug was activated, temp.txt if r specified, elsewhere file name: -r temp_0.txt
 ### Debug mode: 
-To activate the debug mode and save world modification, you need to set debugMode as True in the config/config.json file
-notice that it will be very much slower with debugMode.
+To activate the debug mode and save world modification, you need to set debugMode as True
+in the config/config.json file.
+You can run checkOrCreateConfig file if you want to create the file before any generation.
+Notice that all generation will be very much slower with debugMode activated.
 ## Description of the Generator
-This Minecraft Settlement Generator is generating a coherent minecraft village. In that village, there are unique interaction between villagers using books in their house. There is a system of death, with a death record in the village and a cemetery. Murders often takes place in the village, so be sure to look around for any clue.
+This Minecraft Settlement Generator is generating a coherent minecraft village. 
+The village will be of basic, medium or advanced village.
+But more, the village is connected to surrounded villages, the relation will be from 
+very close relation to war.
+The war relation is very important because if a village has only one war relation, it will enter
+the __war__ status.
+A village can be destroyed too. By many cause such as war or pillager raid.
+
+In that village, there are unique interactions between villagers using diaries on their house.
+There is a system of death, with a death book in the village and one the graveyard. 
+
+One murderer often takes place in the village in a war status, so be sure to look around for any clue.
 ### What it does concretely
-Based on the size of the area the player has set, the program will decide if it will try to generate X village within there is Y Houses if the area is larger than 500 block. Then it will decide on the location of the first house of the first village. From that, it will then place houses at a random distance (but acceptable) from each other in connected area, discovering new chunk after an other and adding materials unlocked thanks to that. When the program decide to place a new house, it will look at houses already built and ressources available to then decide which house will be built.
+Based on the size of the area the player has set, the generator will decide if it will 
+generate X village if the area is larger than 500 block.
+For example:
+- Zone of 450 X 450, the generator will generate one village in X and Z of size 450 X 450.
+- Zone of 600 X 450, the generator will generate two village in X and one Z. Both of size of 300 X 450.
+So the logical minimal size of a village is 256 by 256.
+
+Then it will decide on the location of the first house of the first village. 
+From that, it will then place houses at a random distance (but acceptable) 
+from each other in connected area, discovering new chunks and adding materials to the village.
+The material system is not fully used but is represents the power of the village for commercial purposes.
 ### Future of this program:
-We want to work on interaction between villages, implement new houses, make more uniqueness villages based on more detailed ressources and use the interaction between villages to upgrade each villages "together" (or not if they are ennemies).
+Now we have many placeholder structure. It could be cool to replace for example the generation of the 
+town hall from a nbt file to a script, the system is already prepare to handle this. The well and 
+the quarry are generated via a script.
+
 ###Contact Information
 
 If you want to contact us for any question, you can do so via discord :

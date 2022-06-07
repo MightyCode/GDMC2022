@@ -71,7 +71,7 @@ class Village:
     def generateVillageLore(self):
         self.defineTierAndAge()
         colors = ["white", "orange", "magenta", "light_blue", "yellow", "lime", "pink", "gray", "light_gray", "cyan",
-                  "purple", "blue", "brown", "green", "red", "black"]
+                  "purple", "blue", "brown", "green"]
 
         self.color = Config.getValueOrDefault("villageColor", colors[random.randint(0, len(colors) - 1)])
 

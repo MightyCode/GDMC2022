@@ -1,7 +1,7 @@
 {
   "mainEntry": {
     "facing" : "north",
-    "position" : [4, 0, 0]
+    "position" : [7, 1, 0]
   },
   "replacements" : {
     "oak" : { "type" : "woodType", "state" : 2 },
@@ -10,29 +10,28 @@
   "air" : {
     "preferredAirMode" : 1,
     "replacements" : [
-      [0, 0, 0, 9, 10, 10]
     ]
   },
   "lootTables" : [
-    ["shop"]
+    ["basicfarm"]
   ],
   "villageInfo" : {
-    "villager" : 1,
-    "gameProfession" : "toolsmith",
-    "profession" : "Merchant"
+    "villager" : 2,
+    "gameProfession" : "farmer",
+    "profession" : "Farmer"
   },
   "ground" : {
-    "info" : "lastLayer"
+    "info" : "all"
   },
   "sign" : {
-    "position" : [2, 2, 1],
+    "position" : [6, 3, 3],
     "facing" : "north",
-    "tier" : 2,
-    "name" : "Shop"
+    "tier" : 3,
+    "name" : "Farm"
   },
   "special" : {
     "additionalItem": {
-      "order" : [6, 2, 7]
+      "order" : [3, 5, 5]
     }
   }
 }
