@@ -37,14 +37,7 @@ class WorldModification:
             self.after_modification.append([x, y, z, block])
 
         if place_immediately:
-            self.stateBefore = interfaceUtils.globalinterface.isBuffering()
-            if self.stateBefore:
-                interfaceUtils.setBuffering(False)
-
-            interfaceUtils.setBlock(x, y, z, block)
-
-            if self.stateBefore:
-                interfaceUtils.setBuffering(True)
+            interfaceUtils.runCommand(f'setblock {x} {y} {z} {block}')
         else:
             interfaceUtils.setBlock(x, y, z, block)
 

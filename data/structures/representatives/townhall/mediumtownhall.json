@@ -35,7 +35,7 @@
       ]
     },
     "sign" : {
-      "position" : [3, 1, 1],
+      "position" : [3, 3, 1],
       "facing" : "north",
       "tier" : 2,
       "name" : "Townhall"

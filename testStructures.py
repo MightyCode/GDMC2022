@@ -24,7 +24,7 @@ import generation.generator as generator
 Important information
 """
 
-structure_name: str = "advancedgraveyard"
+structure_name: str = "mediumtownhall"
 structure_type: str = LoreStructure.TYPE_FUNCTIONALS
 
 """
@@ -160,10 +160,6 @@ if not args.remove:
     wall_construction.placeWall(settlement_data, resources, [0, 64, 0], world_modifications, block_transformations, terrain_modification)"""
 
     books: dict = generator.generateVillageBooks(settlement_data)
-    """interfaceUtil.runCommand("give TamalouMax minecraft:written_book" + books["villageBook"])
-    print(books["villageBook"])
-    exit()"""
-
     settlement_data.setVillageBook(books)
 
     generator.makeAirZone(lore_structure, settlement_data, resources, world_modifications, terrain_modification)

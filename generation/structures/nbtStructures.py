@@ -167,6 +167,8 @@ class NbtStructures(BaseStructure):
 
     def build(self, world_modification, building_conditions: BuildingCondition, chest_generation: ChestGeneration,
               block_transformations: list) -> None:
+
+
         ## Pre computing :
         building_conditions.referencePoint = building_conditions.referencePoint.copy()
         self.computeOrientation(building_conditions.rotation, building_conditions.flip)
@@ -183,8 +185,8 @@ class NbtStructures(BaseStructure):
                 change_state = block_palette[NbtStructures.CHANGE_STATE]
 
                 if change_state == 0 or change_state == 1:
-                    block_palette[NbtStructures.NAME] = \
-                        building_conditions.replacements[block_palette[NbtStructures.CHANGE_TO]].split("[")[0]
+                    block_palette[NbtStructures.NAME] = building_conditions.replacements[block_palette[NbtStructures.CHANGE_TO]]
+
                 elif change_state == 2:
                     block_palette[NbtStructures.NAME] = block_palette[NbtStructures.CHANGE_ORIGINAL_BLOCK] \
                         .replace(block_palette[NbtStructures.CHANGE_REPLACEMENT_WORD],
@@ -253,7 +255,7 @@ class NbtStructures(BaseStructure):
         self.checkAfterPlacing(x, y, z, block_name, world_position, chest_generation, building_conditions)
 
     def checkBeforePlacing(self, block_name: str) -> None:
-        if "chest" in block_name or "shulker" in block_name or "lectern" in block_name or "barrel" in block_name:
+        if "chest" in block_name or "shulker" in block_name or "lectern" in block_name or "barrel" in block_name or "banner" in block_name:
             self.placeImmediately = True
 
     def convertNbtBlockToStr(self, block_palette, take_original_block_name=False):
@@ -264,6 +266,12 @@ class NbtStructures(BaseStructure):
             block = block_palette[NbtStructures.NAME]
 
         block = self.applyBlockTransformation(block)
+        part: list
+        if "{" in block:
+            index: int = block.index("{")
+            part = [block[:index], block[index:]]
+        else:
+            part = [block, ""]
 
         properties: str = "["
         for key in block_palette[NbtStructures.PROPERTIES].keys():
@@ -273,7 +281,8 @@ class NbtStructures(BaseStructure):
         if len(block_palette[NbtStructures.PROPERTIES]) > 0:
             properties = properties[:-1]
 
-        block = block + properties + "]"
+        block = part[0] + properties + "]" + part[1]
+
         return block
 
     def getLastLayerBlockPosition(self):

@@ -1,3 +1,5 @@
+import time
+
 from utils.constants import Constants
 from generation.buildingCondition import BuildingCondition
 

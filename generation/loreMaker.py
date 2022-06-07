@@ -2,6 +2,7 @@ import random
 import copy
 
 import utils.util as util
+from generation.banner import Banner
 from generation.data.village import Village
 from generation.data.villager import Villager
 from generation.data.village import VillageInteraction
@@ -141,8 +142,11 @@ def fillSettlementDataWithColor(settlement_data, color):
     settlement_data.setMaterialReplacement("concrete_powder", "minecraft:" + color + "_concrete_powder")
     settlement_data.setMaterialReplacement("dye", "minecraft:" + color + "_dye")
     settlement_data.setMaterialReplacement("bed", "minecraft:" + color + "_bed")
-    settlement_data.setMaterialReplacement("banner", "minecraft:" + color + "_banner")
-    settlement_data.setMaterialReplacement("wall_banner", "minecraft:" + color + "_wall_banner")
+
+    symbols: str = Banner.generateBanner(settlement_data.village_model)
+
+    settlement_data.setMaterialReplacement("banner", "minecraft:" + color + "_banner" + symbols)
+    settlement_data.setMaterialReplacement("wall_banner", "minecraft:" + color + "_wall_banner" + symbols)
 
 
 def generateLoreAfterAllStructure(village: Village, name_generator):
