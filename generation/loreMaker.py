@@ -77,7 +77,6 @@ def checkForImpossibleInteractions(villages: list, interactions: list):
 
             interaction1 = village.village_interactions[interaction.village1]
             interaction2 = village.village_interactions[interaction.village2]
-            interaction2 = village.village_interactions[interaction.village2]
 
             if (interaction1.state != VillageInteraction.STATE_LOVE
                 and interaction1.state != VillageInteraction.STATE_FRIENDSHIP) or \
@@ -99,12 +98,12 @@ def generateLoreAfterRelation(villages: list):
 
     for village in order_to_check:
         if village.status == "peaceful":
-            village.isDestroyed = random.randint(1, 10) == 1
+            village.isDestroyed = random.randint(2, 10) == 1
 
             if village.isDestroyed:
-                village.destroyCause = "pillager" if random.randint(1, 2) == 1 else "abandoned"
+                village.destroyCause = village.DESTROYED_PILLAGER
         else:
-            village.destroyCause = "war"
+            village.destroyCause = village.DESTROYED_WAR
             chance: float = computeChanceOfDestructionComparingTier(village)
 
             if chance == 0.8:
@@ -143,10 +142,18 @@ def fillSettlementDataWithColor(settlement_data, color):
     settlement_data.setMaterialReplacement("dye", "minecraft:" + color + "_dye")
     settlement_data.setMaterialReplacement("bed", "minecraft:" + color + "_bed")
 
-    symbols: str = Banner.generateBanner(settlement_data.village_model)
-
-    settlement_data.setMaterialReplacement("banner", "minecraft:" + color + "_banner" + symbols)
-    settlement_data.setMaterialReplacement("wall_banner", "minecraft:" + color + "_wall_banner" + symbols)
+    if settlement_data.village_model.isDestroyed:
+        if settlement_data.village_model.destroyCause == Village.DESTROYED_WAR:
+            settlement_data.setMaterialReplacement("banner", "minecraft:black_banner")
+            settlement_data.setMaterialReplacement("wall_banner", "minecraft:black_wall_banner")
+        elif settlement_data.village_model.destroyCause == Village.DESTROYED_PILLAGER:
+            symbols: str = Banner.givePillagerBanner()
+            settlement_data.setMaterialReplacement("banner", "minecraft:white_banner" + symbols)
+            settlement_data.setMaterialReplacement("wall_banner", "minecraft:white_wall_banner" + symbols)
+    else:
+        symbols: str = Banner.generateBanner(settlement_data.village_model)
+        settlement_data.setMaterialReplacement("banner", "minecraft:" + color + "_banner" + symbols)
+        settlement_data.setMaterialReplacement("wall_banner", "minecraft:" + color + "_wall_banner" + symbols)
 
 
 def generateLoreAfterAllStructure(village: Village, name_generator):

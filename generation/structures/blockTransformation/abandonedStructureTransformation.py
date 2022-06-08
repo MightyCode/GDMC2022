@@ -27,7 +27,8 @@ class AbandonedStructureTransformation:
                 or "lantern" in block \
                 or "wool" in block \
                 or "carpet" in block \
-                or "leaves" in block:
+                or "leaves" in block \
+                or "campfire" in block:
             return "minecraft:air"
 
         if "potted" in block:

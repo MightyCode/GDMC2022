@@ -72,6 +72,19 @@ class Banner:
         )
 
     @staticmethod
+    def givePillagerBanner():
+        name_info: dict = {
+            "text": "Pillager banner",
+            "color": "dark_grey",
+            "italic": True
+        }
+
+        return Banner.createJsonFromSymbolLists(
+            [["mr", 9], ["bs", 8], ["cs", 7], ["bo", 8], ["ms", 15], ["hh", 8], ["mc", 8], ["bo", 15]],
+            name_info
+        )
+
+    @staticmethod
     def generateBanner(village, alliance=None):
         name_info: dict = {
             "text": village.name + " banner",

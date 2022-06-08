@@ -67,7 +67,8 @@ if not args.remove:
     village.name = "TestLand"
     village.tier = 1
     village.color = "red"
-    village.isDestroyed = False
+    village.isDestroyed = True
+    village.destroyCause = Village.DESTROYED_PILLAGER
 
     otherVillage: Village = Village()
     for i in range(10):
