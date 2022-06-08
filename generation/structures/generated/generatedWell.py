@@ -1,5 +1,5 @@
 from generation.structures.baseStructure import BaseStructure
-from generation.buildingCondition import BuildingCondition
+from generation.structures.buildingCondition import BuildingCondition
 import utils.util as util
 
 

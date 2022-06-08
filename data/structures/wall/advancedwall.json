@@ -8,7 +8,9 @@
       "spruce" : { "type" : "woodType2", "state" : 2 },
       "acacia" : { "type" : "woodType3", "state" : 2 },
       "minecraft:white_wall_banner" : { "type" : "wall_banner", "state" : 1 },
-      "minecraft:white_banner" : { "type" : "banner", "state" : 1 }
+      "minecraft:white_banner" : { "type" : "banner", "state" : 1 },
+      "minecraft:red_banner" :  { "type" : "war_banner", "state" : 1},
+      "minecraft:red_wall_banner" :  { "type" : "war_wall_banner", "state" : 1}
     },
     "air" : {
       "preferredAirMode" : 1

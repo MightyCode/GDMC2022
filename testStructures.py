@@ -24,7 +24,7 @@ import generation.generator as generator
 Important information
 """
 
-structure_name: str = "mediumtownhall"
+structure_name: str = "basictownhall"
 structure_type: str = LoreStructure.TYPE_FUNCTIONALS
 
 """
@@ -66,9 +66,9 @@ if not args.remove:
     village: Village = Village()
     village.name = "TestLand"
     village.tier = 1
-    village.color = "red"
-    village.isDestroyed = True
-    village.destroyCause = Village.DESTROYED_PILLAGER
+    village.color = "yellow"
+    village.isDestroyed = False
+    village.status = Village.STATE_PEACEFUL
 
     otherVillage: Village = Village()
     for i in range(10):
@@ -119,7 +119,7 @@ if not args.remove:
     lore_structure.name = structure_name
     lore_structure.villagers = [villagers[0], villagers[2], villagers[2]]
     lore_structure.type = structure_type
-    lore_structure.position = [build_area[0] + size_area[0] / 2, 65, build_area[2] + size_area[1] / 2]
+    lore_structure.position = [build_area[0] + size_area[0] / 2, 63, build_area[2] + size_area[1] / 2]
 
     lore_structure.preBuildingInfo = structure.getNextBuildingInformation(lore_structure.flip, lore_structure.rotation)
 

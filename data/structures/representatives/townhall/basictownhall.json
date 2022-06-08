@@ -8,7 +8,9 @@
       "minecraft:white_wall_banner" : { "type" : "wall_banner", "state" : 1 },
       "minecraft:white_banner" : { "type" : "banner", "state" : 1 },
       "oak" : { "type" : "woodType", "state" : 2 },
-      "spruce" : { "type" : "woodType2", "state" : 2 }
+      "spruce" : { "type" : "woodType2", "state" : 2 },
+      "minecraft:red_banner" :  { "type" : "war_banner", "state" : 1},
+      "minecraft:red_wall_banner" :  { "type" : "war_wall_banner", "state" : 1}
     },
     "air" : {
       "preferredAirMode" : 1,
@@ -25,6 +27,19 @@
       "villager" : 1,
       "gameProfession" : "librarian",
       "profession" : "Mayor"
+    },
+    "war" : {
+      "banner" : [
+        {
+          "position" : [1, 5, 1], "rotation" : 6
+        },{
+          "position" : [1, 5, 8], "rotation" : 2
+        },{
+          "position" : [9, 5, 1], "rotation" : 10
+        },{
+          "position" : [9, 5, 8], "rotation" : 14
+        }
+      ]
     },
     "ground" : {
       "zones" : [

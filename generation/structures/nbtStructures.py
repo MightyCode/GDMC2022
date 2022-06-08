@@ -1,5 +1,5 @@
 from generation.structures.baseStructure import BaseStructure
-from generation.buildingCondition import BuildingCondition
+from generation.structures.buildingCondition import BuildingCondition
 from generation.chestGeneration import ChestGeneration
 import utils.projectMath as projectMath
 

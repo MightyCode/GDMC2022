@@ -127,6 +127,23 @@ def alterSettlementDataWithNewStructures(settlement_data, lore_structure: LoreSt
 def applyLoreToSettlementData(settlement_data):
     fillSettlementDataWithColor(settlement_data, settlement_data.village_model.color)
 
+    if settlement_data.village_model.isDestroyed:
+        if settlement_data.village_model.destroyCause == Village.DESTROYED_WAR:
+            settlement_data.setMaterialReplacement("banner", "minecraft:black_banner")
+            settlement_data.setMaterialReplacement("wall_banner", "minecraft:black_wall_banner")
+        elif settlement_data.village_model.destroyCause == Village.DESTROYED_PILLAGER:
+            symbols: str = Banner.givePillagerBanner()
+            settlement_data.setMaterialReplacement("banner", "minecraft:white_banner" + symbols)
+            settlement_data.setMaterialReplacement("wall_banner", "minecraft:white_wall_banner" + symbols)
+
+    if settlement_data.village_model.status == Village.STATE_WAR:
+        symbols: str = Banner.giveWarBanner()
+        settlement_data.setMaterialReplacement("war_banner", "minecraft:red_banner" + symbols)
+        settlement_data.setMaterialReplacement("war_wall_banner", "minecraft:red_wall_banner" + symbols)
+    else:
+        settlement_data.setMaterialReplacement("war_banner", "minecraft:air")
+        settlement_data.setMaterialReplacement("war_wall_banner", "minecraft:air")
+
 
 def fillSettlementDataWithColor(settlement_data, color):
     settlement_data.setMaterialReplacement("color", color)
@@ -142,15 +159,7 @@ def fillSettlementDataWithColor(settlement_data, color):
     settlement_data.setMaterialReplacement("dye", "minecraft:" + color + "_dye")
     settlement_data.setMaterialReplacement("bed", "minecraft:" + color + "_bed")
 
-    if settlement_data.village_model.isDestroyed:
-        if settlement_data.village_model.destroyCause == Village.DESTROYED_WAR:
-            settlement_data.setMaterialReplacement("banner", "minecraft:black_banner")
-            settlement_data.setMaterialReplacement("wall_banner", "minecraft:black_wall_banner")
-        elif settlement_data.village_model.destroyCause == Village.DESTROYED_PILLAGER:
-            symbols: str = Banner.givePillagerBanner()
-            settlement_data.setMaterialReplacement("banner", "minecraft:white_banner" + symbols)
-            settlement_data.setMaterialReplacement("wall_banner", "minecraft:white_wall_banner" + symbols)
-    else:
+    if not settlement_data.village_model.isDestroyed:
         symbols: str = Banner.generateBanner(settlement_data.village_model)
         settlement_data.setMaterialReplacement("banner", "minecraft:" + color + "_banner" + symbols)
         settlement_data.setMaterialReplacement("wall_banner", "minecraft:" + color + "_wall_banner" + symbols)

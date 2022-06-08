@@ -1,7 +1,5 @@
-import time
-
 from utils.constants import Constants
-from generation.buildingCondition import BuildingCondition
+from generation.structures.buildingCondition import BuildingCondition
 
 import utils.util as util
 import utils.projectMath as projectMath

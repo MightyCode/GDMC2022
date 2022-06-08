@@ -2,7 +2,7 @@ from generation.chestGeneration import ChestGeneration
 from generation.resources import Resources
 from generation.structures.baseStructure import BaseStructure
 from generation.data.settlementData import SettlementData
-from generation.buildingCondition import BuildingCondition
+from generation.structures.buildingCondition import BuildingCondition
 from generation.data.village import Village
 from generation.data.loreStructure import LoreStructure
 from utils.checkOrCreateConfig import Config
