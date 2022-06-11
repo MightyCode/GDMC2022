@@ -48,7 +48,7 @@
         ]
     }, 
     "sign" : {
-      "position" : [9, 2, 0],
+      "position" : [8, 2, 1],
       "facing" : "north",
       "tier" : 2,
       "name" : "Graveyard"

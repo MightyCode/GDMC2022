@@ -296,18 +296,20 @@ class BaseStructure:
     people : people's name which should appears in the sign
     """
 
-    def generateSignatureSign(self, position, world_modification, wood_type: str, villagers: list):
+    def generateSignatureSign(self, position, world_modification, building_conditions: BuildingCondition):
         if "sign" not in self.info.keys():
             return
 
+        wood_type: str = building_conditions.replacements["woodType"]
+        villagers: list = building_conditions.loreStructure.villagers
+
         world_modification.setBlock(position[0], position[1], position[2], "minecraft:air", place_immediately=True)
         world_modification.setBlock(position[0], position[1], position[2],
-                                    "minecraft:" + wood_type + "_wall_sign[facing=" + self.computed_orientation[
-                                        self.info["sign"]["facing"]] + "]",
+                                    "minecraft:" + wood_type + "_wall_sign[facing=" + self.computed_orientation[self.info["sign"]["facing"]] + "]",
                                     place_immediately=True)
 
         lines = ["", "", "", "", "", "", "", ""]
-        lines[0] = "Tier " + str(self.info["sign"]["tier"])
+        lines[0] = "Tier " + str(self.info["sign"]["tier"]) + (" | old" if building_conditions.loreStructure.age == 1 else "")
         lines[1] = self.info["sign"]["name"]
 
         names: list = []

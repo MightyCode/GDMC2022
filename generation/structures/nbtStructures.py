@@ -210,9 +210,7 @@ class NbtStructures(BaseStructure):
             )
             sign_position[1] += 1
 
-            self.generateSignatureSign(sign_position, world_modification,
-                                       building_conditions.replacements["woodType"],
-                                       building_conditions.loreStructure.villagers)
+            self.generateSignatureSign(sign_position, world_modification, building_conditions)
 
         self.parseSpecialRule(building_conditions, world_modification)
         self.handleSummon(building_conditions)
