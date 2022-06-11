@@ -1,21 +1,11 @@
 {
   "mainEntry": {
     "facing": "north",
-    "position": [
-      3,
-      1,
-      0
-    ]
+    "position": [3, 1, 0]
   },
   "replacements": {
-    "oak": {
-      "type": "woodType",
-      "state": 2
-    },
-    "spruce": {
-      "type": "woodType2",
-      "state": 2
-    }
+    "oak": { "type": "woodType", "state": 2 },
+    "spruce": { "type": "woodType2",  "state": 2}
   },
   "air": {
     "preferredAirMode": 1,
@@ -23,9 +13,7 @@
     ]
   },
   "lootTables": [
-    [
-      "basicstonecutter"
-    ]
+    [ "basicstonecutter"]
   ],
   "villageInfo": {
     "villager": 1,

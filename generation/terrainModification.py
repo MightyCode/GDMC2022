@@ -8,7 +8,7 @@ class TerrainModification:
         self.wall_construction = wall_construction
 
     def removeRecursivelyAt(self, world_modification, x, y, z):
-        removed: list = []
+        #removed: list = []
         remaining: list = []
 
         if self.shouldAdd(x, y, z):
@@ -17,8 +17,8 @@ class TerrainModification:
         while len(remaining) > 0:
             x, y, z = remaining[0]
             world_modification.setBlock(x, y, z, "minecraft:air")
+            #removed.append([x, y, z])
 
-            removed.append([x, y, z])
             del remaining[0]
 
             for x_offset in range(-1, 2):
@@ -27,8 +27,8 @@ class TerrainModification:
                         if x_offset == 0 and y_offset == 0 and z_offset == 0:
                             continue
 
-                        if self.isInStack(removed, [x + x_offset, y + y_offset, z + z_offset]):
-                            continue
+                        """if self.isInStack(removed, [x + x_offset, y + y_offset, z + z_offset]):
+                            continue"""
 
                         if self.isInStack(remaining, [x + x_offset, y + y_offset, z + z_offset]):
                             continue
@@ -52,4 +52,4 @@ class TerrainModification:
 
         block: str = iu.getBlock(x, y, z)
 
-        return "leaves" in block or "log" in block or block == "minecraft:bee_nest"
+        return "leaves" in block or "log" in block or block == "minecraft:bee_nest" or "vine" in block or "mushroom" in block

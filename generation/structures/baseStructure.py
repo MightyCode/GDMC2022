@@ -491,6 +491,16 @@ class BaseStructure:
                         print("Can't add a book to a lectern at pos : " + str(world_position))
                     break
 
+    def handleSummon(self, building_conditions: BuildingCondition):
+        if "summon" in self.info.keys():
+            for entity in self.info["summon"]:
+                world_position = self.returnWorldPosition(
+                    entity["position"],
+                    building_conditions.flip, building_conditions.rotation,
+                    building_conditions.referencePoint, building_conditions.position)
+
+                interfaceUtils.runCommand(f'summon {entity["type"]} {world_position[0]} {world_position[1] + 1} {world_position[2]}')
+
     """
     Get the facing of the main entry depending of the flip and rotation
     flip : flip applied to local space, [0|1|2|3]

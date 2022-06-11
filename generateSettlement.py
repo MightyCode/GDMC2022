@@ -53,7 +53,6 @@ if build_area == -1:
 build_area: tuple = (build_area[0], build_area[1], build_area[2], build_area[3] - 1, build_area[4] - 1, build_area[5] - 1)
 size_area: list = [build_area[3] - build_area[0] + 1, build_area[5] - build_area[2] + 1]
 
-# Five main steps : init settlement Data, choose structures and find its positions, make road between these
 # structures, and finally build structures.
 if not args.remove:
     resources: Resources = Resources()

@@ -183,6 +183,8 @@ REASON_OF_DEATHS = ["died because of old age", "died of creeper attack", "died o
 # Minimum of 10 deaths
 def createListOfDeadVillager(village: Village, name_generator):
     random_dead_villagers = random.randint(10, max(len(village.villagers) - 1, 10))
+    if village.status == Village.STATE_WAR:
+        random_dead_villagers = int(random_dead_villagers * (random.randint(15, 20) / 10))
 
     for i in range(random_dead_villagers):
         dead_villager: Villager = Villager(village)

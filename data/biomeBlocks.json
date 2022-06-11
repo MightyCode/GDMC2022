@@ -8,7 +8,7 @@
         ]
     },
     "0" : {
-        "Comment" : "Plaine and normal forest biome",
+        "Comment" : "Plain and normal forest biome",
         "woodResources" : 1.5,
         "dirtResources" : 0.5,
         "stoneResources" : 0.34,

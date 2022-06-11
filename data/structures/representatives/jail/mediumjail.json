@@ -6,7 +6,9 @@
     "replacements" : {
       "minecraft:blue_bed" : { "type" : "bed", "state" : 1 },
       "oak" : { "type" : "woodType", "state" : 2 },
-      "spruce" : { "type" : "woodType2", "state" : 2 }
+      "spruce" : { "type" : "woodType2", "state" : 2 },
+      "minecraft:red_banner" :  { "type" : "war_banner", "state" : 1},
+      "minecraft:red_wall_banner" :  { "type" : "war_wall_banner", "state" : 1}
     },
     "air" : {
       "preferredAirMode" : 2,
@@ -26,9 +28,9 @@
       ]
     },
     "sign" : {
-      "position" : [5, 3, 2],
-      "facing" : "east",
-      "tier" : 1,
+      "position" : [0, 2, 0],
+      "facing" : "north",
+      "tier" : 2,
       "name" : "Jail"
     }
   }

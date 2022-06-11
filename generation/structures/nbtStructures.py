@@ -167,8 +167,6 @@ class NbtStructures(BaseStructure):
 
     def build(self, world_modification, building_conditions: BuildingCondition, chest_generation: ChestGeneration,
               block_transformations: list) -> None:
-
-
         ## Pre computing :
         building_conditions.referencePoint = building_conditions.referencePoint.copy()
         self.computeOrientation(building_conditions.rotation, building_conditions.flip)
@@ -217,6 +215,7 @@ class NbtStructures(BaseStructure):
                                        building_conditions.loreStructure.villagers)
 
         self.parseSpecialRule(building_conditions, world_modification)
+        self.handleSummon(building_conditions)
 
     def computeBlockAt(self, building_conditions: BuildingCondition, world_modification,
                        chest_generation: ChestGeneration, x: int, y: int, z: int) -> None:

@@ -19,12 +19,11 @@ import generation.resourcesLoader as resLoader
 import utils.argumentParser as argParser
 import lib.interfaceUtils as interfaceUtil
 import generation.generator as generator
-
 """
 Important information
 """
 
-structure_name: str = "basictownhall"
+structure_name: str = "basichorseboxl"
 structure_type: str = LoreStructure.TYPE_FUNCTIONALS
 
 """
