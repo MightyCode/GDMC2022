@@ -8,7 +8,9 @@
       "minecraft:white_wall_banner" : { "type" : "wall_banner", "state" : 1 },
       "minecraft:white_banner" : { "type" : "banner", "state" : 1 },
       "oak" : { "type" : "woodType", "state" : 2 },
-      "spruce" : { "type" : "woodType2", "state" : 2 }
+      "spruce" : { "type" : "woodType2", "state" : 2 },
+      "minecraft:red_banner" :  { "type" : "war_banner", "state" : 1},
+      "minecraft:red_wall_banner" :  { "type" : "war_wall_banner", "state" : 1}
     },
     "air" : {
       "preferredAirMode" : 1,
@@ -35,7 +37,7 @@
       ]
     },
     "sign" : {
-      "position" : [3, 1, 1],
+      "position" : [3, 3, 1],
       "facing" : "north",
       "tier" : 3,
       "name" : "Townhall"

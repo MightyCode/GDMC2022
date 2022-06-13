@@ -1,5 +1,5 @@
 from utils.constants import Constants
-from generation.buildingCondition import BuildingCondition
+from generation.structures.buildingCondition import BuildingCondition
 
 import utils.util as util
 import utils.projectMath as projectMath
@@ -296,18 +296,20 @@ class BaseStructure:
     people : people's name which should appears in the sign
     """
 
-    def generateSignatureSign(self, position, world_modification, wood_type: str, villagers: list):
+    def generateSignatureSign(self, position, world_modification, building_conditions: BuildingCondition):
         if "sign" not in self.info.keys():
             return
 
+        wood_type: str = building_conditions.replacements["woodType"]
+        villagers: list = building_conditions.loreStructure.villagers
+
         world_modification.setBlock(position[0], position[1], position[2], "minecraft:air", place_immediately=True)
         world_modification.setBlock(position[0], position[1], position[2],
-                                    "minecraft:" + wood_type + "_wall_sign[facing=" + self.computed_orientation[
-                                        self.info["sign"]["facing"]] + "]",
+                                    "minecraft:" + wood_type + "_wall_sign[facing=" + self.computed_orientation[self.info["sign"]["facing"]] + "]",
                                     place_immediately=True)
 
         lines = ["", "", "", "", "", "", "", ""]
-        lines[0] = "Tier " + str(self.info["sign"]["tier"])
+        lines[0] = "Tier " + str(self.info["sign"]["tier"]) + (" | old" if building_conditions.loreStructure.age == 1 else "")
         lines[1] = self.info["sign"]["name"]
 
         names: list = []
@@ -490,6 +492,19 @@ class BaseStructure:
                     else:
                         print("Can't add a book to a lectern at pos : " + str(world_position))
                     break
+
+    def handleSummon(self, building_conditions: BuildingCondition):
+        if building_conditions.loreStructure.destroyed:
+            return
+
+        if "summon" in self.info.keys():
+            for entity in self.info["summon"]:
+                world_position = self.returnWorldPosition(
+                    entity["position"],
+                    building_conditions.flip, building_conditions.rotation,
+                    building_conditions.referencePoint, building_conditions.position)
+
+                interfaceUtils.runCommand(f'summon {entity["type"]} {world_position[0]} {world_position[1] + 1} {world_position[2]}')
 
     """
     Get the facing of the main entry depending of the flip and rotation

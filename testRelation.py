@@ -1,4 +1,5 @@
 from generation.data.village import VillageInteraction
+from utils.checkOrCreateConfig import Config
 from utils.nameGenerator import NameGenerator
 import generation.loreMaker as loremaker
 import matplotlib.pyplot as plt
@@ -43,6 +44,7 @@ def plot_village_point(positions_x, positions_y, plotted_villages: list):
 
 
 if __name__ == "__main__":
+    Config.getOrCreateConfig()
     nameGenerator: NameGenerator = NameGenerator()
 
     """Generate village involving on our generation"""

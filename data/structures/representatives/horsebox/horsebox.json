@@ -15,5 +15,8 @@
     "replacements" : [
       [0, 1, 0, 4, 6, 5]
     ]
-  }
+  },
+  "summon" : [
+    {"type":  "minecraft:horse", "position" :  [2, 1, 2]}
+  ]
 }

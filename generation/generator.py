@@ -2,17 +2,16 @@ from generation.chestGeneration import ChestGeneration
 from generation.resources import Resources
 from generation.structures.baseStructure import BaseStructure
 from generation.data.settlementData import SettlementData
-from generation.buildingCondition import BuildingCondition
+from generation.structures.buildingCondition import BuildingCondition
 from generation.data.village import Village
 from generation.data.loreStructure import LoreStructure
 from utils.checkOrCreateConfig import Config
-from utils.constants import Constants
 from utils.worldModification import WorldModification
+from utils.bookWriter import BookWriter
 
 import generation.loreMaker as loreMaker
 import utils.util as util
 import utils.book as book
-import lib.toolbox as toolbox
 
 import math
 import random
@@ -70,25 +69,27 @@ def initNumberHouse(x_size: int, z_size: int) -> tuple:
     return minimal_number_of_house, maximum_number_of_house
 
 
-def placeBooks(settlement_data: SettlementData, books: dict, world_modification: WorldModification):
+def placeBook(position: list, local_position: list, world_modification: WorldModification, positions: list):
     items: list = []
 
-    for key in books.keys():
-        items += [["minecraft:written_book" + books[key], 1]]
+    bookWriter: BookWriter = BookWriter()
+
+    bookWriter.writeFirstPage("Position of villages", "")
+    for i in range(len(positions)):
+        bookWriter.writeLine("Village " + str(i) + " : " + str(positions[i]))
+    bookWriter.setInfo("Village positions", "MightyCode")
+
+    items += [["minecraft:written_book" + bookWriter.printBook(), 1]]
 
     # Set a chest for the books and place the books in the chest
-    height: int = Constants.getHeight(settlement_data.center[0], settlement_data.center[2])
+    height: int = util.getHighestNonAirBlock(position[0], position[1], local_position[0], local_position[1])
 
-    world_modification.setBlock(settlement_data.center[0], height,
-                                settlement_data.center[2], "minecraft:chest[facing=east]", place_immediately=True)
+    world_modification.setBlock(position[0], height + 20,
+                                position[1], "minecraft:chest[facing=east]", place_immediately=True)
 
-    util.addItemChest(settlement_data.center[0], height, settlement_data.center[2], items)
+    util.addItemChest(position[0], height + 20, position[1], items)
 
-    # Set a lectern for the book of village presentation
-    toolbox.placeLectern(
-        settlement_data.center[0],
-        Constants.getHeight(settlement_data.center[0], settlement_data.center[2]),
-        settlement_data.center[2] + 1, books["villageBook"], world_modification, 'east')
+    print("Chest with information at", position[0], height + 20, position[1])
 
 
 def makeAirZone(lore_structure: LoreStructure, settlement_data: SettlementData, resources: Resources,
@@ -189,6 +190,8 @@ def modifyBuildingConditionDependingOnStructure(building_conditions: BuildingCon
     elif "exchanger" in structure.name:
         building_conditions.special["trade"] = []
 
+        economical_relations: list = []
+
         for villageKey in settlement_data.village_model.village_interactions:
             interaction = settlement_data.village_model.village_interactions[villageKey]
 
@@ -200,6 +203,34 @@ def modifyBuildingConditionDependingOnStructure(building_conditions: BuildingCon
                                                                 '}, Enchantments:[{}]'
                                                                 '}'
                 )
+
+                economical_relations.append(villageKey)
+
+        building_conditions.special["sign"] = []
+
+        resources: list = ["dirt", "wood", "metal", "dirt", "sand", "food"]
+        villageName: str
+        resource: str
+
+        for i in range(6):
+            if len(economical_relations) == 0:
+                building_conditions.special["sign"].append("")
+                building_conditions.special["sign"].append("------------")
+                building_conditions.special["sign"].append("------------")
+                building_conditions.special["sign"].append("")
+            else:
+                villageName = economical_relations[random.randint(0, len(economical_relations) - 1)].name
+                resource = resources[random.randint(0, len(resources) - 1)]
+
+                if random.randint(1, 2) == 1:
+                    building_conditions.special["sign"].append(f'Selling {resource}')
+                else:
+                    building_conditions.special["sign"].append(f'Ordering {resource}')
+
+                building_conditions.special["sign"].append("resources to")
+                building_conditions.special["sign"].append(villageName)
+                building_conditions.special["sign"].append(f'Cost: {random.randint(1, 5)} emeralds')
+
     elif "statue" in structure.name:
         building_conditions.special = {"sign": ["", "", "", "", "", "", "", ""]}
         index: int = 0
@@ -238,7 +269,6 @@ def modifyBuildingConditionDependingOnStructure(building_conditions: BuildingCon
                                                                             '}, Enchantments:[{}]'
                                                                             '}'
         )
-
 
 def buildMurdererCache(lore_structure: LoreStructure, settlement_data: SettlementData, resources: Resources,
                        world_modification: WorldModification, chest_generation: ChestGeneration,

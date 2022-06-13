@@ -8,7 +8,7 @@ class Config:
     @staticmethod
     def createConfig() -> dict:
         return {
-            "timeLimit": 600,
+            "timeLimit": 720,
             "villageWall": "convexHull",
             "shouldShowWallSchematic": False,
             "minVillageStructure": 25,

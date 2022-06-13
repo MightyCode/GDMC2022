@@ -435,6 +435,7 @@ class WallConstruction:
                 continue
 
             wallCell.height = util.getHighestNonAirBlock(x_real, z_real, x_real - self.area[0], z_real - self.area[2])
+
             wallCell.augmented_height = wallCell.height
             if wallCell.height > max_height:
                 max_height = wallCell.height
@@ -556,7 +557,7 @@ class WallConstruction:
                 door_candidate.append(wallCell)
 
         if len(door_candidate) > 0:
-            for i in range(random.randint(1, min(3, len(door_candidate)))):
+            for i in range(random.randint(min(2, len(door_candidate)), min(4, len(door_candidate)))):
                 index: int = random.randint(0, len(door_candidate) - 1)
                 door_candidate[index].wall_type = self.MODEL_DOOR
                 del door_candidate[index]

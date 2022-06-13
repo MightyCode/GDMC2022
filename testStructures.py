@@ -19,12 +19,11 @@ import generation.resourcesLoader as resLoader
 import utils.argumentParser as argParser
 import lib.interfaceUtils as interfaceUtil
 import generation.generator as generator
-
 """
 Important information
 """
 
-structure_name: str = "advancedgraveyard"
+structure_name: str = "basicgeneratedquarry"
 structure_type: str = LoreStructure.TYPE_FUNCTIONALS
 
 """
@@ -66,8 +65,9 @@ if not args.remove:
     village: Village = Village()
     village.name = "TestLand"
     village.tier = 1
-    village.color = "red"
+    village.color = "yellow"
     village.isDestroyed = False
+    village.status = Village.STATE_PEACEFUL
 
     otherVillage: Village = Village()
     for i in range(10):
@@ -110,15 +110,15 @@ if not args.remove:
 
     lore_structure: LoreStructure = LoreStructure()
     lore_structure.age = 1
-    lore_structure.flip = 0
-    lore_structure.rotation = 0
+    lore_structure.flip = 3
+    lore_structure.rotation = 3
     lore_structure.destroyed = False
     #lore_structure.causeDestroy = {"burned": "burned", "abandoned": "abandoned", "damaged": "damaged"}
 
     lore_structure.name = structure_name
     lore_structure.villagers = [villagers[0], villagers[2], villagers[2]]
     lore_structure.type = structure_type
-    lore_structure.position = [build_area[0] + size_area[0] / 2, 65, build_area[2] + size_area[1] / 2]
+    lore_structure.position = [build_area[0] + size_area[0] / 2, 63, build_area[2] + size_area[1] / 2]
 
     lore_structure.preBuildingInfo = structure.getNextBuildingInformation(lore_structure.flip, lore_structure.rotation)
 
@@ -160,10 +160,6 @@ if not args.remove:
     wall_construction.placeWall(settlement_data, resources, [0, 64, 0], world_modifications, block_transformations, terrain_modification)"""
 
     books: dict = generator.generateVillageBooks(settlement_data)
-    """interfaceUtil.runCommand("give TamalouMax minecraft:written_book" + books["villageBook"])
-    print(books["villageBook"])
-    exit()"""
-
     settlement_data.setVillageBook(books)
 
     generator.makeAirZone(lore_structure, settlement_data, resources, world_modifications, terrain_modification)

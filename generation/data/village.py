@@ -7,6 +7,11 @@ import random
 class Village:
     STATE_PEACEFUL = "peaceful"
     STATE_WAR = "war"
+    STATE_DESTROYED = "destroyed"
+
+    DESTROYED_NONE = ""
+    DESTROYED_WAR = "war"
+    DESTROYED_PILLAGER = "pillager"
 
     TIER_LOW = 0
     TIER_MID = 1

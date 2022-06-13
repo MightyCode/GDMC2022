@@ -2,6 +2,7 @@ import random
 import copy
 
 import utils.util as util
+from generation.banner import Banner
 from generation.data.village import Village
 from generation.data.villager import Villager
 from generation.data.village import VillageInteraction
@@ -76,7 +77,6 @@ def checkForImpossibleInteractions(villages: list, interactions: list):
 
             interaction1 = village.village_interactions[interaction.village1]
             interaction2 = village.village_interactions[interaction.village2]
-            interaction2 = village.village_interactions[interaction.village2]
 
             if (interaction1.state != VillageInteraction.STATE_LOVE
                 and interaction1.state != VillageInteraction.STATE_FRIENDSHIP) or \
@@ -98,12 +98,12 @@ def generateLoreAfterRelation(villages: list):
 
     for village in order_to_check:
         if village.status == "peaceful":
-            village.isDestroyed = random.randint(1, 10) == 1
+            village.isDestroyed = random.randint(2, 10) == 1
 
             if village.isDestroyed:
-                village.destroyCause = "pillager" if random.randint(1, 2) == 1 else "abandoned"
+                village.destroyCause = village.DESTROYED_PILLAGER
         else:
-            village.destroyCause = "war"
+            village.destroyCause = village.DESTROYED_WAR
             chance: float = computeChanceOfDestructionComparingTier(village)
 
             if chance == 0.8:
@@ -127,6 +127,23 @@ def alterSettlementDataWithNewStructures(settlement_data, lore_structure: LoreSt
 def applyLoreToSettlementData(settlement_data):
     fillSettlementDataWithColor(settlement_data, settlement_data.village_model.color)
 
+    if settlement_data.village_model.isDestroyed:
+        if settlement_data.village_model.destroyCause == Village.DESTROYED_WAR:
+            settlement_data.setMaterialReplacement("banner", "minecraft:black_banner")
+            settlement_data.setMaterialReplacement("wall_banner", "minecraft:black_wall_banner")
+        elif settlement_data.village_model.destroyCause == Village.DESTROYED_PILLAGER:
+            symbols: str = Banner.givePillagerBanner()
+            settlement_data.setMaterialReplacement("banner", "minecraft:white_banner" + symbols)
+            settlement_data.setMaterialReplacement("wall_banner", "minecraft:white_wall_banner" + symbols)
+
+    if settlement_data.village_model.status == Village.STATE_WAR:
+        symbols: str = Banner.giveWarBanner()
+        settlement_data.setMaterialReplacement("war_banner", "minecraft:red_banner" + symbols)
+        settlement_data.setMaterialReplacement("war_wall_banner", "minecraft:red_wall_banner" + symbols)
+    else:
+        settlement_data.setMaterialReplacement("war_banner", "minecraft:air")
+        settlement_data.setMaterialReplacement("war_wall_banner", "minecraft:air")
+
 
 def fillSettlementDataWithColor(settlement_data, color):
     settlement_data.setMaterialReplacement("color", color)
@@ -141,8 +158,11 @@ def fillSettlementDataWithColor(settlement_data, color):
     settlement_data.setMaterialReplacement("concrete_powder", "minecraft:" + color + "_concrete_powder")
     settlement_data.setMaterialReplacement("dye", "minecraft:" + color + "_dye")
     settlement_data.setMaterialReplacement("bed", "minecraft:" + color + "_bed")
-    settlement_data.setMaterialReplacement("banner", "minecraft:" + color + "_banner")
-    settlement_data.setMaterialReplacement("wall_banner", "minecraft:" + color + "_wall_banner")
+
+    if not settlement_data.village_model.isDestroyed:
+        symbols: str = Banner.generateBanner(settlement_data.village_model)
+        settlement_data.setMaterialReplacement("banner", "minecraft:" + color + "_banner" + symbols)
+        settlement_data.setMaterialReplacement("wall_banner", "minecraft:" + color + "_wall_banner" + symbols)
 
 
 def generateLoreAfterAllStructure(village: Village, name_generator):
@@ -163,6 +183,8 @@ REASON_OF_DEATHS = ["died because of old age", "died of creeper attack", "died o
 # Minimum of 10 deaths
 def createListOfDeadVillager(village: Village, name_generator):
     random_dead_villagers = random.randint(10, max(len(village.villagers) - 1, 10))
+    if village.status == Village.STATE_WAR:
+        random_dead_villagers = int(random_dead_villagers * (random.randint(15, 20) / 10))
 
     for i in range(random_dead_villagers):
         dead_villager: Villager = Villager(village)
