@@ -32,6 +32,14 @@
     "additionalItem": {
       "order" : [2, 2, 2],
       "trade" : [2, 2, 2]
-    }
+    },
+    "sign" : [
+      { "position" : [6, 2, 6], "orientation" : "north"},
+      { "position" : [7, 2, 6], "orientation" : "north"},
+      { "position" : [8, 2, 6], "orientation" : "west"},
+      { "position" : [8, 2, 5], "orientation" : "west"},
+      { "position" : [8, 2, 3], "orientation" : "west"},
+      { "position" : [8, 2, 2], "orientation" : "west"}
+    ]
   }
 }

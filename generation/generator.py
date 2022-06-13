@@ -189,6 +189,8 @@ def modifyBuildingConditionDependingOnStructure(building_conditions: BuildingCon
     elif "exchanger" in structure.name:
         building_conditions.special["trade"] = []
 
+        economical_relations: list = []
+
         for villageKey in settlement_data.village_model.village_interactions:
             interaction = settlement_data.village_model.village_interactions[villageKey]
 
@@ -200,6 +202,35 @@ def modifyBuildingConditionDependingOnStructure(building_conditions: BuildingCon
                                                                 '}, Enchantments:[{}]'
                                                                 '}'
                 )
+
+                economical_relations.append(villageKey)
+                print(villageKey)
+
+        building_conditions.special["sign"] = []
+
+        resources: list = ["dirt", "wood", "metal", "dirt", "sand", "food"]
+        villageName: str
+        resource: str
+
+        for i in range(6):
+            if len(economical_relations) == 0:
+                building_conditions.special["sign"].append("")
+                building_conditions.special["sign"].append("------------")
+                building_conditions.special["sign"].append("------------")
+                building_conditions.special["sign"].append("")
+            else:
+                villageName = economical_relations[random.randint(0, len(economical_relations) - 1)].name
+                resource = resources[random.randint(0, len(resources) - 1)]
+
+                if random.randint(1, 2) == 1:
+                    building_conditions.special["sign"].append(f'Selling {resource}')
+                else:
+                    building_conditions.special["sign"].append(f'Ordering {resource}')
+
+                building_conditions.special["sign"].append("resources to")
+                building_conditions.special["sign"].append(villageName)
+                building_conditions.special["sign"].append(f'Cost: {random.randint(1, 5)} emeralds')
+
     elif "statue" in structure.name:
         building_conditions.special = {"sign": ["", "", "", "", "", "", "", ""]}
         index: int = 0
@@ -238,7 +269,6 @@ def modifyBuildingConditionDependingOnStructure(building_conditions: BuildingCon
                                                                             '}, Enchantments:[{}]'
                                                                             '}'
         )
-
 
 def buildMurdererCache(lore_structure: LoreStructure, settlement_data: SettlementData, resources: Resources,
                        world_modification: WorldModification, chest_generation: ChestGeneration,

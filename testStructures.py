@@ -23,7 +23,7 @@ import generation.generator as generator
 Important information
 """
 
-structure_name: str = "basichorseboxl"
+structure_name: str = "basicgeneratedquarry"
 structure_type: str = LoreStructure.TYPE_FUNCTIONALS
 
 """
@@ -110,8 +110,8 @@ if not args.remove:
 
     lore_structure: LoreStructure = LoreStructure()
     lore_structure.age = 1
-    lore_structure.flip = 0
-    lore_structure.rotation = 0
+    lore_structure.flip = 3
+    lore_structure.rotation = 3
     lore_structure.destroyed = False
     #lore_structure.causeDestroy = {"burned": "burned", "abandoned": "abandoned", "damaged": "damaged"}
 

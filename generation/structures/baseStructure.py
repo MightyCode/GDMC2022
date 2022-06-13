@@ -494,6 +494,9 @@ class BaseStructure:
                     break
 
     def handleSummon(self, building_conditions: BuildingCondition):
+        if building_conditions.loreStructure.destroyed:
+            return
+
         if "summon" in self.info.keys():
             for entity in self.info["summon"]:
                 world_position = self.returnWorldPosition(
