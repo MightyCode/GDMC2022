@@ -25,10 +25,10 @@ The main purpose is to create a better version of existing village. So the gener
 game breaking blocks or items.
 
 The village you will encounter after the generation can be a basic, a medium or an advanced one. 
-It will have relations with surrounded settlements, the relation will be from very close relation to war.
+It will have relations with surround settlements, the relation will be from very close relation to war.
 The war relation is very important because if your village has only one war relation, it will enter
 the __war__ status.
-Your village can be destroyed too. By many cause such as war or pillager raid.
+Your village can be destroyed too. By many causes such as war or pillager raid.
 
 In that village, there are unique interactions between villagers using diaries on their house.
 There is a system of death, with a death book in the village and one the graveyard. 
@@ -36,9 +36,9 @@ There is a system of death, with a death book in the village and one the graveya
 One murderer/Spy often takes place in the village with war status, so be sure to look around for any clue.
 The murderer will be happy on a destroyed village by the war. Its hiding place will get bigger. 
 
-Each village has its own money system, which villagers use to sell items to the player. 
+Each village has its own currency system, which villagers use to sell items to the player. 
 In addition, villages can be linked by trade pacts.
-The material system is not fully used but is represents the power of the village for commercial purposes.
+The material system is not fully used, but the power of the village for commercial purposes.
 
 __A chest will be placed 20 blocks above the ground containing information about generated settlement(s)__
 The position of all village will be indicated on the terminal too.
