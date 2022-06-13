@@ -50,7 +50,8 @@ name_generator: NameGenerator = NameGenerator()
 if build_area == -1:
     exit()
 
-build_area: tuple = (build_area[0], build_area[1], build_area[2], build_area[3] - 1, build_area[4] - 1, build_area[5] - 1)
+build_area: tuple = (
+build_area[0], build_area[1], build_area[2], build_area[3] - 1, build_area[4] - 1, build_area[5] - 1)
 size_area: list = [build_area[3] - build_area[0] + 1, build_area[5] - build_area[2] + 1]
 
 # structures, and finally build structures.
@@ -91,9 +92,11 @@ if not args.remove:
 
     block_transformation: list = [OldStructureTransformation(), DamagedStructureTransformation(),
                                   BurnedStructureTransformation(), AbandonedStructureTransformation()]
-
     current_zone_x: int = 0
     current_zone_z: int = 0
+
+    position_of_villages_to_print: str = ""
+    position_of_villages: list = []
 
     while current_zone_z < settlement_zones_number[1]:
         """ First main step : init settlement information """
@@ -242,7 +245,8 @@ if not args.remove:
                     structure = tested_structure
                     break
 
-            if (random.randint(1, 10) <= 9 or villager == settlement_data.village_model.murderer_data.fakeVillagerMurderer) and available:
+            if (random.randint(1,
+                               10) <= 9 or villager == settlement_data.village_model.murderer_data.fakeVillagerMurderer) and available:
                 print("Generate diary of " + villager.name)
                 villager.diary = book.createBookForVillager(settlement_data.village_model, villager)
                 villager.diary[0].setInfo(title="Diary of " + villager.name, author=villager.name,
@@ -281,7 +285,8 @@ if not args.remove:
                 wallConstruction.addPoints(blockPath)
 
         print("\nCompute wall")
-        wallType: int = WallConstruction.BOUNDING_CONVEX_HULL if Config.LOADED_CONFIG["villageWall"] == "convexHull" else WallConstruction.BOUNDING_RECTANGULAR
+        wallType: int = WallConstruction.BOUNDING_CONVEX_HULL if Config.LOADED_CONFIG[
+                                                                     "villageWall"] == "convexHull" else WallConstruction.BOUNDING_RECTANGULAR
         wallConstruction.computeWall(wallType)
 
         if Config.LOADED_CONFIG["shouldShowWallSchematic"]:
@@ -299,7 +304,8 @@ if not args.remove:
         """ Five main step : places every structure and after that every decorations """
         print("\nConstruct wall")
 
-        wallConstruction.placeWall(settlement_data, resources, floodFill.computeCenter(), world_modification, block_transformation, terrain_modification)
+        wallConstruction.placeWall(settlement_data, resources, floodFill.computeCenter(), world_modification,
+                                   block_transformation, terrain_modification)
 
         # Connect entry of village in wall to rest of village paths
         wallEntries: list = wallConstruction.returnWallEntries()
@@ -322,7 +328,8 @@ if not args.remove:
         current_time: int = int(round(time.time() * 1000)) - milliseconds
         while i < len(current_village.lore_structures) and current_time / 1000 < TIME_LIMIT:
             generator.generateStructure(current_village.lore_structures[i], settlement_data, resources,
-                                        world_modification, chest_generation, block_transformation, terrain_modification)
+                                        world_modification, chest_generation, block_transformation,
+                                        terrain_modification)
             if not current_village.lore_structures[i].destroyed:
                 util.spawnVillagerForStructure(settlement_data, current_village.lore_structures[i],
                                                current_village.lore_structures[i].position)
@@ -336,21 +343,22 @@ if not args.remove:
         print("\nBuild decoration")
         if not current_village.isDestroyed:
             floodFill.placeDecorations(settlement_data, road, wallConstruction)
-        print("Position of lectern for village", current_zone_z * settlement_zones_number[0] + current_zone_x, ":",
-              [settlement_data.center[0],
-               Constants.getHeight(
-                   settlement_data.center[0],
-                   settlement_data.center[2]),
-               settlement_data.center[1]])
-        print("Position of first structure",
-              [floodFill.structures[0][0], floodFill.structures[0][1], floodFill.structures[0][2]])
+
+        position_of_villages_to_print += "\nPosition of first structure " + str(
+            [floodFill.structures[0][0], floodFill.structures[0][1], floodFill.structures[0][2]])
+
+        position_of_villages.append([floodFill.structures[0][0], floodFill.structures[0][1], floodFill.structures[0][2]])
+
         # iu.runCommand("tp {} {} {}".format(floodFill.listHouse[0][0], floodFill.listHouse[0][1], floodFill.listHouse[0][2]))
         print("Time left :", TIME_LIMIT - (int(round(time.time() * 1000)) - milliseconds) / 1000, "s")
 
         settlement_index += 1
 
-    interfaceUtil.setBuildArea(build_area[0], build_area[1], build_area[2], build_area[3] + 1, build_area[4] + 1,
-                               build_area[5] + 1)
+    interfaceUtil.setBuildArea(build_area[0], build_area[1], build_area[2], build_area[3] + 1, build_area[4] + 1, build_area[5] + 1)
+
+    print(position_of_villages_to_print)
+    generator.placeBook([build_area[0] + size_area[0] // 2, build_area[2] + size_area[1] // 2], [size_area[0] // 2, size_area[1] // 2], world_modification, position_of_villages)
+
 else:
     if args.remove == "r":
         world_modification.loadFromFile(file)

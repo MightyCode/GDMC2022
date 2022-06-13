@@ -6,7 +6,6 @@ from generation.resources import Resources
 from utils.worldModification import WorldModification
 from utils import util
 import generation.generator as generator
-import lib.interfaceUtils as iu
 
 import copy
 import math
