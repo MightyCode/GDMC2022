@@ -1,5 +1,5 @@
 # GDMC2022
-by Maxence Bazin and by Melvin Cledat, second builder.
+by Maxence Bazin (MightyCode | developper nickname or TamalouMax | discord username) and by Melvin Cledat, second builder.
 
 This repository is the continuation of my [work last year with the tsukuba team done with Lucien Mocrete and Yusuf Senel](https://github.com/MightyCode/GDMC2021Tsukuba)
 
