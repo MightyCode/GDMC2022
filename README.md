@@ -4,7 +4,7 @@ by Maxence Bazin (MightyCode | developper nickname or TamalouMax | discord usern
 This repository is the continuation of my [work last year with the tsukuba team done with Lucien Mocrete and Yusuf Senel](https://github.com/MightyCode/GDMC2021Tsukuba)
 
 ## How to run this project:
-- Make sure to have the [http interface mod](https://github.com/nilsgawlik/gdmc_http_interface) installed;
+- Make sure to have the [http interface mod](https://github.com/Niels-NTG/gdmc_http_interface) installed;
 - Open the minecraft world, and run the `setbuildarea x0 y0 z0 x1 y1 z1` command.
 - Run the python script in this repository: `python generatesettlement.py'
 ## Requirements
